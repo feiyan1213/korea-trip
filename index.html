@@ -6,88 +6,751 @@
     <title>2026 德瑞瑞士之旅</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        :root { 
-            --jp-wash: #1A1C1E; 
-            --accent: #C1A35F; 
-            --card-bg: #25282B;
-            --text-main: #E2E2E2;
-            --text-muted: #9499A0;
-            --border-color: #383C41;
-        }
-        body { background: var(--jp-wash); font-family: "PingFang TC", "Microsoft JhengHei", sans-serif; padding-bottom: 80px; color: var(--text-main); }
-        
-        /* 分頁核心邏輯 */
+        :root { --jp-wash: #F8F9F7; --accent: #2C3E50; --highlight: #D4A373; }
+        body { 
+    background: var(--jp-wash); 
+    /* 使用更現代的字體集，優先調用系統預設的無襯線字體 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif; 
+    padding-bottom: 80px; 
+    color: #333; 
+    letter-spacing: 0.02em; /* 稍微增加字距，提升閱讀舒適度 */
+}
         .content-section { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
-        .content-section.active { display: block !important; }
+        .content-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        /* 卡片樣式 */
-        .card-custom { background: var(--card-bg); border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        
-        /* 標題與導航 */
-        .sticky-top { background-color: #151719 !important; border-bottom: 1px solid var(--border-color); z-index: 1050; }
-        .day-label { font-size: 1.1rem; font-weight: bold; border-bottom: 2.5px solid var(--accent); display: inline-block; margin: 15px 0 10px; color: var(--accent); }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #1A1A1A; border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
-        .nav-item { color: #555; text-decoration: none; text-align: center; font-size: 0.7rem; cursor: pointer; flex: 1; }
+        .card-custom { background: white; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .day-label { font-size: 1.1rem; font-weight: bold; border-bottom: 2.5px solid var(--accent); display: inline-block; margin: 15px 0 10px; letter-spacing: 1px; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #EEE; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
+        .nav-item { color: #BBB; text-decoration: none; text-align: center; font-size: 0.7rem; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--accent); font-weight: bold; }
         .nav-item i { font-size: 1.3rem; display: block; margin-bottom: 3px; }
-
-        /* 行程橫向導航 */
-        .day-nav-container { display: flex; overflow-x: auto; background: #1A1A1A; padding: 15px 10px; gap: 15px; position: sticky; top: 105px; z-index: 999; border-bottom: 1px solid var(--border-color); -webkit-overflow-scrolling: touch; }
+        .budget-sum { background: var(--accent); color: white; border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn-nav { background: #333; color: white; border-radius: 50px; font-size: 0.75rem; padding: 6px 15px; text-decoration: none; display: inline-flex; align-items: center; }
+        .pack-item { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f0f0f0; padding: 8px 0; }
+        .pack-text { flex-grow: 1; margin-left: 10px; cursor: pointer; font-size: 0.95rem; }
+        .pack-text.checked { text-decoration: line-through; color: #aaa; }
+/* 橫向導覽容器 */
+.day-nav-container {
+    display: flex;
+    overflow-x: auto;
+    background: white;
+    padding: 15px 10px;
+    gap: 15px;
+    position: sticky;
+    top: 105px; /* 這裡要根據標題欄的高度做調整，大約是 100-110px */
+    z-index: 999;
+    border-bottom: 1px solid #f0f0f0;
+    -webkit-overflow-scrolling: touch;
+}
         .day-nav-container::-webkit-scrollbar { display: none; }
-        .day-tab { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; min-width: 50px; cursor: pointer; }
-        .day-tab .day-week { font-size: 0.65rem; color: #666; }
-        .day-tab .day-num { font-size: 1.1rem; color: #444; position: relative; padding-bottom: 8px; }
-        .day-tab.active .day-week { color: var(--accent); }
-        .day-tab.active .day-num { color: #FFF; font-weight: bold; }
-        .day-tab.active .day-num::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background-color: var(--accent); border-radius: 50%; }
 
-        /* 行程內容顯示 */
-        .day-content { display: none; }
-        .day-content.active { display: block !important; animation: fadeIn 0.4s ease; }
-        .time-node { border-left: 2px solid #333; margin-left: 10px; padding-left: 20px; position: relative; }
-        .time-node::before { content: ''; position: absolute; left: -6px; top: 5px; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; }
+        /* 日期卡片基礎樣式 */
+        .day-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 0 0 auto;
+            min-width: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-        /* 預算與行李 */
-        .budget-sum { background: linear-gradient(135deg, #C1A35F 0%, #1A1C1E 100%); color: white; border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 20px; }
-        .form-control, .form-select { background-color: #252525 !important; border: 1px solid #444 !important; color: white !important; }
-        .pack-item { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222; padding: 8px 0; }
-        .pack-text.checked { text-decoration: line-through; color: #555; }
-        
-        /* 同步中心 */
-        .sync-card { background: #1A1A1A; border: 1px dashed var(--accent); border-radius: 15px; padding: 20px; margin-top: 20px; }
-        .btn-sync { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 10px; width: 100%; border: none; margin-bottom: 10px; }
-        .btn-export { background-color: var(--accent); color: #000; font-weight: bold; }
-.btn-custom { background-color: var(--accent) !important; color: #000 !important; }
-    </style>
+        /* 上排：星期英文 */
+        .day-tab .day-week {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #ccc; /* 未選中為淺灰色 */
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* 下排：日期數字 */
+        .day-tab .day-num {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #ddd; /* 未選中為淺灰色 */
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        /* 選中狀態：深色強調 */
+        .day-tab.active .day-week {
+            color: #333;
+            font-weight: bold;
+        }
+        .day-tab.active .day-num {
+            color: #000;
+            font-weight: 700;
+        }
+
+        /* 選中狀態下方的紅點 */
+        .day-tab.active .day-num::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background-color: #8B0000; /* 深紅色小點 */
+            border-radius: 50%;
+        }
+/* 住宿資訊固定框 */
+/* 住宿資訊固定框 */
+.accommodation-bar {
+    position: fixed;
+    bottom: 65px; 
+    left: 15px;
+    right: 15px;
+    background: white;
+    padding: 12px 18px;
+    border-radius: 12px;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+    z-index: 998;
+    display: none; 
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #eee;
+}
+
+[data-theme="dark"] .accommodation-bar {
+    background: #1e1e1e;
+    border-color: #333;
+}
+
+/* 核心修正：地圖按鈕樣式 */
+.accommodation-bar .btn-map {
+    background-color: #2C3E50 !important; /* 強制使用您的主題深藍色 */
+    color: #ffffff !important;           /* 強制文字為白色，防止變成藍色字 */
+    border-radius: 20px;
+    font-size: 0.75rem;
+    padding: 6px 15px;
+    text-decoration: none !important;    /* 移除底線 */
+    border: 1px solid #3d5166 !important;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* 點擊效果：與全站按鈕一致 */
+.accommodation-bar .btn-map:active {
+    transform: translateY(1px) scale(0.95);
+    background-color: #1a252f !important; /* 點擊時變深 */
+    opacity: 0.9;
+}
+
+/* 夜間模式下的微調 */
+[data-theme="dark"] .accommodation-bar .btn-map {
+    background-color: #2C3E50 !important;
+    border-color: #455a64 !important;
+}
+/* --- 1. 行程內容顯示控制 --- */
+.day-content { display: none; animation: fadeIn 0.4s ease; }
+.day-content.active { display: block; }
+/* 🌟 時間軸淡入動畫（取代原本 time-item 設定） */
+/* 🌟 時間軸共用基準線（不要改這個值） */
+:root {
+    --timeline-x: 16px;
+}
+.time-item {
+    position: relative;
+    padding-left: 32px;
+    padding-top: 12px;
+    padding-bottom: 24px;
+
+    opacity: 0;
+    transform: translateY(6px);
+    animation: timelineFade 0.6s ease forwards;
+}
+
+/* 🌟 用偽元素畫線（關鍵） */
+.time-item::before {
+    content: '';
+    position: absolute;
+    left: 15px;   /* ⭐ 關鍵 */
+    top: 12px;
+    bottom: -24px;              /* ⭐ 改成不是 0 */
+    width: 2px;
+    background-color: #ddd;
+}
+/* 每一筆稍微錯開出現 */
+.time-item:nth-child(1) { animation-delay: 0.05s; }
+.time-item:nth-child(2) { animation-delay: 0.15s; }
+.time-item:nth-child(3) { animation-delay: 0.25s; }
+.time-item:nth-child(4) { animation-delay: 0.35s; }
+
+/* 圓點同步動畫 */
+.time-node {
+    position: absolute;
+    left: calc(var(--timeline-x) - 6px);
+    top: 12px;
+    width: 12px;
+    height: 12px;
+    background-color: var(--accent);
+    border-radius: 50%;
+    border: 2px solid var(--jp-wash);
+
+    transform: scale(0.6);
+    opacity: 0;
+    animation: nodePop 0.4s ease forwards;
+    animation-delay: inherit;
+}
+
+/* 最後一筆不畫線 */
+.time-item:last-child::before {
+    display: none;
+}
+
+/* 動畫關鍵影格 */
+@keyframes timelineFade {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes nodePop {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+/* 夜間模式適配 */
+[data-theme="dark"] .time-item::before {
+    background-color: #444;
+}
+[data-theme="dark"] .time-node { 
+    background-color: var(--highlight) !important; 
+    border-color: #1e1e1e; 
+}
+/* 同步中心卡片樣式 */
+        .sync-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px dashed #D4A373; /* 使用你定義的亮色作為邊框 */
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .btn-sync {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            width: 100%;
+            border: none;
+        }
+        .btn-export {
+            background-color: #2C3E50; /* 使用你的 accent 色 */
+            color: white;
+            margin-bottom: 10px;
+        }
+        .btn-import {
+            background-color: white;
+            color: #2C3E50;
+            border: 1px solid #2C3E50;
+        }
+        .btn-sync:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+.day-content .text-primary {
+    color: #2C3E50 !important; /* <--- 您可以把 #2C3E50 改成任何您想要的深色 */
+}
+[data-theme="dark"] .day-content .text-primary {
+    color: #D4A373 !important; /* <--- 您可以把 #D4A373 改成任何您想要的淺色或金棕色 */
+}
+[data-theme="dark"] {
+    --jp-wash: #121212 !important;
+    --accent: #EAEAEA;
+    --highlight: #D4A373;
+}
+
+[data-theme="dark"] body {
+    color: #ddd;
+}
+
+[data-theme="dark"] .card-custom,
+[data-theme="dark"] .accommodation-bar,
+[data-theme="dark"] .sync-card,
+[data-theme="dark"] .list-group-item {
+    background-color: #1e1e1e !important;
+    border: 1px solid #2a2a2a !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
+}
+
+/* 修正導覽列與標題 */
+[data-theme="dark"] .bottom-nav,
+[data-theme="dark"] .day-nav-container {
+    background: #1a1a1a !important;
+    border-bottom: 1px solid #2a2a2a !important;
+    box-shadow: none !important;
+}
+
+/* 修正文字顏色 */
+[data-theme="dark"] .text-primary {
+    color: var(--highlight) !important; /* 將原本的藍色標題改為金棕色，更配夜間模式 */
+}
+
+[data-theme="dark"] .text-muted {
+    color: #888 !important;
+}
+}
+
+[data-theme="dark"] .text-muted {
+    color: #aaa !important;
+}
+
+[data-theme="dark"] .budget-sum {
+    background: #252525; /* 改為深灰色背景 */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4); /* 加強陰影深度 */
+    border: 1px solid #333; /* 增加微弱邊框區隔 */
+}
+
+[data-theme="dark"] .day-tab .day-week,
+[data-theme="dark"] .day-tab .day-num {
+    color: #777;
+}
+
+[data-theme="dark"] .day-tab.active .day-week,
+[data-theme="dark"] .day-tab.active .day-num {
+    color: #fff;
+}
+/* 🌙 夜間模式：所有按鈕全狀態統一 */
+
+/* A. 平時的狀態：統一為深藍色 */
+[data-theme="dark"] .btn-dark, 
+[data-theme="dark"] .btn-primary,
+[data-theme="dark"] .btn-sync,
+[data-theme="dark"] .btn-export,
+[data-theme="dark"] .btn-import,
+[data-theme="dark"] .btn-outline-primary,
+[data-theme="dark"] .btn-outline-dark,
+[data-theme="dark"] .btn-info {
+    background-color: #2C3E50 !important;
+    color: #ffffff !important;
+    border: 1px solid #455a64 !important;
+    transition: all 0.2s ease !important; /* 讓變色平滑 */
+}
+
+/* B. 懸停 (Hover) 與 點擊 (Active) 的狀態：統一變深 */
+[data-theme="dark"] .btn-dark:hover, [data-theme="dark"] .btn-dark:active,
+[data-theme="dark"] .btn-primary:hover, [data-theme="dark"] .btn-primary:active,
+[data-theme="dark"] .btn-sync:hover, [data-theme="dark"] .btn-sync:active,
+[data-theme="dark"] .btn-export:hover, [data-theme="dark"] .btn-export:active,
+[data-theme="dark"] .btn-import:hover, [data-theme="dark"] .btn-import:active,
+[data-theme="dark"] .btn-outline-primary:hover, [data-theme="dark"] .btn-outline-primary:active,
+[data-theme="dark"] .btn-outline-dark:hover, [data-theme="dark"] .btn-outline-dark:active,
+[data-theme="dark"] .btn-info:hover, [data-theme="dark"] .btn-info:active {
+    background-color: #1a252f !important; /* 點擊時變成更深的藍黑色 */
+
+    color: #ffffff !important;
+    transform: translateY(1px); /* 輕微下沈感，模擬真實按鈕 */
+}
+/* 🌙 簡約圖標按鈕：也要有統一的回饋感 */
+#themeBtn {
+    background: transparent !important;
+    border: none !important;
+    transition: all 0.2s ease;
+}
+
+#themeBtn:active {
+    transform: scale(0.85); /* 點擊時縮小，這是一個很棒的簡約回饋感 */
+    opacity: 0.7;
+}
+/* 🌙 夜間模式切換動畫 */
+body,
+.sticky-top,
+.card,
+.bg-white {
+    transition: 
+        background-color 0.5s ease,
+        color 0.5s ease,
+        border-color 0.5s ease;
+}
+/* 🌙 標題夜間模式 */
+[data-theme="dark"] .trip-title {
+    color: #f1f3f5;
+}
+
+[data-theme="dark"] .trip-subtitle {
+    color: #adb5bd;
+}
+/* 🌙 主題切換按鈕位置 */
+.theme-toggle {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+}
+/* 🌙 Header 夜間背景 */
+[data-theme="dark"] .sticky-top {
+    background-color: #121212 !important;
+    border-bottom: 1px solid #2a2a2a !important; /* 將原本可能的白線改為極深灰 */
+    box-shadow: none !important;
+}
+[data-theme="dark"] .sticky-top .p-3 {
+    background-color: #121212 !important;
+}
+/* 🌙 夜間模式－時鐘顏色 */
+[data-theme="dark"] #tw-time {
+    color: #999 !important;  /* 你日間用的淺灰色 */
+}
+
+/* 夜間模式：歐洲時間保留白色或冷色對比 */
+[data-theme="dark"] #eu-time {
+    color: #f1f3f5 !important;
+}
+[data-theme="dark"] #tw-date-label,
+[data-theme="dark"] #eu-date-label {
+    color: #adb5bd !important;
+}
+
+[data-theme="dark"] .sticky-top small {
+    color: #adb5bd !important;
+}
+/* 🌙 夜間模式－時鐘背景 */
+[data-theme="dark"] .sticky-top .d-flex {
+    background-color: #1e1e1e !important;
+    border: 1px solid #2a2a2a;
+}
+/* 🌙 夜間模式－隊友同步中心卡片 */
+[data-theme="dark"] .sync-card {
+    background: #1e1e1e;           /* 改為深色背景 */
+    border: 1px dashed #444;       /* 邊框顏色調深 */
+    color: #ddd;
+}
+
+[data-theme="dark"] .btn-import {
+    background-color: #2c2c2c;     /* 匯入按鈕背景變深 */
+    color: #EAEAEA;                /* 文字變亮 */
+    border-color: #555;
+}
+/* 🌙 夜間模式－輸入框與下拉選單 */
+[data-theme="dark"] .form-control, 
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .input-group-text {
+    background-color: #2c2c2c !important; /* 深灰色背景 */
+    border-color: #444 !important;        /* 深色邊框 */
+    color: #eee !important;               /* 亮色文字 */
+}
+
+/* 修正輸入框內的 placeholder (提示文字) 顏色 */
+[data-theme="dark"] .form-control::placeholder {
+    color: #777 !important;
+}
+
+/* 修正行李清單的新增類別按鈕邊框 */
+[data-theme="dark"] .input-group .btn-dark {
+    border: 1px solid #444;
+}
+/* 🌙 夜間模式－記帳總額卡片 */
+[data-theme="dark"] .budget-sum {
+    background: #1a252f;           /* 深藍黑色 */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+/* 🌙 夜間模式－所有按鈕統一為深藍色系 */
+[data-theme="dark"] .btn-dark, 
+[data-theme="dark"] .btn-primary,
+[data-theme="dark"] .btn-outline-dark,
+[data-theme="dark"] .btn-outline-secondary,
+[data-theme="dark"] .btn-export,
+[data-theme="dark"] .btn-import,
+[data-theme="dark"] .btn-sync {
+    background-color: #2C3E50 !important; /* 原本「記錄這筆支出」的深藍色 */
+    color: #ffffff !important;
+    border: 1px solid #3d5166 !important;
+}
+
+/* 按鈕點擊時的微調 */
+[data-theme="dark"] .btn:active {
+    background-color: #1a252f !important;
+}
+/* 🌙 夜間模式－輸入框與下拉選單深色化 */
+[data-theme="dark"] .form-control, 
+[data-theme="dark"] .form-select {
+    background-color: #252525 !important;
+    border-color: #444 !important;
+    color: #eeeeee !important;
+}
+
+/* 修正輸入框內的提示文字顏色 */
+[data-theme="dark"] .form-control::placeholder {
+    color: #777 !important;
+}
+/* 🌙 夜間模式－區塊背景深色化 */
+[data-theme="dark"] .sync-card {
+    background: #1e1e1e !important;
+    border: 1px dashed #2C3E50 !important; /* 邊框也用深藍色 */
+}
+
+[data-theme="dark"] .budget-sum {
+    background: #1a252f !important; /* 支出總額改為更深一點的藍黑色 */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+/* 🌗 主題切換按鈕固定尺寸 */
+#themeBtn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: none !important; /* 去除邊框 */
+    background: transparent !important; /* 背景透明 */
+    color: #666; /* 日間模式使用中灰色 */
+    transition: transform 0.3s ease;
+}
+
+[data-theme="dark"] #themeBtn {
+    color: #D4A373; /* 夜間模式使用金棕色圖標 */
+}
+
+#themeBtn:active {
+    transform: scale(0.8); /* 點擊時的縮放反饋 */
+}    
+/* 強制行李清單標題使用主題定義的 accent 顏色 */
+#pack-list-container .text-primary {
+    color: var(--accent) !important;
+}
+
+/* 確保夜間模式下也同步跟隨主題色 */
+[data-theme="dark"] #pack-list-container .text-primary {
+    color: var(--highlight) !important;
+}
+/* 行程標題列（可點擊） */
+.time-header {
+    display: inline-flex;          /* ⭐ 關鍵 */
+    align-items: center;
+    gap: 6px;                      /* 文字與箭頭距離 */
+    cursor: pointer;
+    user-select: none;
+}
+/* 下拉箭頭 */
+.toggle-icon {
+    font-size: 0.9rem;
+    color: #999;
+    transition: transform 0.3s ease;
+}
+
+/* 細節內容（預設收合） */
+.item-list {
+    transform: scaleY(0);
+    transform-origin: top; /* 從上方展開 */
+    opacity: 0;
+    overflow: hidden;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.card-custom.open .item-list {
+    transform: scaleY(1);
+    opacity: 1;
+}
+/* 展開狀態 */
+.time-item.open .time-detail {
+    max-height: 300px;   /* 足夠大即可 */
+    opacity: 1;
+    margin-top: 8px;
+}
+
+/* 箭頭旋轉 */
+.time-item.open .toggle-icon {
+    transform: rotate(180deg);
+}
+/* 📍 左上角「今日」按鈕 - 獨立樣式 */
+.today-toggle {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 1000; /* 確保在最上層 */
+}
+
+#todayBtn {
+    width: auto;
+    height: 20px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,0.08);
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(6px);
+    color: #666;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: transform 0.15s ease, background 0.2s ease;
+    cursor: pointer;
+    line-height: 1.1;
+}
+
+[data-theme="dark"] #todayBtn {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.15);
+    color: #ddd;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+#todayBtn:active {
+    transform: scale(0.9);
+}
+/* --- 強制修正：消除夜間模式連接處亮線與陰影 --- */
+
+/* 1. 頂部標題列與下方內容連接處 */
+
+/* 2. 橫向日期導覽列 (Day Nav) */
+
+/* 3. 底部頁籤 (Bottom Nav) 與上方內容連接處 */
+[data-theme="dark"] .bottom-nav {
+    background: #1a1a1a !important;
+    border-top: 1px solid #2a2a2a !important; /* 消除底部上方的亮線 */
+    box-shadow: 0 -1px 10px rgba(0,0,0,0.5) !important; /* 改為深色陰影 */
+}
+
+/* 4. 卡片元件 (Card) 的邊框與連接處 */
+
+/* 5. 行李清單與其他連接處線條 */
+[data-theme="dark"] .pack-item {
+    border-bottom: 1px solid #2a2a2a !important;
+}
+
+/* 6. 修正 body 確保背景顏色一致，避免滑動時邊緣露白 */
+/* icon 按鈕統一樣式 */
+.icon-btn {
+    padding: 2px 6px;
+    border-radius: 6px;
+    line-height: 0;
+    opacity: 0.6;
+}
+
+.icon-btn:hover {
+    opacity: 0;
+    background-color: rgba(0,0,0,0);
+}
+
+.fav-btn-group {
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+.fav-icon:not(.text-danger) i {
+    color: #999;           /* 你想要的顏色 */
+    font-size: 0.9rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+/* 收藏卡片展開按鈕箭頭顏色 + 大小 */
+.fav-icon.toggle-icon i {
+    color: #999;                 /* 日夜模式都可見 */
+    font-size: 0.9rem;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* hover 效果 */
+.fav-icon.toggle-icon:hover i {
+    color: #555;
+}
+
+/* 地點清單初始收合 */
+.item-list {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.35s ease;
+}
+
+/* 展開狀態 */
+.card-custom.open .item-list {
+    max-height: 1000px;  /* 足夠高度，根據內容調整 */
+    opacity: 1;
+    margin-top: 8px;
+}
+
+/* 展開時箭頭旋轉 */
+.card-custom.open .fav-icon.toggle-icon i {
+    transform: rotate(180deg);
+}
+/* 頂端標記 */
+#fav-top-list .card-custom {
+    background-color: #5d8aa8; /* 背景 */
+    color: #5a4b2b;            /* 文字 */
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+[data-theme="dark"] #fav-top-list .card-custom {
+    background-color: #2a3b4d !important; /* 夜間背景，深色 */
+    color: #dcdcdc !important;            /* 夜間文字，淺色 */
+</style>
 </head>
 <body>
 
-<div class="sticky-top shadow-sm">
+<div class="sticky-top bg-white border-bottom shadow-sm">
     <div class="p-3 text-center">
-        <h1 style="font-size: 1.2rem; letter-spacing: 4px; margin:0; font-weight: 300;">SEPTEMBER 2026 EUROPE</h1>
-        <small class="text-secondary d-block mb-2" style="font-size: 0.75rem;">Germany • Norway Cruise • Switzerland • Italy</small>
+<h1 class="trip-title"
+    style="font-size: 1.2rem; letter-spacing: 4px; margin:0; font-weight: 300;">
+    SEP 2026 EUROPE
+</h1>
+
+<small class="trip-subtitle d-block mb-2"
+       style="font-size: 0.75rem;">
+    Germany • Norway Cruise • Switzerland • Italy
+</small>
         
-        <div class="d-flex justify-content-center align-items-center gap-3 py-1" style="background: #252525; border-radius: 20px; font-family: monospace; max-width: 280px; margin: 0 auto;">
-            <div class="text-end" style="min-width: 100px;">
-                <span id="tw-date-label" style="font-size: 0.5rem; color: #dc3545; vertical-align: middle;"></span>
-                <span id="tw-time" style="font-size: 0.9rem; font-weight: bold; color: #777;">--:--</span>
-                <small style="font-size: 0.5rem; color: #666; display: block; margin-top: -4px;">TAIWAN</small>
-            </div>
-            <div style="height: 15px; width: 1px; background: #444;"></div>
-            <div class="text-start" style="min-width: 100px;">
-                <span id="eu-time" style="font-size: 0.9rem; font-weight: bold; color: var(--accent);">--:--</span>
-                <span id="eu-date-label" style="font-size: 0.5rem; color: #198754; vertical-align: middle;"></span>
-                <small style="font-size: 0.5rem; color: var(--accent); display: block; margin-top: -4px;">EUROPE</small>
-            </div>
-        </div>
+<div class="d-flex justify-content-center align-items-center gap-3 py-1 position-relative" 
+     style="background: #f8f9fa; border-radius: 20px; font-family: monospace; max-width: 280px; margin: 0 auto;">
+    
+    <!-- 台灣時間 -->
+    <div class="text-end" style="min-width: 100px;">
+        <span id="tw-date-label" style="font-size: 0.5rem; color: #dc3545; vertical-align: middle;"></span>
+        <span id="tw-time" style="font-size: 0.9rem; font-weight: bold; color: #999;">--:--</span>
+        <small style="font-size: 0.5rem; color: #999; display: block; margin-top: -4px;">TAIWAN</small>
     </div>
+
+    <div style="height: 15px; width: 1px; background: #ddd;"></div>
+
+    <!-- 歐洲時間 -->
+    <div class="text-start" style="min-width: 100px;">
+        <span id="eu-time" style="font-size: 0.9rem; font-weight: bold; color: #2C3E50;">--:--</span>
+        <span id="eu-date-label" style="font-size: 0.5rem; color: #198754; vertical-align: middle;"></span>
+        <small style="font-size: 0.5rem; color: #2C3E50; display: block; margin-top: -4px;">EUROPE</small>
+    </div>
+
+    <!-- Today 按鈕固定在右下角 -->
+    <button id="todayBtn" onclick="jumpToToday()" title="跳轉至今日行程"
+            style="position: absolute; right: -10px; bottom: -5px;">
+        Today · <span id="todayDate">--/--</span>
+    </button>
 </div>
 
+<div class="theme-toggle">
+<button id="themeBtn"
+        class="btn btn-sm btn-outline-secondary"
+        onclick="toggleTheme()"
+        style="font-size: 0.9rem; line-height: 1;">
+    ☾
+</div>
+</button>
+
+</div>
+    </div>
+</div>
 <div id="itinerary" class="content-section active">
     <div class="day-nav-container">
-        <div class="day-tab active" onclick="switchDay('all', this)"><span class="day-week">ALL</span><span class="day-num">總覽</span></div>
+        <div class="day-tab active" onclick="switchDay('all', this)">
+            <span class="day-week">ALL</span><span class="day-num">總覽</span>
+        </div>
         <div class="day-tab" onclick="switchDay('910', this)"><span class="day-week">THU</span><span class="day-num">10</span></div>
         <div class="day-tab" onclick="switchDay('911', this)"><span class="day-week">FRI</span><span class="day-num">11</span></div>
         <div class="day-tab" onclick="switchDay('912', this)"><span class="day-week">SAT</span><span class="day-num">12</span></div>
@@ -111,115 +774,402 @@
 
     <div id="day-all" class="day-content active">
         <div class="card-custom">
-            <h5 class="fw-bold" style="color:var(--accent)">2026 德瑞挪壯遊 🇪🇺</h5>
-            <p class="small text-secondary">高雄出發，橫跨德國、挪威郵輪與瑞士深度遊。</p>
-            <div class="badge bg-dark border border-secondary">Total 19 Days</div>
+            <h5 class="fw-bold">2026 德瑞挪壯遊 🇪🇺</h5>
+            <p class="small text-muted">高雄出發，橫跨德國、挪威郵輪與瑞士深度遊。</p>
+            <div class="badge bg-dark">Total 19 Days</div>
         </div>
     </div>
 
-    <div id="day-910" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">✈️ 啟程飛行</h6><div class="time-node"><b>19:10 高雄 (KHH)</b><br><small class="text-secondary">搭乘前往香港 (1h 40m)</small></div><div class="time-node mt-3"><b>23:55 香港 (HKG)</b><br><small class="text-secondary">前往法蘭克福 (13h 20m)</small></div></div></div>
-    <div id="day-911" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🇩🇪 抵達德國</h6><div class="time-node"><b>07:15 抵達 FRA T2</b></div><div class="time-node mt-3"><b>09:41 ICE 高鐵</b><br><small class="text-secondary">法蘭克福 ➔ 15:21 抵達基爾 (Kiel)</small></div></div></div>
-    <div id="day-912" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🚢 登船：基爾 Kiel</h6><p class="small">下午 19:00 啟航，開啟挪威峽灣之旅。</p></div></div>
-    <div id="day-913" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🚢 郵輪航行中 - 哥本哈根</h6></div></div>
-    <div id="day-914" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🚢 郵輪航行中 - 海上巡航</h6></div></div>
-    <div id="day-915" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🚢 郵輪航行中 - 希雷斯利特</h6></div></div>
-    <div id="day-916" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🚢 郵輪航行中 - 奧勒松</h6></div></div>
-    <div id="day-917" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🚢 郵輪航行中 - 弗洛姆</h6></div></div>
-    <div id="day-918" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🚢 郵輪航行中 - 海上巡航</h6></div></div>
-    <div id="day-919" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">✈️ 漢堡 ➔ 蘇黎世 ➔ 琉森</h6><p class="small">抵達瑞士，傍晚逛老城區與卡貝爾橋。</p></div></div>
-    <div id="day-920" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🚠 鐵力士山 (Titlis)</h6><p class="small">下午移動至溫根 (Wengen) 入住。</p></div></div>
-    <div id="day-921" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🏔️ 健行：Männlichen ➔ 小夏戴克</h6><p class="small">全景健行 (2h) ➔ 格林德瓦 ➔ First 山。</p></div></div>
-    <div id="day-922" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🏔️ 雪朗峰 (Schilthorn)</h6><p class="small">或前往厄西嫩湖 (Oeschinensee)。宿溫根。</p></div></div>
-    <div id="day-923" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🗻 前往策馬特 (Zermatt)</h6><p class="small">入住策馬特，傍晚逛鎮上商店。</p></div></div>
-    <div id="day-924" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🗻 冰川天堂 (Glacier Paradise)</h6><p class="small">策馬特周邊景點探索。</p></div></div>
-    <div id="day-925" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🗻 策馬特周邊</h6><p class="small">Sunnegga 五湖健行或鎮上放鬆。</p></div></div>
-    <div id="day-926" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🇮🇹 前往米蘭 (Milan)</h6><p class="small">經 Visp 轉車，入住米蘭。</p></div></div>
-    <div id="day-927" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">✈️ 賦歸 (MXP - HKG)</h6><div class="time-node"><b>12:45 米蘭 (MXP) 起飛</b><br><small class="text-secondary">前往香港 (11h 40m)</small></div></div></div>
-    <div id="day-928" class="day-content"><div class="card-custom"><h6 class="fw-bold mb-3" style="color:var(--accent)">🏠 抵達高雄</h6><div class="time-node"><b>06:25 抵達香港 (HKG)</b></div><div class="time-node mt-3"><b>08:35 香港 ➔ 10:15 高雄</b></div></div></div>
+<div id="day-910" class="day-content" data-day="910">
+    <div class="card-custom">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold text-primary m-0">啟程飛行</h6>
+        </div>
+        <div class="time-item">
+            <div class="time-node"></div>
+
+            <div class="time-header">
+                <div class="fw-bold">19:00 高雄小港機場</div>
+                <span class="toggle-icon">▾</span>
+            </div>
+
+            <div class="time-detail">
+                <div class="small text-muted">
+                    出境、準備起飛、貴賓室
+                </div>
+            </div>
+        </div>
+        <div class="time-item">
+            <div class="time-node"></div>
+
+            <div class="time-header">
+                <div class="fw-bold">23:00 抵達香港機場</div>
+                <span class="toggle-icon">▾</span>
+            </div>
+
+            <div class="time-detail">
+                <div class="small text-muted">
+                    等待轉機 (Kiel)
+                </div>
+            </div>
+        </div>
+    </div> <!-- ⭐ card-custom -->
+</div>     <!-- ⭐ day-910 -->
+<div id="day-911" class="day-content" data-day="911">
+    <div class="card-custom">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold text-primary m-0">🇩🇪 抵達德國</h6>
+            <div class="d-flex gap-1">
+                <a href="https://www.google.com/search?q=Kiel+Weather" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <i class="fas fa-sun"></i>
+                </a>
+                <a href="https://maps.app.goo.gl/9ZfWp6G1P8Ue2SjN8" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <i class="fas fa-map-marked-alt"></i>
+                </a>
+            </div>
+        </div>
+        <div class="time-item">
+            <div class="time-node"></div>
+
+            <div class="time-header">
+                <div class="fw-bold">07:15 抵達 FRA T2</div>
+                <span class="toggle-icon">▾</span>
+            </div>
+
+            <div class="time-detail">
+                <div class="small text-muted">
+                    抵達後通關、領取行李
+                </div>
+            </div>
+        </div>
+        <div class="time-item">
+            <div class="time-node"></div>
+
+            <div class="time-header">
+                <div class="fw-bold">09:41 ICE 高鐵</div>
+                <span class="toggle-icon">▾</span>
+            </div>
+
+            <div class="time-detail">
+                <div class="small text-muted">
+                    法蘭克福 ➔ 15:21 抵達基爾 (Kiel)
+                </div>
+            </div>
+        </div>
+    </div> <!-- ⭐ card-custom -->
+</div>     <!-- ⭐ day-911 -->
+<div id="day-912" class="day-content" data-day="912">
+    <div class="card-custom">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold text-primary m-0">🚢 登船：基爾 Kiel</h6>
+            <div class="d-flex gap-1">
+                <a href="https://www.yr.no/en" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <i class="fas fa-sun"></i>
+                </a>
+                <a href="https://maps.app.goo.gl/xjPNo9XXZtwXu1qR7" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <i class="fas fa-map-marked-alt"></i>
+                </a>
+            </div>
+        </div>
+        <div class="time-item">
+            <div class="time-node"></div>
+
+            <div class="time-header">
+                <div class="fw-bold">16:00 MSC EURIBIA登船</div>
+                <span class="toggle-icon">▾</span>
+            </div>
+
+            <div class="time-detail">
+                <div class="small text-muted">
+                    Terminal MSC Kiel 
+                </div>
+            </div>
+        </div>
+        <div class="time-item">
+            <div class="time-node"></div>
+
+            <div class="time-header">
+                <div class="fw-bold">19:00 啟航</div>
+                <span class="toggle-icon">▾</span>
+            </div>
+
+            <div class="time-detail">
+                <div class="small text-muted">
+                    房號10103
+                </div>
+            </div>
+        </div>
+    </div> <!-- ⭐ card-custom -->
+</div>     <!-- ⭐ day-912 -->
+    <div id="day-913" class="day-content" data-day="913"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 哥本哈根</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
+    <div id="day-914" class="day-content" data-day="914"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 海上巡航</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
+    <div id="day-915" class="day-content" data-day="915"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 希雷斯利特</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
+    <div id="day-916" class="day-content" data-day="916"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 奧勒松</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
+    <div id="day-917" class="day-content" data-day="917"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 弗洛姆</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
+    <div id="day-918" class="day-content" data-day="918"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 海上巡航</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
+<div id="day-919" class="day-content" data-day="919">
+    <div class="card-custom">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold text-primary m-0">🇨🇭 琉森 Luzern</h6>
+            <div class="d-flex gap-1">
+                <a href="https://www.meteoswiss.admin.ch/local-forecasts/lucerne/6000.html" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <i class="fas fa-sun"></i>
+                </a>
+                <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <i class="fas fa-map-marked-alt"></i>
+                </a>
+            </div>
+        </div>
+        <div class="time-item"><div class="time-node"></div><div class="fw-bold">抵達琉森</div><div class="small text-muted">市區觀光、卡貝爾橋</div></div>
+    </div>
 </div>
+
+<div id="day-920" class="day-content" data-day="920">
+    <div class="card-custom">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold text-primary m-0">🇨🇭 少女峰區：溫根 Wengen</h6>
+            <div class="d-flex gap-1">
+                <a href="https://www.meteoswiss.admin.ch/local-forecasts/wengen/3823.html" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <i class="fas fa-sun"></i>
+                </a>
+                <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <i class="fas fa-map-marked-alt"></i>
+                </a>
+            </div>
+        </div>
+        <div class="time-item"><div class="time-node"></div><div class="fw-bold">入住 Wengen</div><div class="small text-muted">少女峰、小夏戴克</div></div>
+    </div>
+</div>
+    <div id="day-921" class="day-content" data-day="921">
+        <div class="card-custom">
+            <h6 class="fw-bold text-primary mb-3">🏔️ 健行：Männlichen ➔ 小夏戴克</h6>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">全景健行 (2h)</div><div class="small text-muted">格林德瓦 ➔ First 山</div></div>
+        </div>
+    </div>
+    <div id="day-922" class="day-content" data-day="922">
+        <div class="card-custom">
+            <h6 class="fw-bold text-primary mb-3">🏔️ 雪朗峰 (Schilthorn)</h6>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">景點探索</div><div class="small text-muted">或前往厄西嫩湖 (Oeschinensee)。宿溫根</div></div>
+        </div>
+    </div>
+<div id="day-923" class="day-content" data-day="923">
+    <div class="card-custom">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold text-primary m-0">🇨🇭 策馬特 Zermatt</h6>
+            <div class="d-flex gap-1">
+                <a href="https://www.meteoswiss.admin.ch/local-forecasts/zermatt/3920.html" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <i class="fas fa-sun"></i>
+                </a>
+                <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <i class="fas fa-map-marked-alt"></i>
+                </a>
+            </div>
+        </div>
+        <div class="time-item"><div class="time-node"></div><div class="fw-bold">五湖健行 / 冰川天堂</div></div>
+    </div>
+</div>
+    <div id="day-924" class="day-content" data-day="924">
+        <div class="card-custom">
+            <h6 class="fw-bold text-primary mb-3">🗻 冰川天堂 (Glacier Paradise)</h6>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">景點遊覽</div><div class="small text-muted">策馬特周邊景點探索</div></div>
+        </div>
+    </div>
+    <div id="day-925" class="day-content" data-day="925">
+        <div class="card-custom">
+            <h6 class="fw-bold text-primary mb-3">🗻 策馬特周邊</h6>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">五湖健行</div><div class="small text-muted">Sunnegga 五湖健行或鎮上放鬆</div></div>
+        </div>
+    </div>
+<div id="day-926" class="day-content" data-day="926">
+    <div class="card-custom">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold text-primary m-0">🇮🇹 米蘭 Milan</h6>
+            <div class="d-flex gap-1">
+                <a href="https://www.google.com/search?q=Milan+Weather" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <i class="fas fa-sun"></i>
+                </a>
+                <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <i class="fas fa-map-marked-alt"></i>
+                </a>
+            </div>
+        </div>
+        <div class="time-item"><div class="time-node"></div><div class="fw-bold">米蘭大教堂 / 購物</div></div>
+    </div>
+</div>
+    <div id="day-927" class="day-content" data-day="927">
+        <div class="card-custom">
+            <h6 class="fw-bold text-primary mb-3">✈️ 賦歸 (MXP - HKG)</h6>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">12:45 米蘭 (MXP) 起飛</div><div class="small text-muted">前往香港 (11h 40m)</div></div>
+        </div>
+    </div>
+    <div id="day-928" class="day-content" data-day="928">
+        <div class="card-custom">
+            <h6 class="fw-bold text-primary mb-3">🏠 抵達高雄</h6>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">06:25 抵達香港 (HKG)</div></div>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">08:35 香港 ➔ 10:15 高雄</div></div>
+        </div>
+    </div>
+</div> 
 
 <div id="budget" class="content-section">
     <div class="budget-sum">
         <small style="opacity: 0.8; letter-spacing: 1px;">旅程總支出估算 (TWD)</small>
         <div class="h1 my-2">NT$ <span id="total-twd">0</span></div>
-        <div class="small" style="font-size:0.75rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; color: #888;">
+        <div class="small" style="font-size:0.75rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px;">
             CHF: <span id="total-chf">0</span> | EUR: <span id="total-eur">0</span> | HKD: <span id="total-hkd">0</span>
         </div>
     </div>
+
     <div class="card-custom">
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="fw-bold m-0">匯率與輸入</h6>
-            <button class="btn btn-sm btn-outline-warning" style="font-size: 0.7rem;" onclick="fetchRates()">
-                <i class="fas fa-sync-alt"></i> 更新即時匯率
+            <h6 class="fw-bold m-0">匯率設定</h6>
+            <button class="btn btn-sm btn-outline-dark" style="font-size: 0.7rem;" onclick="fetchRates()">
+                <i class="fas fa-sync-alt"></i> 
             </button>
         </div>
         <div class="row g-2 mb-3">
-            <div class="col-4"><label class="small text-secondary">CHF➔TWD</label><input type="number" id="rate-chf" class="form-control form-control-sm" value="38.5" onchange="render()"></div>
-            <div class="col-4"><label class="small text-secondary">EUR➔TWD</label><input type="number" id="rate-eur" class="form-control form-control-sm" value="34.2" onchange="render()"></div>
-            <div class="col-4"><label class="small text-secondary">HKD➔TWD</label><input type="number" id="rate-hkd" class="form-control form-control-sm" value="4.1" onchange="render()"></div>
+            <div class="col-4"><label class="small text-muted">CHF➔TWD</label><input type="number" id="rate-chf" class="form-control form-control-sm" value="38.5" onchange="render()"></div>
+            <div class="col-4"><label class="small text-muted">EUR➔TWD</label><input type="number" id="rate-eur" class="form-control form-control-sm" value="34.2" onchange="render()"></div>
+            <div class="col-4"><label class="small text-muted">HKD➔TWD</label><input type="number" id="rate-hkd" class="form-control form-control-sm" value="4.1" onchange="render()"></div>
         </div>
-        <hr style="border-color: #444;">
+        <hr>
         <input type="text" id="exp-name" class="form-control form-control-sm mb-2" placeholder="項目 (如: 機場晚餐)">
         <div class="input-group input-group-sm mb-2">
             <select id="exp-curr" class="form-select" style="max-width: 85px;"><option>CHF</option><option>EUR</option><option>HKD</option><option>TWD</option></select>
             <input type="number" id="exp-amt" class="form-control" placeholder="金額">
         </div>
         <textarea id="exp-note" class="form-control form-control-sm mb-2" placeholder="備註內容"></textarea>
-        <button class="btn btn-custom w-100 btn-sm fw-bold" onclick="addExp()">記錄這筆支出</button>
+        <button class="btn btn-dark w-100 btn-sm shadow-sm" onclick="addExp()">記錄這筆支出</button>
     </div>
     <div id="exp-list"></div>
-    <button class="btn btn-link btn-sm w-100 text-secondary mt-4" onclick="clearAll()">清空所有記帳紀錄</button>
+    <button class="btn btn-link btn-sm w-100 text-muted mt-4" onclick="clearAll()">清空所有記帳紀錄</button>
 </div>
-
 <div id="packing" class="content-section">
     <div class="day-label">🧳 行李清單</div>
+    <div class="card-custom mb-3" id="packing-progress-container" style="display: none;">
+    <div class="d-flex justify-content-between mb-1">
+        <span class="small fw-bold">打包進度</span>
+        <span class="small text-muted" id="packing-percent">0%</span>
+    </div>
+    <div class="progress" style="height: 8px; background-color: #eee; border-radius: 4px;">
+        <div id="packing-bar" class="progress-bar" style="width: 0%; height: 100%; transition: width 0.3s; background-color: #5d8aa8;">
+</div>
+    </div>
+</div>
     <div class="card-custom mb-3">
         <div class="input-group input-group-sm">
             <input type="text" id="new-cat-input" class="form-control" placeholder="新增類別 (如：化妝品)">
-            <button class="btn btn-custom" onclick="addNewCategory()">建立分類</button>
+            <button class="btn btn-dark" onclick="addNewCategory()">建立分類</button>
         </div>
     </div>
+
     <div id="pack-list-container"></div>
-    <button class="btn btn-link btn-sm w-100 text-secondary mt-2" onclick="clearCheckedItems()">清除所有已勾選項目</button>
+    
+    <button class="btn btn-link btn-sm w-100 text-muted mt-2" onclick="clearCheckedItems()">清除所有已勾選項目</button>
+</div>
 </div>
 
 <div id="info" class="content-section">
-    <div class="day-label">🔗 快速連結與同步</div>
+    <div class="day-label">🔗 快速連結與電話</div>
     <div class="card-custom">
         <h6 class="fw-bold">緊急連絡</h6>
-        <p class="small mb-2 text-secondary">外交部急難救助：+886-800-085-095</p>
-        <hr style="border-color: #444;">
-        <h6 class="fw-bold mb-2">常用連結</h6>
+        <p class="small mb-2">外交部急難救助：+886-800-085-095</p>
+        <hr>
+        <h6 class="fw-bold">常用連結</h6>
         <div class="d-grid gap-2">
-            <a href="https://www.sbb.ch/en" target="_blank" class="btn btn-sm btn-outline-light text-start">SBB 瑞士國鐵官網</a>
-            <a href="https://www.meteoswiss.admin.ch/" target="_blank" class="btn btn-sm btn-outline-light text-start">MeteoSwiss 瑞士天氣</a>
+            <a href="https://www.sbb.ch/en" target="_blank" class="btn btn-sm btn-outline-dark text-start">SBB 瑞士國鐵官網</a>
+            <a href="https://www.meteoswiss.admin.ch/" target="_blank" class="btn btn-sm btn-outline-dark text-start">MeteoSwiss 瑞士天氣</a>
         </div>
     </div>
 
     <div class="sync-card">
         <div class="text-center mb-3">
-            <h6 class="fw-bold mb-1">👫 隊友同步中心</h6>
-            <small class="text-secondary">同步記帳紀錄與行李清單</small>
+            <h6 class="fw-bold mb-1"> 隊友同步中心</h6>
+            <small class="text-muted">同步記帳紀錄與行李清單</small>
         </div>
-        <button class="btn-sync btn-export" onclick="exportData()"><i class="fas fa-share-square"></i> 匯出數據代碼</button>
-        <button class="btn-sync btn-import" onclick="importData()"><i class="fas fa-file-import"></i> 貼上代碼同步</button>
+        <button class="btn-sync btn-export" onclick="exportData()">
+            <i class="fas fa-share-square"></i> 匯出並複製數據代碼
+        </button>
+        <button class="btn-sync btn-import" onclick="importData()">
+            <i class="fas fa-file-import"></i> 貼上朋友的代碼同步
+        </button>
+        <div class="text-center mt-2">
+            <small style="font-size: 0.65rem; color: #999;">注意：同步會覆蓋掉目前的本地數據</small>
+        </div>
     </div>
 </div>
-
 <nav class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('itinerary', this)"><i class="fas fa-calendar-alt"></i>行程</div>
     <div class="nav-item" onclick="switchTab('info', this)"><i class="fas fa-info-circle"></i>資訊</div>
     <div class="nav-item" onclick="switchTab('budget', this)"><i class="fas fa-wallet"></i>記帳</div>
     <div class="nav-item" onclick="switchTab('packing', this)"><i class="fas fa-check-square"></i>行李</div>
-</nav>
+    <div class="nav-item" onclick="switchTab('favorites', this)"><i class="fas fa-heart"></i>收藏</div>
+    </nav>
+<div id="favorites" class="content-section">
+<div id="fav-top-container" class="mb-3">
+    <h5>🔖</h5>
+    <div id="fav-top-list"></div>
+</div>
+
+<div id="fav-list-container"></div>
+
+<button class="btn btn-sm btn-primary mt-2" onclick="addFavoritePrompt()">➕ 新增收藏</button>
+
+    <div id="fav-list-container"></div>
+</div>
+</div>
 <script>
-// --- 1. 分頁與導覽邏輯 ---
+function updateClocks() {
+    const now = new Date();
+    
+    // 1. 調整格式：加入 second: '2-digit' 來顯示秒數
+    const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+    
+    // 2. 獲取時間字串
+    const twStr = now.toLocaleTimeString('zh-TW', { ...options, timeZone: 'Asia/Taipei' });
+    const euStr = now.toLocaleTimeString('zh-TW', { ...options, timeZone: 'Europe/Berlin' });
+    
+    // 3. 獲取日期數字判斷跨日 (使用 Intl.DateTimeFormat 較為穩定)
+    const twDay = parseInt(new Intl.DateTimeFormat('en-US', { day: 'numeric', timeZone: 'Asia/Taipei' }).format(now));
+    const euDay = parseInt(new Intl.DateTimeFormat('en-US', { day: 'numeric', timeZone: 'Europe/Berlin' }).format(now));
+
+    // 4. 更新 DOM (加上安全檢查確保 ID 存在)
+    const twTimeEl = document.getElementById('tw-time');
+    const euTimeEl = document.getElementById('eu-time');
+    const twLabel = document.getElementById('tw-date-label');
+    const euLabel = document.getElementById('eu-date-label');
+
+    if (twTimeEl) twTimeEl.innerText = twStr;
+    if (euTimeEl) euTimeEl.innerText = euStr;
+
+    // 5. 判斷日期差異標籤
+    if (twLabel && euLabel) {
+        if (twDay > euDay) {
+            twLabel.innerText = "明天 "; 
+            euLabel.innerText = "";
+        } else if (twDay < euDay) {
+            twLabel.innerText = "";
+            euLabel.innerText = " (昨日)"; 
+        } else {
+            twLabel.innerText = "";
+            euLabel.innerText = "";
+        }
+    }
+}
+
+// --- 關鍵：確保這行在函數外面，這才會每秒執行一次 ---
+setInterval(updateClocks, 1000);
+// --- 基礎分頁切換 ---
 function switchTab(id, el) {
     document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     el.classList.add('active');
     window.scrollTo(0,0);
+// 【新增指令】：每當切換大分頁時，強制重新判定住宿框
+    if (typeof refreshHotelBar === 'function') {
+        refreshHotelBar();
+    }
 }
 
 function switchDay(dayId, el) {
@@ -232,34 +1182,7 @@ function switchDay(dayId, el) {
     window.scrollTo(0, 0);
 }
 
-// --- 2. 時鐘功能 (包含跨日判斷) ---
-function updateClocks() {
-    const now = new Date();
-    const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-    
-    const twStr = now.toLocaleTimeString('zh-TW', { ...options, timeZone: 'Asia/Taipei' });
-    const euStr = now.toLocaleTimeString('zh-TW', { ...options, timeZone: 'Europe/Berlin' });
-    
-    const twDay = parseInt(new Intl.DateTimeFormat('en-US', { day: 'numeric', timeZone: 'Asia/Taipei' }).format(now));
-    const euDay = parseInt(new Intl.DateTimeFormat('en-US', { day: 'numeric', timeZone: 'Europe/Berlin' }).format(now));
-
-    document.getElementById('tw-time').innerText = twStr;
-    document.getElementById('eu-time').innerText = euStr;
-
-    const twLabel = document.getElementById('tw-date-label');
-    const euLabel = document.getElementById('eu-date-label');
-
-    if (twDay > euDay) {
-        twLabel.innerText = "明天 "; euLabel.innerText = "";
-    } else if (twDay < euDay) {
-        twLabel.innerText = ""; euLabel.innerText = " (昨日)"; 
-    } else {
-        twLabel.innerText = ""; euLabel.innerText = "";
-    }
-}
-setInterval(updateClocks, 1000);
-
-// --- 3. 記帳邏輯 (包含匯率抓取) ---
+// --- 記帳邏輯 ---
 let expenses = JSON.parse(localStorage.getItem('trip_v2026')) || [];
 
 function addExp() {
@@ -273,7 +1196,7 @@ function addExp() {
         document.getElementById('exp-name').value = ''; 
         document.getElementById('exp-amt').value = ''; 
         document.getElementById('exp-note').value = '';
-        render();
+        render(); // 重新渲染
     } else {
         alert("請輸入項目名稱與金額");
     }
@@ -284,8 +1207,17 @@ function deleteExp(id) {
     render();
 }
 
+function clearAll() {
+    if(confirm("確定要清空所有記帳紀錄嗎？")) {
+        expenses = [];
+        render();
+    }
+}
+
+// 核心修正：補回 render 函數
 function render() {
     localStorage.setItem('trip_v2026', JSON.stringify(expenses));
+    
     const rCHF = parseFloat(document.getElementById('rate-chf').value) || 0;
     const rEUR = parseFloat(document.getElementById('rate-eur').value) || 0;
     const rHKD = parseFloat(document.getElementById('rate-hkd').value) || 0;
@@ -306,8 +1238,9 @@ function render() {
                 <div class="d-flex justify-content-between">
                     <div>
                         <span class="fw-bold">${e.name}</span>
-                        <div class="small text-muted">${e.amt} ${e.curr} <i class="fas fa-arrow-right mx-1"></i> NT$ ${Math.round(twd)}</div>
-                        ${e.note ? `<div class="small text-secondary mt-1" style="color:#aaa !important">${e.note}</div>` : ''}
+                        <div class="small text-muted">${Number(e.amt).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 1})} ${e.curr}<i class="fas fa-arrow-right mx-1"></i> NT$ ${Math.round(twd).toLocaleString()}
+</div>
+                        ${e.note ? `<div class="small text-secondary mt-1">${e.note}</div>` : ''}
                     </div>
                     <button class="btn btn-sm text-danger" onclick="deleteExp(${e.id})"><i class="fas fa-trash-alt"></i></button>
                 </div>
@@ -321,6 +1254,7 @@ function render() {
     document.getElementById('total-hkd').innerText = tHKD.toFixed(1);
 }
 
+// --- 匯率獲取 ---
 async function fetchRates() {
     try {
         const res = await fetch('https://open.er-api.com/v6/latest/TWD');
@@ -332,14 +1266,12 @@ async function fetchRates() {
             alert('匯率已更新！');
             render();
         }
-    } catch (e) { alert('無法獲取即時匯率'); }
+    } catch (e) {
+        alert('無法獲取即時匯率');
+    }
 }
 
-function clearAll() {
-    if(confirm("確定要清空所有記帳紀錄嗎？")) { expenses = []; render(); }
-}
-
-// --- 4. 行李清單邏輯 ---
+// --- 行李清單邏輯 ---
 let categorizedPack = JSON.parse(localStorage.getItem('trip_pack_cat')) || [];
 
 function addNewCategory() {
@@ -366,7 +1298,7 @@ function toggleItem(catIdx, itemIdx) {
 }
 
 function deleteCategory(catIdx) {
-    if(confirm(`確定刪除「${categorizedPack[catIdx].category}」？`)) {
+    if(confirm(`確定要刪除「${categorizedPack[catIdx].category}」整個分類嗎？`)) {
         categorizedPack.splice(catIdx, 1);
         renderPackList();
     }
@@ -383,15 +1315,18 @@ function renderPackList() {
     container.innerHTML = '';
     categorizedPack.forEach((catObj, catIdx) => {
         let catHtml = `<div class="card-custom mb-3">
-            <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2 mb-2">
-                <span class="fw-bold" style="color:var(--accent)"># ${catObj.category}</span>
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                <span class="fw-bold text-primary"># ${catObj.category}</span>
                 <div>
-                    <button class="btn btn-sm btn-outline-light py-0" onclick="addItemToCat(${catIdx})">+ 項目</button>
+                    <button class="btn btn-sm btn-outline-dark py-0" onclick="addItemToCat(${catIdx})">+ 項目</button>
                     <button class="btn btn-sm text-danger ms-2" onclick="deleteCategory(${catIdx})"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </div>`;
+        if (catObj.items.length === 0) {
+            catHtml += `<div class="text-center py-2 small text-muted">暫無項目</div>`;
+        }
         catObj.items.forEach((item, itemIdx) => {
-            catHtml += `<div class="pack-item">
+            catHtml += `<div class="pack-item d-flex align-items-center justify-content-between py-1">
                 <div class="d-flex align-items-center flex-grow-1" onclick="toggleItem(${catIdx}, ${itemIdx})">
                     <input type="checkbox" ${item.checked ? 'checked' : ''}>
                     <span class="pack-text ${item.checked ? 'checked' : ''} ms-2">${item.text}</span>
@@ -402,9 +1337,26 @@ function renderPackList() {
         catHtml += `</div>`;
         container.innerHTML += catHtml;
     });
-    localStorage.setItem('trip_pack_cat', JSON.stringify(categorizedPack));
-}
+// --- 新增：計算進度條邏輯 ---
+let totalItems = 0;
+let checkedItems = 0;
 
+categorizedPack.forEach(cat => {
+    cat.items.forEach(item => {
+        totalItems++;
+        if (item.checked) checkedItems++;
+    });
+});
+
+const progressContainer = document.getElementById('packing-progress-container');
+if (totalItems > 0) {
+    progressContainer.style.display = 'block';
+    const percent = Math.round((checkedItems / totalItems) * 100);
+    document.getElementById('packing-bar').style.width = percent + '%';
+    document.getElementById('packing-percent').innerText = `${checkedItems} / ${totalItems} (${percent}%)`;
+} else {
+    progressContainer.style.display = 'none';
+}
 function clearCheckedItems() {
     if(confirm("確定要清除所有已勾選項目嗎？")) {
         categorizedPack.forEach(cat => cat.items = cat.items.filter(item => !item.checked));
@@ -412,31 +1364,542 @@ function clearCheckedItems() {
     }
 }
 
-// --- 5. 數據同步功能 ---
-function exportData() {
-    const data = { expenses: localStorage.getItem('trip_v2026'), packing: localStorage.getItem('trip_pack_cat') };
-    const code = btoa(encodeURIComponent(JSON.stringify(data)));
-    navigator.clipboard.writeText(code).then(() => alert('✅ 同步代碼已複製！'));
+
+    localStorage.setItem('trip_pack_cat', JSON.stringify(categorizedPack));
+}
+// 1. 統一的初始化函數
+function initializePage() {
+    console.log("頁面初始化中...");
+    // 重新抓取資料
+    expenses = JSON.parse(localStorage.getItem('trip_v2026')) || [];
+    categorizedPack = JSON.parse(localStorage.getItem('trip_pack_cat')) || [];
+
+    // 執行渲染
+    if (typeof render === "function") render();
+    if (typeof renderPackList === "function") renderPackList();
 }
 
+// 🔄 匯入同步代碼
 function importData() {
-    const code = prompt("請貼上同步代碼：");
+    const code = prompt("請貼上朋友傳給你的同步代碼：");
     if (!code) return;
+
     try {
         const decoded = JSON.parse(decodeURIComponent(atob(code)));
-        if (decoded.expenses) localStorage.setItem('trip_v2026', decoded.expenses);
-        if (decoded.packing) localStorage.setItem('trip_pack_cat', decoded.packing);
-        alert('🚀 同步成功！即將重啟。');
-        location.reload(); 
-    } catch (e) { alert('❌ 代碼無效'); }
+
+        // 覆蓋 localStorage
+        if (decoded.favorites) localStorage.setItem('trip_favorites', JSON.stringify(decoded.favorites));
+        if (decoded.packing) localStorage.setItem('trip_pack_cat', JSON.stringify(decoded.packing));
+        if (decoded.expenses) localStorage.setItem('trip_v2026', JSON.stringify(decoded.expenses));
+
+        alert('🚀 同步成功！即將更新畫面。');
+
+        // 刷新畫面，重新渲染收藏清單
+        favorites = decoded.favorites || [];
+        renderFavorites();
+        // 這裡可依需要呼叫 renderPacking()、renderExpenses() 等刷新畫面函數
+    } catch (e) {
+        console.error(e);
+        alert('❌ 代碼無效，請確保完整複製。');
+    }
 }
 
-// --- 6. 啟動初始化 ---
+// 🔄 匯出同步代碼
+function exportData() {
+    try {
+        const data = {
+            favorites: JSON.parse(localStorage.getItem('trip_favorites')) || [],
+            packing: JSON.parse(localStorage.getItem('trip_pack_cat')) || [],
+            expenses: JSON.parse(localStorage.getItem('trip_v2026')) || []
+        };
+
+        if (!data.favorites.length && !data.packing.length && !data.expenses.length) {
+            alert('目前沒有資料可匯出喔！');
+            return;
+        }
+
+        const code = btoa(encodeURIComponent(JSON.stringify(data)));
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert('✅ 同步代碼已複製，請傳送給朋友貼上。');
+            }).catch(() => fallbackCopy(code));
+        } else {
+            fallbackCopy(code);
+        }
+    } catch (err) {
+        alert("匯出失敗：" + err);
+    }
+}
+// --- 收藏清單 ---
+let favorites = JSON.parse(localStorage.getItem('trip_favorites')) || [];
+
+// --- 建立收藏物件 ---
+function createFavorite({ title, category = "備案" }) {
+    return {
+        id: Date.now(),
+        title,
+        category,
+        note: "",
+        items: [], // 地點清單
+        createdAt: new Date().toISOString()
+    };
+}
+
+// --- 建立地點物件 ---
+function createItem({ name, links = [], note = "" }) {
+    return {
+        id: Date.now(),
+        name,
+        links,
+        note,
+        tempMark: false // 🔖 臨時決策標記
+    };
+}
+
+// --- 儲存到 localStorage ---
+function saveFavorites() {
+    localStorage.setItem('trip_favorites', JSON.stringify(favorites));
+}
+
+// --- 渲染頂部臨時標記區 ---
+function renderTopMarked() {
+    const topContainer = document.getElementById('fav-top-list');
+    topContainer.innerHTML = '';
+    favorites.forEach(fav => {
+        fav.items.filter(i => i.tempMark).forEach(item => {
+            const div = document.createElement('div');
+            div.className = "card-custom mb-1 p-2 bg-warning";
+            div.innerText = `${fav.title} → ${item.name}`;
+            topContainer.appendChild(div);
+        });
+    });
+}
+
+// --- 渲染頂部臨時標記區 ---
+function renderTopMarked() {
+    const topContainer = document.getElementById('fav-top-list');
+    topContainer.innerHTML = '';
+    favorites.forEach(fav => {
+        fav.items.filter(i => i.tempMark).forEach(item => {
+            const div = document.createElement('div');
+            div.className = "card-custom mb-1 p-2 d-flex justify-content-between align-items-center";
+
+            const textSpan = document.createElement('span');
+            textSpan.innerText = `${fav.title} → ${item.name}`;
+            div.appendChild(textSpan);
+
+            // 🔖 取消標記按鈕
+            const markBtn = document.createElement('button');
+            markBtn.className = markBtn.className = "btn btn-sm text-muted p-0 fav-icon";
+            markBtn.innerHTML = item.tempMark ? "×" : `<i class="fas fa-bookmark-o"></i>`;
+            markBtn.onclick = () => {
+                item.tempMark = false;
+                saveFavorites();
+                renderFavorites();
+                renderTopMarked();
+            };
+            div.appendChild(markBtn);
+
+            topContainer.appendChild(div);
+        });
+    });
+}
+
+// --- 渲染收藏列表 ---
+function renderFavorites() {
+    const container = document.getElementById('fav-list-container');
+    container.innerHTML = '';
+
+    if(favorites.length === 0) {
+        container.innerHTML = `<div class="text-center text-muted py-3">尚無收藏項目</div>`;
+        return;
+    }
+
+    favorites.forEach(fav => {
+        const card = document.createElement('div');
+        card.className = "card-custom mb-2 p-2 border";
+
+        // 大標題 + 展開按鈕
+        const header = document.createElement('div');
+        header.className = "d-flex justify-content-between align-items-center";
+        const titleSpan = document.createElement('span');
+        titleSpan.innerText = `${fav.title} [${fav.category}]`;
+        header.appendChild(titleSpan);
+
+        const btnGroup = document.createElement('div');
+        btnGroup.className = "d-flex align-items-center gap-1 fav-btn-group";
+
+        // 刪除收藏
+        const delBtn = document.createElement('button');
+        delBtn.className = "btn btn-sm text-danger p-0 fav-icon";
+        delBtn.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+        delBtn.onclick = () => { removeFavorite(fav.id); };
+
+        // 編輯大標題
+        const editBtn = document.createElement('button');
+        editBtn.className = "btn btn-sm fav-icon";
+        editBtn.innerHTML = `<i class="fas fa-pen"></i>`;
+        editBtn.onclick = () => {
+            const newTitle = prompt("編輯標題", fav.title);
+            const newCategory = prompt("編輯分類", fav.category);
+            if(newTitle) fav.title = newTitle;
+            if(newCategory) fav.category = newCategory;
+            saveFavorites();
+            renderFavorites();
+        };
+
+        btnGroup.appendChild(editBtn);
+        btnGroup.appendChild(delBtn);
+
+        // 展開/收合
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = "btn btn-sm fav-icon toggle-icon";
+        toggleBtn.innerHTML = `<i class="fas fa-chevron-down"></i>`;                        
+        btnGroup.appendChild(toggleBtn);
+
+        header.appendChild(btnGroup);
+        card.appendChild(header);
+
+        // 地點清單區
+        const itemList = document.createElement('div');
+        itemList.className = "item-list mt-2"; // 初始收合
+// 先建立編輯 & 刪除按鈕
+fav.items.forEach(item => {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = "border p-1 mb-1 position-relative";
+
+    // 刪除細項按鈕
+    const removeItemBtn = document.createElement('button');
+    removeItemBtn.className = "btn btn-sm text-muted p-0 fav-icon position-absolute";
+    removeItemBtn.style.top = "5px";
+    removeItemBtn.style.right = "10px";
+    removeItemBtn.innerText = "×";
+    removeItemBtn.onclick = () => {
+        fav.items = fav.items.filter(i => i.id !== item.id);
+        saveFavorites();
+        renderFavorites();
+    };
+
+    // 編輯細項
+    const editItemBtn = document.createElement('button');
+    editItemBtn.className = "btn btn-sm fav-icon position-absolute";
+    editItemBtn.style.top = "5px";
+    editItemBtn.style.right = "40px";
+    editItemBtn.innerHTML = `<i class="fas fa-pen"></i>`;
+    editItemBtn.onclick = () => {
+        const newName = prompt("編輯地點名稱", item.name);
+        const newLinks = prompt("編輯連結（用 | 分隔）", item.links.join(" | "));
+        const newNote = prompt("編輯備註", item.note);
+        if(newName) item.name = newName;
+        if(newLinks) item.links = newLinks.split("|").map(l => l.trim());
+        if(newNote !== null) item.note = newNote;
+        saveFavorites();
+        renderFavorites();
+    };
+
+    // 標記按鈕
+    const markBtn = document.createElement('button');
+    markBtn.className = "btn btn-sm fav-icon mark-icon";
+    markBtn.innerHTML = `<i class="${item.tempMark ? "fas" : "far"} fa-bookmark"></i>`;
+    markBtn.onclick = () => {
+        item.tempMark = !item.tempMark;
+        saveFavorites();
+        renderFavorites();
+        renderTopMarked();
+    };
+
+    // 名稱
+    const nameSpan = document.createElement('span');
+    nameSpan.innerText = item.name;
+    nameSpan.style.margin = "0 8px";
+
+    // topRow 容器
+    const topRow = document.createElement('div');
+    topRow.className = "d-flex align-items-center";
+    topRow.appendChild(markBtn);
+    topRow.appendChild(nameSpan);
+    topRow.appendChild(editItemBtn);
+    topRow.appendChild(removeItemBtn);
+
+    itemDiv.appendChild(topRow);
+
+    // 連結
+    if(item.links.length > 0){
+        const linkText = document.createElement('div');
+        linkText.className = "small";
+        linkText.innerHTML = item.links.map(l => `<a href="${l}" target="_blank">${l}</a>`).join(" | ");
+        itemDiv.appendChild(linkText);
+    }
+
+    // 備註
+    if(item.note){
+        const noteDiv = document.createElement('div');
+        noteDiv.className = "small text-muted";
+        noteDiv.innerText = item.note;
+        itemDiv.appendChild(noteDiv);
+    }
+
+    itemList.appendChild(itemDiv);
+});
+
+
+
+        // 新增地點按鈕
+        const addItemBtn = document.createElement('button');
+        addItemBtn.className = "btn btn-sm btn-primary mt-1";
+        addItemBtn.innerText = "➕ 新增地點";
+        addItemBtn.onclick = () => addItemPrompt(fav.id);
+        itemList.appendChild(addItemBtn);
+
+        card.appendChild(itemList);
+
+        // 切換展開/收合
+        toggleBtn.onclick = () => {
+            card.classList.toggle("open");
+        };
+
+        container.appendChild(card);
+    });
+
+    renderTopMarked();
+}
+
+// --- 新增大標題收藏 ---
+function addFavoritePrompt() {
+    const title = prompt("輸入收藏大標題");
+    if(!title) return;
+    const category = prompt("分類標籤(可空白, 例如雨備)") || "備案";
+
+    const fav = createFavorite({ title, category });
+    favorites.push(fav);
+    saveFavorites();
+    renderFavorites();
+}
+
+// --- 新增地點 ---
+function addItemPrompt(favId) {
+    const fav = favorites.find(f => f.id === favId);
+    if(!fav) return;
+
+    const name = prompt("地點名稱 (必填)");
+    if(!name) return;
+
+    const linksRaw = prompt("連結 (可空白，多個用逗號分隔)") || "";
+    const links = linksRaw.split(",").map(s => s.trim()).filter(s => s);
+
+    const note = prompt("備註 (可空白)") || "";
+
+    const item = createItem({ name, links, note });
+    fav.items.push(item);
+    saveFavorites();
+    renderFavorites();
+}
+
+// --- 刪除收藏 ---
+function removeFavorite(id) {
+    favorites = favorites.filter(f => f.id !== id);
+    saveFavorites();
+    renderFavorites();
+}
+
+// --- 初始渲染 ---
+renderFavorites();
+// 4. 只有一個 onload，確保所有事情都在這裡發生
 window.onload = function() {
-    updateClocks();
-    render();
-    renderPackList();
+    const savedTheme = localStorage.getItem('trip_theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+    }
+    initializePage();
+    updateClocks(); // 確保頁面一打開就顯示時間
 };
+initScrollSpy();
+function fallbackCopy(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+        document.execCommand("copy");
+        alert("✅ 同步代碼已複製（備用模式）");
+    } catch (e) {
+        alert("❌ 無法自動複製，請手動複製");
+        prompt("請手動複製以下代碼：", text);
+    }
+    document.body.removeChild(textarea);
+}
+function initScrollSpy() {
+    const sections = document.querySelectorAll('.day-content[data-day]');
+    const tabs = document.querySelectorAll('.day-tab');
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const dayId = entry.target.dataset.day;
+
+                // 切換 tab 高亮
+                tabs.forEach(t => t.classList.remove('active'));
+                const activeTab = document.querySelector(
+                    `.day-tab[onclick*="'${dayId}'"]`
+                );
+                if (activeTab) activeTab.classList.add('active');
+            }
+        });
+    }, {
+        rootMargin: '-40% 0px -50% 0px', // 重點：決定何時算「進入」
+        threshold: 0
+    });
+
+    sections.forEach(sec => observer.observe(sec));
+}
+function toggleTheme() {
+function updateThemeIcon(theme) {
+    const btn = document.getElementById('themeBtn');
+    if (!btn) return;
+
+    // 線條風 icon（非 emoji）
+    btn.textContent = theme === 'dark' ? '☀︎' : '☾';
+}
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('trip_theme', next);
+
+    updateThemeIcon(next);
+}
+function updateThemeIcon(theme) {
+    const btn = document.getElementById('themeBtn');
+    if (!btn) return;
+
+    btn.textContent = theme === 'dark' ? '☀︎' : '☾';
+}
+// 住宿資料庫 (請根據您的實際飯店名稱與 Google Map 連結修改)
+const hotelData = {
+    "911": { name: "Hotel Liegeplatz 13 Kiel by Premiere Classe", map: "https://maps.app.goo.gl/uiViyTyUQAfHDNbq6" },
+    "912": { name: "MSC Cruise Ship", map: "https://maps.app.goo.gl/yAHd1n7yvGv2XG7m8" },
+    "919": { name: "Barabas Luzern", map: "https://maps.app.goo.gl/NdmS1o8y9ZsDfiYu5" },
+    "920": { name: "Hotel Victoria Lauberhorn Wengen", map: "https://maps.app.goo.gl/JUk59ZPRiiRCN5Aw9" },
+    "921": { name: "Hotel Victoria Lauberhorn Wengen", map: "https://maps.app.goo.gl/JUk59ZPRiiRCN5Aw9" },
+    "922": { name: "Hotel Victoria Lauberhorn Wengen", map: "https://maps.app.goo.gl/JUk59ZPRiiRCN5Aw9" },
+    "923": { name: "Zermatt Hotel Alpina", map: "https://maps.app.goo.gl/vPqfrLinN6M45mbN8" },
+    "924": { name: "Zermatt Hotel Alpina", map: "https://maps.app.goo.gl/vPqfrLinN6M45mbN8" },
+    "925": { name: "Zermatt Hotel Alpina", map: "https://maps.app.goo.gl/vPqfrLinN6M45mbN8" },
+    "926": { name: "Hostel INN PETRELLA Milan", map: "https://maps.app.goo.gl/E8gig159c8U69n2x9" },
+    "927": { name: "Milan Malpensa Airport MXP", map: "https://maps.app.goo.gl/PuzkC7L5KWpmE93v5" },
+    "928": { name: "Home", map: "https://maps.app.goo.gl/UNuPB1CaheDYPV9h9" },
+    
+};
+// 【新增指令】：建立一個統一的刷新判定工具
+function refreshHotelBar() {
+    const hotelBar = document.getElementById('hotel-bar');
+    const hotelNameEl = document.getElementById('hotel-name');
+    const hotelLinkEl = document.getElementById('hotel-link');
+    if (!hotelBar) return;
+
+    // 1. 檢查行程分頁是否為 active
+    const isItineraryActive = document.getElementById('itinerary').classList.contains('active');
+
+    // 2. 獲取目前選中的日期
+    const activeTab = document.querySelector('.day-tab.active');
+    const dayId = activeTab ? activeTab.getAttribute('onclick').match(/'([^']+)'/)[1] : 'all';
+
+    // 3. 判定顯示或隱藏
+    if (isItineraryActive && dayId !== 'all' && hotelData[dayId]) {
+        hotelNameEl.innerText = hotelData[dayId].name;
+        hotelLinkEl.href = hotelData[dayId].map;
+        hotelBar.style.setProperty('display', 'flex', 'important');
+    } else {
+        hotelBar.style.setProperty('display', 'none', 'important');
+    }
+}
+// 修改原有的 switchDay 函數
+// 【修改指令】：讓 switchDay 直接調用剛剛建立的工具
+const originalSwitchDay = switchDay;
+switchDay = function(dayId, el) {
+    originalSwitchDay(dayId, el); 
+    refreshHotelBar(); // 直接執行剛寫好的工具
+};
+document.querySelectorAll('.time-header').forEach(header => {
+    header.addEventListener('click', () => {
+        const item = header.closest('.time-item');
+        item.classList.toggle('open');
+    });
+});
+// 🗓️ 顯示今天日期在按鈕上（歐洲時間）
+(function updateTodayLabel() {
+    const now = new Date();
+
+    const euMonth = new Intl.DateTimeFormat('en-US', {
+        month: 'numeric',
+        timeZone: 'Europe/Berlin'
+    }).format(now);
+
+    const euDay = new Intl.DateTimeFormat('en-US', {
+        day: 'numeric',
+        timeZone: 'Europe/Berlin'
+    }).format(now);
+
+    const label = document.getElementById('todayDate');
+    if (label) {
+        label.textContent = `${euMonth}/${euDay}`;
+    }
+})();
+function jumpToToday() {
+    const now = new Date();
+    const m = now.getMonth() + 1;
+    const d = now.getDate();
+    const y = now.getFullYear();
+
+    // 判斷是否在 2026 年 9 月 10 日至 28 日之間
+    if (y === 2026 && m === 9 && d >= 10 && d <= 28) {
+        const dayId = '9' + d; // 生成 ID 如 910, 911...
+        
+        // 1. 強制切換回「行程」大分頁
+        const itineraryNav = document.querySelector('.nav-item[onclick*="itinerary"]');
+        if (typeof switchTab === 'function') {
+            switchTab('itinerary', itineraryNav);
+        }
+
+// 2. 找到對應日期的 Tab
+        const targetTab = document.querySelector(`.day-tab[onclick*="'${dayId}'"]`);
+        
+        if (targetTab) {
+            // A. 觸發內容切換
+            targetTab.click(); 
+            
+            // B. 同步捲動上方導覽列：讓目標 Tab 滾動到容器的最左側
+            targetTab.scrollIntoView({
+                behavior: 'smooth', // 平滑捲動
+                inline: 'start',    // 對齊到起始位置 (最左側)
+                block: 'nearest'    // 垂直方向保持不動
+            });
+
+            // C. 視覺回饋：滾動頁面到頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+}
+// 頁面加載後自動顯示日期文字
+document.addEventListener('DOMContentLoaded', () => {
+    const now = new Date();
+    const todayBtn = document.getElementById('todayBtn');
+    if (now.getMonth() + 1 === 9) {
+        todayBtn.innerText = `9/${now.getDate()}`;
+    }
+});
 </script>
+<div id="hotel-bar" class="accommodation-bar">
+    <div>
+        <small class="text-muted d-block" style="font-size: 0.65rem;">今晚住宿</small>
+        <span id="hotel-name" class="hotel-name">載入中...</span>
+    </div>
+    <a id="hotel-link" href="#" target="_blank" class="btn-map">
+        <i class="fas fa-map-marker-alt"></i> 
+    </a>
+</div>
 </body>
 </html>
