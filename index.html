@@ -541,23 +541,29 @@ body,
 }
 
 /* 細節內容（預設收合） */
-.item-list {
-    transform: scaleY(0);
-    transform-origin: top; /* 從上方展開 */
-    opacity: 0;
-    overflow: hidden;
-    transition: transform 0.35s ease, opacity 0.35s ease;
-}
 
 .card-custom.open .item-list {
+    max-height: 0;
     transform: scaleY(1);
     opacity: 1;
 }
 /* 展開狀態 */
+/* 行程頁：細節預設收合 */
+.time-detail {
+    max-height: 0px;
+    transform: scaleY(0);
+    transform-origin: top;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, transform 0.35s ease, opacity 0.35s ease;
+}
+
+/* 行程頁：展開 */
 .time-item.open .time-detail {
-    max-height: 300px;   /* 足夠大即可 */
+    max-height: 500px;
+    transform: scaleY(1);
     opacity: 1;
-    margin-top: 8px;
+
 }
 
 /* 箭頭旋轉 */
@@ -660,21 +666,28 @@ body,
     color: #555;
 }
 
-/* 地點清單初始收合 */
-.item-list {
+/* 收藏頁：細項預設收合 */
+.card-custom .item-list { 
     max-height: 0;
-    overflow: hidden;
+    transform: scaleY(0);
+    transform-origin: top;
     opacity: 0;
-    transition: all 0.35s ease;
+    overflow: hidden;
+    transition:
+        max-height 0.35s ease,
+        transform 0.35s ease,
+        opacity 0.35s ease;
 }
-
-/* 展開狀態 */
+/* 收藏頁：展開 */
 .card-custom.open .item-list {
-    max-height: 1000px;  /* 足夠高度，根據內容調整 */
+    max-height: 1000px;   /* 一定要比內容大 */
+    transform: scaleY(1);
     opacity: 1;
-    margin-top: 8px;
+    transition:
+        max-height 0.35s ease,
+        transform 0.35s ease,
+        opacity 0.35s ease;
 }
-
 /* 展開時箭頭旋轉 */
 .card-custom.open .fav-icon.toggle-icon i {
     transform: rotate(180deg);
@@ -692,6 +705,95 @@ body,
 [data-theme="dark"] #fav-top-list .card-custom {
     background-color: #2a3b4d !important; /* 夜間背景，深色 */
     color: #dcdcdc !important;            /* 夜間文字，淺色 */
+}
+/* ===== 大標題主文字 ===== */
+.fav-title-text {
+  font-weight: 700;
+  font-size: 1.05rem; /* 比原本大一點 */
+  line-height: 1.3;
+}
+
+/* ===== 分類膠囊（亮色模式） ===== */
+.fav-title-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 2px 8px;
+  margin-left: 6px;        /* ← 拉開與標題距離 */
+  border-radius: 999px;
+  background-color: #f8f9fa; /* 更淡 */
+  color: #868e96;            /* 灰階降低存在感 */
+  border: 1px solid #e9ecef; /* 用邊框取代實色 */
+  line-height: 1.4;
+}
+
+/* ===== 深色模式（配合 data-theme="dark"） ===== */
+[data-theme="dark"] .fav-title-text {
+  color: #e9ecef;
+}
+
+/* 深色模式－分類膠囊（提高一點對比，但仍低調） */
+[data-theme="dark"] .fav-title-badge {
+  background-color: #2a3440;   /* 比背景亮一階的藍灰 */
+  color: #ced4da;              /* 淡灰白文字 */
+  border: 1px solid #3a4653;   /* 柔和邊框 */
+}
+/* ---------------------- */
+/* 細項卡片 - 全局樣式 */
+/* ---------------------- */
+.item-list .item-div {
+    border-radius: 8px;                /* 圓角柔和 */
+    border: 1px solid #e0e0e0;         /* 淺灰邊框 */
+    padding: 8px 12px;                 /* 內距 */
+    margin-bottom: 6px;                /* 行間距 */
+    background-color: #ffffff;         /* 白色背景 */
+    transition: background 0.3s, box-shadow 0.3s; /* hover柔化 */
+}
+
+/* hover 提升感 */
+.item-list .item-div:hover {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    background-color: #f9f9f9;
+}
+
+/* 內部文字小標題 / 連結 */
+.item-list .item-div .item-link {
+    color: #0d6efd;
+    text-decoration: none;
+}
+.item-list .item-div .item-link:hover {
+    text-decoration: underline;
+}
+
+/* ---------------------- */
+/* 深色模式細項卡片 */
+/* ---------------------- */
+[data-theme="dark"] .item-list .item-div {
+    border: 1px solid #3a4a56; /* 淡白邊框 */
+    background-color: #1f2a35;                 /* 輕微分層背景 */
+}
+
+[data-theme="dark"] .item-list .item-div:hover {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);    /* 深色模式輕微浮起 */
+    background-color: #242f3a;                 /* hover微亮 */
+}
+
+/* 備註文字 - 膠囊風格柔化 */
+.item-list .item-div .small.text-muted {
+    font-size: 0.75rem;
+    color: #6c757d;                 /* 淺灰色文字 */
+    background-color: rgba(0,0,0,0.05); /* 淺膠囊背景 */
+    padding: 2px 6px;
+    border-radius: 6px;
+    margin-left: 6px;               /* 與文字分開 */
+}
+
+/* 深色模式膠囊 */
+[data-theme="dark"] .item-list .item-div .small.text-muted {
+    color: #c0c4c8;
+    background-color: rgba(255,255,255,0.05);
+}
+
+
 </style>
 </head>
 <body>
@@ -838,7 +940,10 @@ body,
 
             <div class="time-detail">
                 <div class="small text-muted">
-                    抵達後通關、領取行李
+                    抵達後通關、領取行李<br>
+                    123<br>
+                    3221<br>
+                    123547<br>
                 </div>
             </div>
         </div>
@@ -1509,6 +1614,12 @@ function renderTopMarked() {
 // --- 渲染收藏列表 ---
 function renderFavorites() {
     const container = document.getElementById('fav-list-container');
+    
+    // 🔹 STEP 1: 在清空前，精確記錄目前「哪些 ID 的卡片是開啟的」
+    // 注意：這裡要確保 dataset.id 轉為 String 或 Number 格式一致
+    const openFavIds = Array.from(container.querySelectorAll('.card-custom.open'))
+                            .map(c => c.dataset.id);
+
     container.innerHTML = '';
 
     if(favorites.length === 0) {
@@ -1519,28 +1630,49 @@ function renderFavorites() {
     favorites.forEach(fav => {
         const card = document.createElement('div');
         card.className = "card-custom mb-2 p-2 border";
+        card.dataset.id = fav.id.toString(); // 統一轉為字串比較
 
-        // 大標題 + 展開按鈕
+        // --- header 大標題區 ---
         const header = document.createElement('div');
         header.className = "d-flex justify-content-between align-items-center";
-        const titleSpan = document.createElement('span');
-        titleSpan.innerText = `${fav.title} [${fav.category}]`;
-        header.appendChild(titleSpan);
 
+        const titleContainer = document.createElement('div');
+        titleContainer.className = "d-flex align-items-center gap-1";
+        titleContainer.style.cursor = "pointer";
+
+        // 主標題文字
+        const titleText = document.createElement('span');
+        titleText.className = "fav-title-text";
+        titleText.innerText = fav.title;
+        titleContainer.appendChild(titleText);
+
+        // 分類小膠囊
+        const categoryBadge = document.createElement('span');
+        categoryBadge.className = "fav-title-badge";
+        categoryBadge.innerText = fav.category;
+        titleContainer.appendChild(categoryBadge);
+
+        const toggleBtn = document.createElement('span');
+        toggleBtn.innerText = "▾";
+        toggleBtn.className = "toggle-icon";
+        toggleBtn.style.transition = "transform 0.3s"; // 讓旋轉順一點
+        titleContainer.appendChild(toggleBtn);
+
+        // 🔹 統一的開關邏輯
+        titleContainer.onclick = () => {
+            const isOpen = card.classList.toggle("open");
+            toggleBtn.style.transform = isOpen ? "rotate(180deg)" : "rotate(0deg)";
+        };
+
+        // 右側按鈕群 (編輯/刪除)
         const btnGroup = document.createElement('div');
         btnGroup.className = "d-flex align-items-center gap-1 fav-btn-group";
 
-        // 刪除收藏
-        const delBtn = document.createElement('button');
-        delBtn.className = "btn btn-sm text-danger p-0 fav-icon";
-        delBtn.innerHTML = `<i class="fas fa-trash-alt"></i>`;
-        delBtn.onclick = () => { removeFavorite(fav.id); };
-
-        // 編輯大標題
         const editBtn = document.createElement('button');
         editBtn.className = "btn btn-sm fav-icon";
         editBtn.innerHTML = `<i class="fas fa-pen"></i>`;
-        editBtn.onclick = () => {
+        editBtn.onclick = (e) => {
+            e.stopPropagation(); // 防止觸發標題點擊
             const newTitle = prompt("編輯標題", fav.title);
             const newCategory = prompt("編輯分類", fav.category);
             if(newTitle) fav.title = newTitle;
@@ -1548,123 +1680,146 @@ function renderFavorites() {
             saveFavorites();
             renderFavorites();
         };
-
         btnGroup.appendChild(editBtn);
+
+        const delBtn = document.createElement('button');
+        delBtn.className = "btn btn-sm text-danger p-0 fav-icon";
+        delBtn.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+        delBtn.onclick = (e) => { 
+            e.stopPropagation(); 
+            if(confirm("確定刪除此大項？")) removeFavorite(fav.id); 
+        };
         btnGroup.appendChild(delBtn);
 
-        // 展開/收合
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = "btn btn-sm fav-icon toggle-icon";
-        toggleBtn.innerHTML = `<i class="fas fa-chevron-down"></i>`;                        
-        btnGroup.appendChild(toggleBtn);
-
+        header.appendChild(titleContainer);
         header.appendChild(btnGroup);
         card.appendChild(header);
 
-        // 地點清單區
+        // --- 地點清單區 ---
         const itemList = document.createElement('div');
-        itemList.className = "item-list mt-2"; // 初始收合
-// 先建立編輯 & 刪除按鈕
-fav.items.forEach(item => {
-    const itemDiv = document.createElement('div');
-    itemDiv.className = "border p-1 mb-1 position-relative";
+        itemList.className = "item-list mt-2"; 
 
-    // 刪除細項按鈕
-    const removeItemBtn = document.createElement('button');
-    removeItemBtn.className = "btn btn-sm text-muted p-0 fav-icon position-absolute";
-    removeItemBtn.style.top = "5px";
-    removeItemBtn.style.right = "10px";
-    removeItemBtn.innerText = "×";
-    removeItemBtn.onclick = () => {
-        fav.items = fav.items.filter(i => i.id !== item.id);
-        saveFavorites();
-        renderFavorites();
-    };
+        fav.items.forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = "item-div border p-1 mb-1 position-relative";
 
-    // 編輯細項
-    const editItemBtn = document.createElement('button');
-    editItemBtn.className = "btn btn-sm fav-icon position-absolute";
-    editItemBtn.style.top = "5px";
-    editItemBtn.style.right = "40px";
-    editItemBtn.innerHTML = `<i class="fas fa-pen"></i>`;
-    editItemBtn.onclick = () => {
-        const newName = prompt("編輯地點名稱", item.name);
-        const newLinks = prompt("編輯連結（用 | 分隔）", item.links.join(" | "));
-        const newNote = prompt("編輯備註", item.note);
-        if(newName) item.name = newName;
-        if(newLinks) item.links = newLinks.split("|").map(l => l.trim());
-        if(newNote !== null) item.note = newNote;
-        saveFavorites();
-        renderFavorites();
-    };
+            // 標記按鈕
+            const markBtn = document.createElement('button');
+            markBtn.className = "btn btn-sm fav-icon mark-icon";
+            markBtn.innerHTML = `<i class="${item.tempMark ? "fas" : "far"} fa-bookmark"></i>`;
+            markBtn.onclick = () => {
+                item.tempMark = !item.tempMark;
+                saveFavorites();
+                renderFavorites();
+                renderTopMarked();
+            };
 
-    // 標記按鈕
-    const markBtn = document.createElement('button');
-    markBtn.className = "btn btn-sm fav-icon mark-icon";
-    markBtn.innerHTML = `<i class="${item.tempMark ? "fas" : "far"} fa-bookmark"></i>`;
-    markBtn.onclick = () => {
-        item.tempMark = !item.tempMark;
-        saveFavorites();
-        renderFavorites();
-        renderTopMarked();
-    };
+            const nameSpan = document.createElement('span');
+            nameSpan.innerText = item.name;
+            nameSpan.style.margin = "0 8px";
 
-    // 名稱
-    const nameSpan = document.createElement('span');
-    nameSpan.innerText = item.name;
-    nameSpan.style.margin = "0 8px";
+            // 編輯細項
+            const editItemBtn = document.createElement('button');
+            editItemBtn.className = "btn btn-sm fav-icon";
+            editItemBtn.innerHTML = `<i class="fas fa-pen"></i>`;
+editItemBtn.onclick = () => {
+    const newName = prompt("編輯地點名稱", item.name);
+    
+    // 這裡處理連結：將物件陣列轉回 "名稱:網址" 字串讓使用者編輯
+    const currentLinksString = item.links.map(l => 
+        typeof l === 'object' ? `${l.name}:${l.url}` : l
+    ).join(" | ");
+    
+    const newLinksRaw = prompt("編輯連結 (格式：名稱:網址，多組用 | 分隔)", currentLinksString);
+    const newNote = prompt("編輯備註", item.note);
 
-    // topRow 容器
-    const topRow = document.createElement('div');
-    topRow.className = "d-flex align-items-center";
-    topRow.appendChild(markBtn);
-    topRow.appendChild(nameSpan);
-    topRow.appendChild(editItemBtn);
-    topRow.appendChild(removeItemBtn);
-
-    itemDiv.appendChild(topRow);
-
-    // 連結
-    if(item.links.length > 0){
-        const linkText = document.createElement('div');
-        linkText.className = "small";
-        linkText.innerHTML = item.links.map(l => `<a href="${l}" target="_blank">${l}</a>`).join(" | ");
-        itemDiv.appendChild(linkText);
+    if (newName) item.name = newName;
+    
+    // 處理輸入的連結字串，轉回物件格式
+    if (newLinksRaw !== null) {
+        item.links = newLinksRaw.split("|").filter(s => s.trim()).map(pair => {
+            if (pair.includes(":")) {
+                const [name, ...urlParts] = pair.split(":");
+                return { name: name.trim(), url: urlParts.join(":").trim() };
+            }
+            return { name: "連結", url: pair.trim() }; // 若沒輸入冒號，預設名稱為"連結"
+        });
     }
+    
+    if (newNote !== null) item.note = newNote;
 
-    // 備註
-    if(item.note){
-        const noteDiv = document.createElement('div');
-        noteDiv.className = "small text-muted";
-        noteDiv.innerText = item.note;
-        itemDiv.appendChild(noteDiv);
-    }
+    saveFavorites();
+    renderFavorites();
+};
+            // 刪除細項
+            const removeItemBtn = document.createElement('button');
+            removeItemBtn.className = "btn btn-sm text-muted p-0 fav-icon";
+            removeItemBtn.innerText = "×";
+            removeItemBtn.onclick = () => {
+                fav.items = fav.items.filter(i => i.id !== item.id);
+                saveFavorites();
+                renderFavorites();
+            };
 
-    itemList.appendChild(itemDiv);
-});
+            const topRow = document.createElement('div');
+            topRow.className = "d-flex align-items-center justify-content-between";
+            
+            const leftPart = document.createElement('div');
+            leftPart.appendChild(markBtn);
+            leftPart.appendChild(nameSpan);
+            
+            const rightPart = document.createElement('div');
+            rightPart.appendChild(editItemBtn);
+            rightPart.appendChild(removeItemBtn);
 
+            topRow.appendChild(leftPart);
+            topRow.appendChild(rightPart);
+            itemDiv.appendChild(topRow);
 
+            // --- 替換這裡的邏輯 ---
+            if(item.links && item.links.length > 0){
+                const linkText = document.createElement('div');
+                linkText.className = "small";
+                // 這裡判斷：如果是物件就顯示 l.name，如果是舊資料(字串)就顯示網址本身
+                linkText.innerHTML = item.links.map(l => {
+                    if (typeof l === 'object' && l !== null) {
+                        return `<a href="${l.url}" target="_blank" class="item-link" title="${l.url}">${l.name}</a>`;
+                    }
+                    return `<a href="${l}" target="_blank" class="item-link">${l}</a>`; 
+                }).join(" | ");
+                itemDiv.appendChild(linkText);
+            }
+            // ---------------------
+// 備註
+if(item.note){
+    const noteDiv = document.createElement('div');
+    noteDiv.className = "small text-muted";
+    noteDiv.innerText = item.note;
+    itemDiv.appendChild(noteDiv);
+}
+            itemList.appendChild(itemDiv);
+        });
 
-        // 新增地點按鈕
         const addItemBtn = document.createElement('button');
-        addItemBtn.className = "btn btn-sm btn-primary mt-1";
+        addItemBtn.className = "btn btn-sm btn-outline-primary mt-1 w-100";
         addItemBtn.innerText = "➕ 新增地點";
         addItemBtn.onclick = () => addItemPrompt(fav.id);
         itemList.appendChild(addItemBtn);
 
         card.appendChild(itemList);
 
-        // 切換展開/收合
-        toggleBtn.onclick = () => {
-            card.classList.toggle("open");
-        };
+        // 🔹 STEP 2: 關鍵修正點 - 恢復開啟狀態
+        // 如果這個 ID 存在於剛才記錄的 openFavIds 中，就幫它加回 .open
+        if (openFavIds.includes(fav.id.toString())) {
+            card.classList.add('open');
+            toggleBtn.style.transform = "rotate(180deg)";
+        }
 
         container.appendChild(card);
     });
 
     renderTopMarked();
 }
-
 // --- 新增大標題收藏 ---
 function addFavoritePrompt() {
     const title = prompt("輸入收藏大標題");
@@ -1685,9 +1840,26 @@ function addItemPrompt(favId) {
     const name = prompt("地點名稱 (必填)");
     if(!name) return;
 
-    const linksRaw = prompt("連結 (可空白，多個用逗號分隔)") || "";
-    const links = linksRaw.split(",").map(s => s.trim()).filter(s => s);
-
+    const linksRaw = prompt("連結 (格式：名稱:網址，多組用逗號或 | 分隔)") || "";
+    
+    // 🔹 關鍵修正：將輸入的字串切開並轉換成物件格式
+// 1. 先用空格切開每一組
+const links = linksRaw.split(/\s+/).filter(s => s.trim()).map(s => {
+    // 2. 尋找第一個冒號的位置
+    const colonIndex = s.indexOf(':');
+    
+    // 3. 只有當冒號存在，且不是在開頭(https://)的情況下才拆分
+    // 如果你輸入 地圖:www.google.com
+    // colonIndex 會是在「地圖」後面
+    if (colonIndex !== -1 && !s.startsWith('http')) {
+        const name = s.substring(0, colonIndex).trim();
+        const url = s.substring(colonIndex + 1).trim();
+        return { name: name || "連結", url: url };
+    }
+    
+    // 4. 如果沒有冒號或格式不符，整串當成網址
+    return { name: "連結", url: s.trim() };
+}).filter(l => l.url);
     const note = prompt("備註 (可空白)") || "";
 
     const item = createItem({ name, links, note });
@@ -1695,7 +1867,6 @@ function addItemPrompt(favId) {
     saveFavorites();
     renderFavorites();
 }
-
 // --- 刪除收藏 ---
 function removeFavorite(id) {
     favorites = favorites.filter(f => f.id !== id);
