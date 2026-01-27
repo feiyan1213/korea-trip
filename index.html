@@ -792,8 +792,33 @@ body,
     color: #c0c4c8;
     background-color: rgba(255,255,255,0.05);
 }
+/* --- 收藏頁連結按鈕化 --- */
+/* --- 更加精緻小巧的膠囊標籤 --- */
+#fav-list-container a.item-link {
+    display: inline-block !important;
+    color: var(--highlight) !important;
+    background: rgba(212, 163, 115, 0.1) !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    
+    /* 調整重點：更小的字體與更緊湊的內距 */
+    font-size: 0.75rem !important; 
+    padding: 1px 10px !important; 
+    
+    /* 調整重點：全圓角（膠囊狀） */
+    border-radius: 50px !important; 
+    
+    margin-top: 4px !important;
+    margin-right: 5px !important;
+    border: 1px solid rgba(212, 163, 115, 0.2) !important;
+    transition: all 0.2s ease;
+}
 
-
+#fav-list-container a.item-link:hover {
+    background: var(--highlight) !important;
+    color: white !important;
+    transform: scale(1.05); /* 縮放微互動 */
+}
 </style>
 </head>
 <body>
@@ -1777,18 +1802,16 @@ editItemBtn.onclick = () => {
             itemDiv.appendChild(topRow);
 
             // --- 替換這裡的邏輯 ---
-            if(item.links && item.links.length > 0){
-                const linkText = document.createElement('div');
-                linkText.className = "small";
-                // 這裡判斷：如果是物件就顯示 l.name，如果是舊資料(字串)就顯示網址本身
-                linkText.innerHTML = item.links.map(l => {
-                    if (typeof l === 'object' && l !== null) {
-                        return `<a href="${l.url}" target="_blank" class="item-link" title="${l.url}">${l.name}</a>`;
-                    }
-                    return `<a href="${l}" target="_blank" class="item-link">${l}</a>`; 
-                }).join(" | ");
-                itemDiv.appendChild(linkText);
-            }
+if(item.links && item.links.length > 0){
+    const linkDiv = document.createElement('div');
+    linkDiv.className = "d-flex flex-wrap mt-1"; // 讓按鈕自動換行且靠左對齊
+    linkDiv.innerHTML = item.links.map(l => {
+        const lName = (typeof l === 'object' && l !== null) ? l.name : "連結";
+        const lUrl = (typeof l === 'object' && l !== null) ? l.url : l;
+        return `<a href="${lUrl}" target="_blank" class="item-link">${lName}</a>`;
+    }).join(""); // 移除中間的 " | "，由 CSS 的 margin 控制間距
+    itemDiv.appendChild(linkDiv);
+}
             // ---------------------
 // 備註
 if(item.note){
