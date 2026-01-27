@@ -1870,7 +1870,7 @@ function addItemPrompt(favId) {
 // 1. 先用空格切開每一組
 const links = linksRaw.split(/\s+/).filter(s => s.trim()).map(s => {
     // 2. 尋找第一個冒號的位置
-    const colonIndex = s.indexOf(':');
+    const colonIndex = s.indexOf('：');
     
     // 3. 只有當冒號存在，且不是在開頭(https://)的情況下才拆分
     // 如果你輸入 地圖:www.google.com
