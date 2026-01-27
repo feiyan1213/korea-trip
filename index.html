@@ -1737,10 +1737,10 @@ editItemBtn.onclick = () => {
     
     // 處理輸入的連結字串，轉回物件格式
     if (newLinksRaw !== null) {
-        item.links = newLinksRaw.split("|").filter(s => s.trim()).map(pair => {
-            if (pair.includes(":")) {
-                const [name, ...urlParts] = pair.split(":");
-                return { name: name.trim(), url: urlParts.join(":").trim() };
+        item.links = newLinksRaw.split(/[\s,|]+/).filter(s => s.trim()).map(pair => {
+            if (pair.includes("：")) {
+                const [name, ...urlParts] = pair.split("：");
+                return { name: name.trim(), url: urlParts.join("：").trim() };
             }
             return { name: "連結", url: pair.trim() }; // 若沒輸入冒號，預設名稱為"連結"
         });
