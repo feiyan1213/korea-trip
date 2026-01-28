@@ -20,7 +20,16 @@
         .content-section { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
         .content-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .card-custom { background: white; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.card-custom {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 12px;
+
+  border: 1px solid transparent; /* ✅ 亮色先預留 1px，避免切換上下跳 */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
         .day-label { font-size: 1.1rem; font-weight: bold; border-bottom: 2.5px solid var(--accent); display: inline-block; margin: 15px 0 10px; letter-spacing: 1px; }
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #EEE; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
         .nav-item { color: #BBB; text-decoration: none; text-align: center; font-size: 0.7rem; cursor: pointer; flex: 1; }
@@ -300,7 +309,6 @@
 
 [data-theme="dark"] .text-muted {
     color: #888 !important;
-}
 }
 
 [data-theme="dark"] .text-muted {
@@ -778,20 +786,85 @@ body,
 }
 
 /* 備註文字 - 膠囊風格柔化 */
-.item-list .item-div .small.text-muted {
-    font-size: 0.75rem;
-    color: #6c757d;                 /* 淺灰色文字 */
-    background-color: rgba(0,0,0,0.05); /* 淺膠囊背景 */
-    padding: 2px 6px;
-    border-radius: 6px;
-    margin-left: 6px;               /* 與文字分開 */
+/* =========================
+   Favorites Theme v3 - Glass Panel
+========================= */
+
+#fav-list-container .card-custom{
+  border-radius: 18px !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  background: rgba(255,255,255,0.70) !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 14px 38px rgba(0,0,0,0.10) !important;
 }
 
-/* 深色模式膠囊 */
-[data-theme="dark"] .item-list .item-div .small.text-muted {
-    color: #c0c4c8;
-    background-color: rgba(255,255,255,0.05);
+#fav-list-container .item-list{
+  padding-top: 10px;
 }
+
+#fav-list-container .item-list .item-div{
+  border-radius: 14px !important;
+  border: 1px solid rgba(255,255,255,0.16) !important;
+  background: rgba(255,255,255,0.55) !important;
+  backdrop-filter: blur(8px);
+  padding: 10px 12px !important;
+  margin-bottom: 10px !important;
+}
+
+#fav-list-container .item-list .item-div > .d-flex{
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+#fav-list-container .item-list .item-div .item-link{
+  color: rgba(44,62,80,0.95) !important;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(44,62,80,0.22);
+}
+
+#fav-list-container .item-list .item-div .small.text-muted{
+  font-size: 0.78rem;
+  color: rgba(90,100,110,0.85) !important;
+  margin-top: 8px;
+  padding-left: 10px;
+  position: relative;
+}
+#fav-list-container .item-list .item-div .small.text-muted::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0.2em;
+  bottom:0.2em;
+  width:2px;
+  border-radius:1px;
+  background: rgba(0,0,0,0.08);
+}
+
+/* Dark：這套的主場 */
+[data-theme="dark"] #fav-list-container .card-custom{
+  background: rgba(20,20,20,0.55) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: 0 18px 46px rgba(0,0,0,0.55) !important;
+}
+[data-theme="dark"] #fav-list-container .item-list .item-div{
+  background: rgba(35,45,55,0.55) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+}
+[data-theme="dark"] #fav-list-container .item-list .item-div > .d-flex{
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+[data-theme="dark"] #fav-list-container .item-list .item-div .item-link{
+  color: rgba(212,163,115,0.95) !important;
+  border-bottom-color: rgba(212,163,115,0.22);
+}
+[data-theme="dark"] #fav-list-container .item-list .item-div .small.text-muted{
+  color: rgba(230,235,240,0.72) !important;
+}
+[data-theme="dark"] #fav-list-container .item-list .item-div .small.text-muted::before{
+  background: rgba(255,255,255,0.10);
+}
+
 /* --- 收藏頁連結按鈕化 --- */
 /* --- 更加精緻小巧的膠囊標籤 --- */
 #fav-list-container a.item-link {
@@ -820,6 +893,179 @@ body,
     color: white !important;
     transform: scale(1.05); /* 縮放微互動 */
 }
+/* =========================
+   收藏頁－新增地點（次要動作）
+========================= */
+/* 新增地點：工具列小＋ */
+#fav-list-container .item-list .btn-outline-primary {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 8px;
+    font-size: 1.1rem;
+
+    background: transparent;
+    border: 1px dashed rgba(44,62,80,0.25);
+    color: rgba(44,62,80,0.85);
+}
+
+/* Dark */
+[data-theme="dark"] #fav-list-container .item-list .btn-outline-primary {
+    border-color: rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.85);
+}
+/* =========================
+   收藏頁－新增收藏（主要動作）
+========================= */
+
+/* 收藏頁 header icon 統一成「手機友善」點擊區 */
+#fav-list-container .fav-btn-group .fav-icon{
+  width: 34px;
+  height: 34px;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, background 0.15s ease, opacity 0.15s ease;
+}
+
+/* icon 本體 */
+#fav-list-container .fav-btn-group .fav-icon i{
+  font-size: 0.95rem;
+  color: rgba(44,62,80,0.65);
+}
+
+/* 手機：點一下的回饋（比 hover 重要） */
+#fav-list-container .fav-btn-group .fav-icon:active{
+  transform: scale(0.90);
+  background: rgba(44,62,80,0.10) !important;
+}
+
+/* 鍵盤使用者（桌機） */
+#fav-list-container .fav-btn-group .fav-icon:focus-visible{
+  outline: 2px solid rgba(44,62,80,0.25);
+  outline-offset: 2px;
+}
+
+/* ➕ 新增地點 icon：略微強調，但仍低調 */
+#fav-list-container .fav-btn-group .fav-add-icon i{
+  color: rgba(44,62,80,0.80);
+}
+
+/* 深色模式 */
+[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon i{
+  color: rgba(230,235,240,0.75);
+}
+[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon:active{
+  background: rgba(255,255,255,0.10) !important;
+}
+/* 刪除 icon：低調危險提示 */
+#fav-list-container .fav-btn-group .fav-icon.text-danger i {
+  color: rgba(200, 70, 70, 0.75); /* 灰紅，不刺眼 */
+}
+
+/* 點擊回饋（手機最重要） */
+#fav-list-container .fav-btn-group .fav-icon.text-danger:active {
+  background: rgba(200, 70, 70, 0.18) !important;
+  transform: scale(0.9);
+}
+
+/* 深色模式 */
+[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon.text-danger i {
+  color: rgba(240, 120, 120, 0.85);
+}
+[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon.text-danger:active {
+  background: rgba(240, 120, 120, 0.22) !important;
+}
+/* =========================
+   行李頁－刪除 icon（低調紅，與收藏頁一致）
+========================= */
+
+/* 亮色模式 */
+#pack-list-container .text-danger i,
+#pack-list-container .text-danger {
+  color: rgba(200, 70, 70, 0.75) !important;
+}
+
+/* 手機點擊回饋 */
+#pack-list-container .text-danger:active {
+  background: rgba(200, 70, 70, 0.18) !important;
+  transform: scale(0.9);
+  border-radius: 10px;
+}
+
+/* 深色模式 */
+[data-theme="dark"]
+#pack-list-container .text-danger i,
+[data-theme="dark"]
+#pack-list-container .text-danger {
+  color: rgba(240, 120, 120, 0.85) !important;
+}
+
+[data-theme="dark"]
+#pack-list-container .text-danger:active {
+  background: rgba(240, 120, 120, 0.22) !important;
+}
+.nav-item,
+.day-tab .day-week,
+.day-tab .day-num {
+  font-weight: 500 !important;
+}
+.sticky-top {
+  min-height: 105px;
+}
+.content-section { 
+  display: none; 
+  padding: 15px; 
+  animation: fadeIn 0.3s ease; 
+}
+.content-section.active { 
+  display: block; 
+}
+/* =========================
+   收藏頁－新增收藏按鈕：跟行李頁新增類別同風格
+   （放在 style 最後面）
+========================= */
+
+/* 亮色 */
+#fav-add-btn,
+#fav-list-container ~ .btn-primary,
+#fav-list-container + .btn-primary{
+  background: transparent !important;
+  color: rgba(44,62,80,0.90) !important;
+  border: 1px solid rgba(44,62,80,0.20) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  font-weight: 500 !important;
+}
+
+/* 手機點擊回饋 */
+#fav-add-btn:active,
+#fav-list-container ~ .btn-primary:active,
+#fav-list-container + .btn-primary:active{
+  transform: scale(0.98);
+  background: rgba(44,62,80,0.08) !important;
+}
+
+/* 深色 */
+[data-theme="dark"] #fav-add-btn,
+[data-theme="dark"] #fav-list-container ~ .btn-primary,
+[data-theme="dark"] #fav-list-container + .btn-primary{
+  background: transparent !important;
+  color: rgba(230,235,240,0.90) !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+}
+
+/* 深色點擊回饋 */
+[data-theme="dark"] #fav-add-btn:active,
+[data-theme="dark"] #fav-list-container ~ .btn-primary:active,
+[data-theme="dark"] #fav-list-container + .btn-primary:active{
+  background: rgba(255,255,255,0.10) !important;
+}
+
 </style>
 </head>
 <body>
@@ -1244,7 +1490,7 @@ body,
 
 <div id="fav-list-container"></div>
 
-<button class="btn btn-sm btn-primary mt-2" onclick="addFavoritePrompt()">➕ 新增收藏</button>
+<button class="btn btn-sm btn-primary mt-2" onclick="addFavoritePrompt()">+ 新增收藏</button>
 
     <div id="fav-list-container"></div>
 </div>
@@ -1694,6 +1940,17 @@ function renderFavorites() {
         const btnGroup = document.createElement('div');
         btnGroup.className = "d-flex align-items-center gap-1 fav-btn-group";
 
+// ➕ 新增地點（icon 版，放在右上角跟編輯刪除同一排）
+const addItemIconBtn = document.createElement('button');
+addItemIconBtn.className = "btn btn-sm fav-icon fav-add-icon";
+addItemIconBtn.innerHTML = `<i class="fas fa-plus"></i>`;
+addItemIconBtn.title = "新增地點";
+addItemIconBtn.onclick = (e) => {
+    e.stopPropagation(); // 不要觸發展開/收合
+    addItemPrompt(fav.id);
+};
+btnGroup.appendChild(addItemIconBtn);
+
         const editBtn = document.createElement('button');
         editBtn.className = "btn btn-sm fav-icon";
         editBtn.innerHTML = `<i class="fas fa-pen"></i>`;
@@ -1824,11 +2081,6 @@ if(item.note){
             itemList.appendChild(itemDiv);
         });
 
-        const addItemBtn = document.createElement('button');
-        addItemBtn.className = "btn btn-sm btn-outline-primary mt-1 w-100";
-        addItemBtn.innerText = "➕ 新增地點";
-        addItemBtn.onclick = () => addItemPrompt(fav.id);
-        itemList.appendChild(addItemBtn);
 
         card.appendChild(itemList);
 
@@ -1870,7 +2122,7 @@ function addItemPrompt(favId) {
 // 1. 先用空格切開每一組
 const links = linksRaw.split(/\s+/).filter(s => s.trim()).map(s => {
     // 2. 尋找第一個冒號的位置
-    const colonIndex = s.indexOf('：');
+    const colonIndex = s.indexOf(':');
     
     // 3. 只有當冒號存在，且不是在開頭(https://)的情況下才拆分
     // 如果你輸入 地圖:www.google.com
