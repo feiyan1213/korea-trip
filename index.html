@@ -578,14 +578,6 @@ body,
 .time-item.open .toggle-icon {
     transform: rotate(180deg);
 }
-/* 📍 左上角「今日」按鈕 - 獨立樣式 */
-.today-toggle {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    z-index: 1000; /* 確保在最上層 */
-}
-
 #todayBtn {
     width: auto;
     height: 20px;
@@ -595,7 +587,6 @@ body,
     justify-content: center;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 0.6rem;
-    letter-spacing: 1px;
     font-weight: 500;
     letter-spacing: 0.4px;
     border-radius: 999px;
@@ -616,6 +607,7 @@ body,
     color: #ddd;
     box-shadow: 0 1px 4px rgba(0,0,0,0.4);
 }
+
 #todayBtn:active {
     transform: scale(0.9);
 }
@@ -785,85 +777,6 @@ body,
     background-color: #242f3a;                 /* hover微亮 */
 }
 
-/* 備註文字 - 膠囊風格柔化 */
-/* =========================
-   Favorites Theme v3 - Glass Panel
-========================= */
-
-#fav-list-container .card-custom{
-  border-radius: 18px !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-  background: rgba(255,255,255,0.70) !important;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 14px 38px rgba(0,0,0,0.10) !important;
-}
-
-#fav-list-container .item-list{
-  padding-top: 10px;
-}
-
-#fav-list-container .item-list .item-div{
-  border-radius: 14px !important;
-  border: 1px solid rgba(255,255,255,0.16) !important;
-  background: rgba(255,255,255,0.55) !important;
-  backdrop-filter: blur(8px);
-  padding: 10px 12px !important;
-  margin-bottom: 10px !important;
-}
-
-#fav-list-container .item-list .item-div > .d-flex{
-  padding-bottom: 6px;
-  margin-bottom: 6px;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-}
-
-#fav-list-container .item-list .item-div .item-link{
-  color: rgba(44,62,80,0.95) !important;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(44,62,80,0.22);
-}
-
-#fav-list-container .item-list .item-div .small.text-muted{
-  font-size: 0.78rem;
-  color: rgba(90,100,110,0.85) !important;
-  margin-top: 8px;
-  padding-left: 10px;
-  position: relative;
-}
-#fav-list-container .item-list .item-div .small.text-muted::before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:0.2em;
-  bottom:0.2em;
-  width:2px;
-  border-radius:1px;
-  background: rgba(0,0,0,0.08);
-}
-
-/* Dark：這套的主場 */
-[data-theme="dark"] #fav-list-container .card-custom{
-  background: rgba(20,20,20,0.55) !important;
-  border: 1px solid rgba(255,255,255,0.08) !important;
-  box-shadow: 0 18px 46px rgba(0,0,0,0.55) !important;
-}
-[data-theme="dark"] #fav-list-container .item-list .item-div{
-  background: rgba(35,45,55,0.55) !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-}
-[data-theme="dark"] #fav-list-container .item-list .item-div > .d-flex{
-  border-bottom: 1px solid rgba(255,255,255,0.10);
-}
-[data-theme="dark"] #fav-list-container .item-list .item-div .item-link{
-  color: rgba(212,163,115,0.95) !important;
-  border-bottom-color: rgba(212,163,115,0.22);
-}
-[data-theme="dark"] #fav-list-container .item-list .item-div .small.text-muted{
-  color: rgba(230,235,240,0.72) !important;
-}
-[data-theme="dark"] #fav-list-container .item-list .item-div .small.text-muted::before{
-  background: rgba(255,255,255,0.10);
-}
 
 /* --- 收藏頁連結按鈕化 --- */
 /* --- 更加精緻小巧的膠囊標籤 --- */
@@ -1058,212 +971,7 @@ body,
   background: rgba(44,62,80,0.92) !important;
   border-color: rgba(255,255,255,0.12) !important;
 }
-/* =========================
-   fav-top-list 高亮區（可點回原處）
-========================= */
-#fav-top-list .topmark-row{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:10px;
 
-  padding:10px 12px;
-  margin-bottom:8px;
-  border-radius:14px;
-
-  background: rgba(255,255,255,0.65);
-  border: 1px solid rgba(44,62,80,0.10);
-  backdrop-filter: blur(10px);
-}
-
-[data-theme="dark"] #fav-top-list .topmark-row{
-  background: rgba(35,45,55,0.55);
-  border-color: rgba(255,255,255,0.10);
-}
-
-#fav-top-list .topmark-info{ flex:1; min-width:0; }
-#fav-top-list .topmark-title{
-  font-weight:700;
-  font-size:0.95rem;
-  line-height:1.25;
-}
-#fav-top-list .topmark-place{
-  font-size:0.85rem;
-  opacity:0.85;
-  margin-top:2px;
-}
-
-#fav-top-list .topmark-links{
-  margin-top:6px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-}
-
-/* 右側 X 按鈕 */
-#fav-top-list .topmark-x{
-  width:34px;
-  height:34px;
-  border:none;
-  background:transparent;
-  border-radius:12px;
-  font-size:18px;
-  opacity:0.65;
-}
-
-#fav-top-list .topmark-x:active{
-  transform: scale(0.9);
-  background: rgba(200,70,70,0.18);
-  opacity:1;
-}
-
-/* 點高亮列的手機回饋 */
-#fav-top-list .topmark-row:active{
-  transform: scale(0.99);
-  background: rgba(44,62,80,0.06);
-}
-[data-theme="dark"] #fav-top-list .topmark-row:active{
-  background: rgba(255,255,255,0.06);
-}
-
-/* 跳回去的目標 item 閃一下 */
-.pulse-highlight{
-  outline: 2px solid rgba(212,163,115,0.55);
-  outline-offset: 2px;
-  border-radius: 14px;
-}
-/* =========================
-   fav-top-list（頂端標記區）— 精緻卡片版
-   只影響 #fav-top-list 裡的 .topmark-row
-========================= */
-
-/* 容器可選：讓整塊更乾淨 */
-#fav-top-container h5{
-  margin-bottom: 10px;
-  opacity: 0.9;
-}
-
-#fav-top-list{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* 每一列：玻璃感＋柔和邊框 */
-#fav-top-list .topmark-row{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-
-  padding: 12px 12px;
-  border-radius: 16px;
-
-  /* 亮色玻璃卡片 */
-  background: rgba(255,255,255,0.72);
-  border: 1px solid rgba(44,62,80,0.10);
-  backdrop-filter: blur(10px);
-
-  /* 柔和浮起感 */
-  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
-
-  /* 點擊回饋的平滑 */
-  transition: transform 0.12s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
-  cursor: pointer;
-}
-
-/* 點一下：輕微按壓感 */
-#fav-top-list .topmark-row:active{
-  transform: scale(0.99);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.07);
-  background: rgba(255,255,255,0.82);
-}
-
-/* 左側文字區 */
-#fav-top-list .topmark-info{
-  flex:1;
-  min-width:0;
-}
-
-/* 標題（大項） */
-#fav-top-list .topmark-title{
-  font-weight: 800;
-  font-size: 0.95rem;
-  line-height: 1.2;
-  color: rgba(44,62,80,0.92);
-}
-
-/* 地點名稱（細項） */
-#fav-top-list .topmark-place{
-  margin-top: 4px;
-  font-size: 0.86rem;
-  line-height: 1.2;
-  color: rgba(60,70,80,0.70);
-}
-
-/* 連結群（沿用你 item-link 的按鈕化風格） */
-#fav-top-list .topmark-links{
-  margin-top: 8px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-}
-
-/* 右側 X 按鈕：更像「小 icon」 */
-#fav-top-list .topmark-x{
-  width: 34px;
-  height: 34px;
-  border:none;
-  background: transparent;
-  border-radius: 12px;
-
-  font-size: 18px;
-  line-height: 1;
-
-  opacity: 0.55;
-  transition: transform 0.12s ease, background 0.15s ease, opacity 0.15s ease;
-}
-
-/* 點 X 的回饋 */
-#fav-top-list .topmark-x:active{
-  transform: scale(0.90);
-  background: rgba(200,70,70,0.16);
-  opacity: 1;
-}
-
-/* 跳回去的目標 item 閃一下（你原本就有） */
-.pulse-highlight{
-  outline: 2px solid rgba(212,163,115,0.55);
-  outline-offset: 2px;
-  border-radius: 14px;
-}
-
-/* ========== Dark Mode：更有質感的深色卡 ========== */
-[data-theme="dark"] #fav-top-list .topmark-row{
-  background: rgba(35,45,55,0.55);
-  border: 1px solid rgba(255,255,255,0.10);
-  box-shadow: 0 16px 34px rgba(0,0,0,0.50);
-}
-
-[data-theme="dark"] #fav-top-list .topmark-row:active{
-  background: rgba(45,55,65,0.62);
-}
-
-[data-theme="dark"] #fav-top-list .topmark-title{
-  color: rgba(230,235,240,0.92);
-}
-
-[data-theme="dark"] #fav-top-list .topmark-place{
-  color: rgba(230,235,240,0.68);
-}
-
-[data-theme="dark"] #fav-top-list .topmark-x{
-  opacity: 0.65;
-}
-
-[data-theme="dark"] #fav-top-list .topmark-x:active{
-  background: rgba(240,120,120,0.18);
-}
 /* =========================
    收藏頁頂端標記區－連結樣式修正
    只影響 #fav-top-list
@@ -1307,6 +1015,430 @@ body,
 
 [data-theme="dark"] #fav-top-list .topmark-links a:hover{
   background: rgba(255,255,255,0.18);
+}
+/* =========================
+   fav-top-list 高亮區（簡約一行提示列）
+   放在 style 最底部
+========================= */
+
+#fav-top-list{ 
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+/* 一行提示列 */
+#fav-top-list .topmark-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+
+  padding:6px 8px;
+  margin:0;
+
+  background: transparent;
+  border-left: 3px solid rgba(212,163,115,0.65);
+  border-radius: 8px;
+
+  box-shadow:none;
+  backdrop-filter:none;
+
+  cursor:pointer;
+  transition: background 0.15s ease;
+}
+
+#fav-top-list .topmark-row:active{
+  background: rgba(44,62,80,0.06);
+}
+
+/* 左側：同一行排版 */
+#fav-top-list .topmark-info{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  min-width:0;
+  flex:1;
+}
+
+/* 標題（縮小、低調） */
+#fav-top-list .topmark-title{
+  font-size:0.78rem;
+  font-weight:600;
+  opacity:0.75;
+  white-space:nowrap;
+}
+
+/* 地點（主體，可省略號） */
+#fav-top-list .topmark-place{
+  font-size:0.86rem;
+  font-weight:500;
+
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+
+  margin:0; /* 把你原本 margin-top 影響拿掉 */
+}
+
+/* 連結膠囊同一行（不換行；多的就自己縮） */
+#fav-top-list .topmark-links{
+  display:flex;
+  flex-wrap:nowrap;
+  gap:6px;
+  margin:0; /* 把你原本 margin-top 影響拿掉 */
+}
+.pulse-highlight{
+  outline: 2px solid rgba(212,163,115,0.55);
+  outline-offset: 2px;
+  border-radius: 14px;
+}
+
+/* X 按鈕更小更像提示列 */
+#fav-top-list .topmark-x{
+  width:28px;
+  height:28px;
+  border:none;
+  background:transparent;
+  border-radius:8px;
+  font-size:18px;
+  line-height:1;
+  opacity:0.55;
+}
+
+#fav-top-list .topmark-x:active{
+  background: rgba(200,70,70,0.18);
+  opacity:1;
+}
+
+/* 深色模式 */
+[data-theme="dark"] #fav-top-list .topmark-row{
+  border-left-color: rgba(212,163,115,0.85);
+}
+[data-theme="dark"] #fav-top-list .topmark-row:active{
+  background: rgba(255,255,255,0.06);
+}
+/* =========================
+   fav-top-list 高亮區：收合/展開 + 連結 +N + 回原處動畫
+   貼在 <style> 最底部
+========================= */
+
+/* 右下角「顯示更多/收合」控制列 */
+#fav-top-list .topmark-toggle-row{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:6px;
+}
+
+#fav-top-list .topmark-toggle-btn{
+  border:none;
+  background: transparent;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: rgba(44,62,80,0.70);
+  cursor: pointer;
+}
+
+#fav-top-list .topmark-toggle-btn:active{
+  transform: scale(0.98);
+  background: rgba(44,62,80,0.06);
+}
+
+[data-theme="dark"] #fav-top-list .topmark-toggle-btn{
+  color: rgba(230,235,240,0.75);
+}
+[data-theme="dark"] #fav-top-list .topmark-toggle-btn:active{
+  background: rgba(255,255,255,0.06);
+}
+
+/* +N 連結膠囊 */
+#fav-top-list .topmark-more{
+  display:inline-flex;
+  align-items:center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+
+  color: rgba(44,62,80,0.75);
+  background: rgba(44,62,80,0.06);
+  border: 1px solid rgba(44,62,80,0.14);
+}
+
+#fav-top-list .topmark-more:active{
+  transform: scale(0.96);
+  background: rgba(44,62,80,0.10);
+}
+
+[data-theme="dark"] #fav-top-list .topmark-more{
+  color: rgba(230,235,240,0.78);
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.16);
+}
+[data-theme="dark"] #fav-top-list .topmark-more:active{
+  background: rgba(255,255,255,0.12);
+}
+
+/* 多餘連結預設隱藏（點 +N 展開） */
+#fav-top-list .topmark-links-extra{
+  display:none;
+}
+#fav-top-list .topmark-row.links-expanded .topmark-links-extra{
+  display:inline-flex;
+}
+
+/* 回到原處：滑入 + 閃爍（加在目標 item 上） */
+@keyframes jumpFlashSlide {
+  0%   { transform: translateX(10px); box-shadow: 0 0 0 rgba(0,0,0,0); outline-color: rgba(212,163,115,0); background: rgba(212,163,115,0.00); }
+  35%  { transform: translateX(0);    outline-color: rgba(212,163,115,0.70); background: rgba(212,163,115,0.08); }
+  70%  { outline-color: rgba(212,163,115,0.35); background: rgba(212,163,115,0.04); }
+  100% { outline-color: rgba(212,163,115,0.00); background: rgba(212,163,115,0.00); }
+}
+
+/* 你原本已有 pulse-highlight；這裡讓它變成「滑動＋閃爍」 */
+.pulse-highlight{
+  outline: 2px solid rgba(212,163,115,0.55);
+  outline-offset: 2px;
+  border-radius: 14px;
+  animation: jumpFlashSlide 0.9s ease both;
+}
+/* =========================
+   fav-top-list：+N 展開/收合 連結膠囊
+   只影響 #fav-top-list
+========================= */
+
+/* +N 按鈕樣式（讓它像膠囊） */
+#fav-top-list .topmark-more{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+
+  color: rgba(44,62,80,0.85);
+  background: rgba(44,62,80,0.08);
+  border: 1px solid rgba(44,62,80,0.18);
+}
+
+/* 其餘膠囊預設先隱藏 */
+#fav-top-list .topmark-links-extra{
+  display: none;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: 6px; /* 跟 +N 拉開距離 */
+}
+
+/* 當 links-expanded 被加上時才顯示 */
+#fav-top-list .topmark-links.links-expanded .topmark-links-extra{
+  display: inline-flex;
+}
+
+/* 深色模式 */
+[data-theme="dark"] #fav-top-list .topmark-more{
+  color: rgba(230,235,240,0.85);
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.20);
+}
+/* =========================
+   fav-top-list：修正展開後順序
+   目標：展開時變成「連結 連結 其他連結… 收合」
+========================= */
+
+#fav-top-list .topmark-links{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* 讓前面顯示的連結一定排在最前 */
+#fav-top-list .topmark-links > a{
+  order: 1;
+}
+
+/* 被收起來那一群（展開後顯示）排在中間 */
+#fav-top-list .topmark-links .topmark-links-extra{
+  order: 2;
+  margin-left: 0; /* 需要的話可留 0，避免多插一個空隙 */
+}
+
+/* +N / 收合按鈕永遠排最後 */
+#fav-top-list .topmark-links .topmark-more{
+  order: 3;
+  margin-left: 2px; /* 讓它跟前面膠囊有一點點距離 */
+}
+  /* ✅ 取代突兀左線：柔和點綴 */
+  border-left: 4px solid rgba(212,163,115,0.55);
+
+  box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+}
+
+#fav-top-list .topmark-row:active{
+  background: rgba(44,62,80,0.06);
+}
+
+[data-theme="dark"] #fav-top-list .topmark-row{
+  background: rgba(20,20,20,0.45);
+  border-color: rgba(255,255,255,0.10);
+  border-left-color: rgba(212,163,115,0.75);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.45);
+}
+
+[data-theme="dark"] #fav-top-list .topmark-row:active{
+  background: rgba(255,255,255,0.06);
+}
+/* =========================
+   fav-top-list：連結/標籤膠囊（地圖/連結/+N）統一風格
+========================= */
+
+/* hover / active（桌機/手機都會有回饋） */
+#fav-top-list .topmark-links a.item-link:hover{
+  background: rgba(212,163,115,0.16);
+  border-color: rgba(212,163,115,0.35);
+  color: rgba(44,62,80,0.95) !important;
+}
+#fav-top-list .topmark-links a.item-link:active,
+#fav-top-list .topmark-more:active{
+  transform: scale(0.96);
+  background: rgba(44,62,80,0.08);
+}
+
+/* +N 特別做得更「次要」一點 */
+#fav-top-list .topmark-more{
+  font-weight: 700;
+  background: rgba(44,62,80,0.06);
+}
+
+/* 深色模式 */
+[data-theme="dark"] #fav-top-list .topmark-links a.item-link,
+[data-theme="dark"] #fav-top-list .topmark-more{
+  border-color: rgba(255,255,255,0.16);
+  color: rgba(230,235,240,0.82) !important;
+  background: rgba(35,45,55,0.50);
+}
+[data-theme="dark"] #fav-top-list .topmark-links a.item-link:hover{
+  background: rgba(212,163,115,0.14);
+  border-color: rgba(212,163,115,0.35);
+  color: rgba(255,255,255,0.92) !important;
+}
+[data-theme="dark"] #fav-top-list .topmark-more{
+  background: rgba(255,255,255,0.08);
+}
+/* =========================
+   Favorites：非玻璃版（覆蓋 Glass Panel）
+========================= */
+
+/* 收藏大卡（不透明、不卡） */
+#fav-list-container .card-custom{
+  background: #ffffff !important;
+  border: 1px solid #e9ecef !important;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.06) !important;
+  border-radius: 18px !important;
+}
+
+/* 細項卡片（不透明、不卡） */
+#fav-list-container .item-list .item-div{
+  background: #ffffff !important;
+  border: 1px solid #eef1f4 !important;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.05) !important;
+  border-radius: 14px !important;
+}
+
+/* 分隔線（維持乾淨） */
+#fav-list-container .item-list .item-div > .d-flex{
+  border-bottom: 1px solid rgba(0,0,0,0.06) !important;
+}
+
+/* 深色模式：改成純深色層級 */
+[data-theme="dark"] #fav-list-container .card-custom{
+  background: #1e1e1e !important;
+  border-color: #2a2a2a !important;
+  box-shadow: 0 14px 32px rgba(0,0,0,0.50) !important;
+}
+[data-theme="dark"] #fav-list-container .item-list .item-div{
+  background: #1f2a35 !important;
+  border-color: #2f3b47 !important;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.45) !important;
+}
+[data-theme="dark"] #fav-list-container .item-list .item-div > .d-flex{
+  border-bottom: 1px solid rgba(255,255,255,0.10) !important;
+}
+/* =========================
+   fav-top-list：E-pure（最終建議版）
+========================= */
+
+#fav-top-container{
+  padding: 6px 0;
+}
+
+/* 整個高亮區＝一個被框住的集合 */
+#fav-top-list{
+  padding: 14px;
+  border-radius: 18px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(44,62,80,0.04),
+    rgba(44,62,80,0.015)
+  );
+  border: 1px solid rgba(44,62,80,0.10);
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 每一列：不標記、不染色 */
+#fav-top-list .topmark-row{
+  padding: 12px 12px;
+  border-radius: 16px;
+
+  background: #ffffff;
+  border: 1px solid rgba(44,62,80,0.08);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* 點擊只是物理回饋，不是視覺強調 */
+#fav-top-list .topmark-row:active{
+  transform: scale(0.99);
+  background: rgba(44,62,80,0.02);
+}
+
+/* Dark mode：維持同一邏輯 */
+[data-theme="dark"] #fav-top-list{
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.05),
+    rgba(255,255,255,0.02)
+  );
+  border-color: rgba(255,255,255,0.10);
+}
+
+[data-theme="dark"] #fav-top-list .topmark-row{
+  background: #1f2a35;
+  border-color: rgba(255,255,255,0.10);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.45);
+}
+
+/* ✅ 全站關閉玻璃 blur（效能救星） */
+*, *::before, *::after{
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 </style>
@@ -1727,7 +1859,7 @@ body,
     </nav>
 <div id="favorites" class="content-section">
 <div id="fav-top-container" class="mb-3">
-    <h5>🔖</h5>
+    <h5 class="fav-head-icon"><i class="fa-regular fa-bookmark"></i></h5>
     <div id="fav-top-list"></div>
 </div>
 
@@ -2083,23 +2215,13 @@ function saveFavorites() {
 }
 
 // --- 渲染頂部臨時標記區 ---
-function renderTopMarked() {
-    const topContainer = document.getElementById('fav-top-list');
-    topContainer.innerHTML = '';
-    favorites.forEach(fav => {
-        fav.items.filter(i => i.tempMark).forEach(item => {
-            const div = document.createElement('div');
-            div.className = "card-custom mb-1 p-2 bg-warning";
-            div.innerText = `${fav.title} → ${item.name}`;
-            topContainer.appendChild(div);
-        });
-    });
-}
+let topMarksExpanded = false;          // ① 高亮列整體：收合/展開
+const TOPMARK_COLLAPSE_LIMIT = 6;      // ② 超過幾列就自動收合（可改成 5/8）
 
-// --- 渲染頂部臨時標記區 ---
-// --- 渲染頂部臨時標記區（可點回原位置）---
 function renderTopMarked() {
     const topContainer = document.getElementById('fav-top-list');
+    if (!topContainer) return;
+
     topContainer.innerHTML = '';
 
     // 收集所有 tempMark 的項目
@@ -2112,41 +2234,89 @@ function renderTopMarked() {
 
     if (markedRows.length === 0) return;
 
-    markedRows.forEach(({ fav, item }) => {
+    // 1) 數量多時自動收合：只顯示前 N 筆
+    const needCollapse = markedRows.length > TOPMARK_COLLAPSE_LIMIT;
+    const rowsToShow = (needCollapse && !topMarksExpanded)
+        ? markedRows.slice(0, TOPMARK_COLLAPSE_LIMIT)
+        : markedRows;
+
+    rowsToShow.forEach(({ fav, item }) => {
         const row = document.createElement('div');
-        row.className = "topmark-row";  // 用 CSS 美化
+        row.className = "topmark-row";
         row.style.cursor = "pointer";
 
-        // 左側資訊（標題 / 地點 / 連結）
+        // 左側資訊（同一行：標題 / 地點 / 連結）
         const info = document.createElement('div');
         info.className = "topmark-info";
 
-        const line1 = document.createElement('div');
-        line1.className = "topmark-title";
-        line1.innerText = fav.title;
+        const title = document.createElement('span');
+        title.className = "topmark-title";
+        title.innerText = fav.title;
 
-        const line2 = document.createElement('div');
-        line2.className = "topmark-place";
-        line2.innerText = item.name;
+        const place = document.createElement('span');
+        place.className = "topmark-place";
+        place.innerText = item.name;
 
-        info.appendChild(line1);
-        info.appendChild(line2);
+        info.appendChild(title);
+        info.appendChild(place);
 
-        // 連結（若有）
-        if (item.links && item.links.length > 0) {
-            const linksDiv = document.createElement('div');
-            linksDiv.className = "topmark-links";
+        // 3) 只顯示第一個連結，其餘收成 +N（點 +N 展開/收起，不跳轉）
+// ---- Links: 顯示前 2 個，其餘變 +N ----
+const rawLinks = Array.isArray(item.links) ? item.links : [];
+const links = rawLinks
+  .map(l => {
+    if (typeof l === 'object' && l) {
+      return { name: l.name || '連結', url: l.url || '' };
+    }
+    return { name: '連結', url: String(l || '') };
+  })
+  .filter(l => l.url && l.url.trim());
 
-            linksDiv.innerHTML = item.links.map(l => {
-                const url = (typeof l === 'object' && l) ? l.url : l;
-                const name = (typeof l === 'object' && l) ? l.name : "連結";
-                return `<a class="item-link" href="${url}" target="_blank" rel="noopener">${name}</a>`;
-            }).join(" ");
+if (links.length > 0) {
+  const linksDiv = document.createElement('div');
+  linksDiv.className = 'topmark-links';
 
-            info.appendChild(linksDiv);
-        }
+  // ✅ 顯示前 2 個
+  const visibleLinks = links.slice(0, 2);
+  visibleLinks.forEach(l => {
+    const a = document.createElement('a');
+    a.className = 'item-link';
+    a.href = l.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.innerText = l.name;
+    linksDiv.appendChild(a);
+  });
 
-        // 右側：取消標記按鈕
+  // ✅ 剩下的收成 +N
+  const rest = links.slice(2);
+  if (rest.length > 0) {
+    const more = document.createElement('span');
+    more.className = 'topmark-more';
+    more.innerText = `+${rest.length}`;
+
+    const extra = document.createElement('span');
+    extra.className = 'topmark-links-extra';
+    extra.style.gap = '6px';
+
+    extra.innerHTML = rest.map(l => {
+      return `<a class="item-link" href="${l.url}" target="_blank" rel="noopener">${l.name}</a>`;
+    }).join('');
+
+more.onclick = (e) => {
+  e.stopPropagation();
+  const expanded = linksDiv.classList.toggle('links-expanded');
+  more.innerHTML = expanded ? '&times;' : `+${rest.length}`;
+  more.title = expanded ? '收合' : `還有 ${rest.length} 個連結`;
+};
+    linksDiv.appendChild(more);
+    linksDiv.appendChild(extra);
+  }
+
+  info.appendChild(linksDiv);
+}
+
+        // 右側：取消標記 X
         const btn = document.createElement('button');
         btn.className = "topmark-x";
         btn.type = "button";
@@ -2159,7 +2329,7 @@ function renderTopMarked() {
             renderTopMarked();
         };
 
-        // 點整行 → 滾回原收藏位置並打開
+        // 2) 點整列：滑動回原處 + 閃爍（沿用你 jumpToFavoriteItem）
         row.onclick = () => {
             jumpToFavoriteItem(fav.id, item.id);
         };
@@ -2168,37 +2338,70 @@ function renderTopMarked() {
         row.appendChild(btn);
         topContainer.appendChild(row);
     });
-}
-function jumpToFavoriteItem(favId, itemId) {
-    // 先確保收藏列表已渲染（你本來就會 renderFavorites，因此通常不用額外切頁）
-    // 找到目標 item
-    const el = document.getElementById(`fav-${favId}-item-${itemId}`);
-    const card = document.querySelector(`.card-custom[data-id="${favId}"]`);
 
-    // 若還沒渲染到（例如你剛好切頁 / 或還沒 render），就先強制渲染一次再找
-    if (!el || !card) {
-        renderFavorites();
+    // 收合/展開控制鈕
+    if (needCollapse) {
+        const toggleRow = document.createElement('div');
+        toggleRow.className = "topmark-toggle-row";
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = "topmark-toggle-btn";
+        const hiddenCount = markedRows.length - TOPMARK_COLLAPSE_LIMIT;
+
+        toggleBtn.innerText = topMarksExpanded
+            ? "收合"
+            : `顯示更多 (+${hiddenCount})`;
+
+        toggleBtn.onclick = (e) => {
+            e.stopPropagation();
+            topMarksExpanded = !topMarksExpanded;
+            renderTopMarked();
+        };
+
+        toggleRow.appendChild(toggleBtn);
+        topContainer.appendChild(toggleRow);
+    }
+}
+
+function jumpToFavoriteItem(favId, itemId) {
+    // 1) 如果不在收藏頁，先切到收藏頁
+    const favTab = document.getElementById('favorites');
+    if (favTab && !favTab.classList.contains('active')) {
+        const navEl = document.querySelector('.nav-item[onclick*="favorites"]');
+        if (typeof switchTab === 'function' && navEl) {
+            switchTab('favorites', navEl);
+        }
     }
 
-    const el2 = document.getElementById(`fav-${favId}-item-${itemId}`);
-    const card2 = document.querySelector(`.card-custom[data-id="${favId}"]`);
-    if (!el2 || !card2) return;
+    // 2) 確保 DOM 已渲染
+    if (typeof renderFavorites === 'function') renderFavorites();
 
-    // 打開該卡片
-    if (!card2.classList.contains("open")) {
-        card2.classList.add("open");
-        const toggleIcon = card2.querySelector(".toggle-icon");
+    const card = document.querySelector(`.card-custom[data-id="${String(favId)}"]`);
+    const itemEl = document.getElementById(`fav-${favId}-item-${itemId}`);
+    if (!card || !itemEl) return;
+
+    // 3) 若卡片是關的 → 先打開，並等待展開動畫後再 scroll
+    const wasClosed = !card.classList.contains("open");
+    if (wasClosed) {
+        card.classList.add("open");
+        const toggleIcon = card.querySelector(".toggle-icon");
         if (toggleIcon) toggleIcon.style.transform = "rotate(180deg)";
     }
 
-    // 平滑捲動到該 item
-    el2.scrollIntoView({ behavior: "smooth", block: "center" });
+    const doScrollAndFlash = () => {
+        // 再保險：下一個 frame 再滾，避免高度還沒長出來
+        requestAnimationFrame(() => {
+            itemEl.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    // 閃一下提示
-    el2.classList.add("pulse-highlight");
-    setTimeout(() => el2.classList.remove("pulse-highlight"), 1200);
+            itemEl.classList.add("pulse-highlight");
+            setTimeout(() => itemEl.classList.remove("pulse-highlight"), 950);
+        });
+    };
+
+    // 展開動畫時間你 CSS 是 0.35s，所以給 380ms 比較穩
+    if (wasClosed) setTimeout(doScrollAndFlash, 380);
+    else doScrollAndFlash();
 }
-
 // --- 渲染收藏列表 ---
 function renderFavorites() {
     const container = document.getElementById('fav-list-container');
@@ -2330,7 +2533,7 @@ editItemBtn.onclick = () => {
         typeof l === 'object' ? `${l.name}:${l.url}` : l
     ).join(" | ");
     
-    const newLinksRaw = prompt("編輯連結 (格式：名稱:網址，多組用 | 分隔)", currentLinksString);
+    const newLinksRaw = prompt("編輯連結 (格式：名稱：網址，多組用空格、 | 分隔)", currentLinksString);
     const newNote = prompt("編輯備註", item.note);
 
     if (newName) item.name = newName;
