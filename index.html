@@ -1090,11 +1090,6 @@ body,
   gap:6px;
   margin:0; /* 把你原本 margin-top 影響拿掉 */
 }
-.pulse-highlight{
-  outline: 2px solid rgba(212,163,115,0.55);
-  outline-offset: 2px;
-  border-radius: 14px;
-}
 
 /* X 按鈕更小更像提示列 */
 #fav-top-list .topmark-x{
@@ -1200,13 +1195,6 @@ body,
   100% { outline-color: rgba(212,163,115,0.00); background: rgba(212,163,115,0.00); }
 }
 
-/* 你原本已有 pulse-highlight；這裡讓它變成「滑動＋閃爍」 */
-.pulse-highlight{
-  outline: 2px solid rgba(212,163,115,0.55);
-  outline-offset: 2px;
-  border-radius: 14px;
-  animation: jumpFlashSlide 0.9s ease both;
-}
 /* =========================
    fav-top-list：+N 展開/收合 連結膠囊
    只影響 #fav-top-list
@@ -1383,21 +1371,15 @@ body,
 
 /* 整個高亮區＝一個被框住的集合 */
 #fav-top-list{
-  padding: 14px;
-  border-radius: 18px;
-
-  background: linear-gradient(
-    180deg,
-    rgba(44,62,80,0.04),
-    rgba(44,62,80,0.015)
-  );
-  border: 1px solid rgba(44,62,80,0.10);
+  padding: 6px 0;      /* 保留一點呼吸感 */
+  border-radius: 0;    /* 不再是卡片 */
+  background: none;    /* 拿掉底色 */
+  border: none;        /* 拿掉邊框 */
 
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
 /* 每一列：不標記、不染色 */
 #fav-top-list .topmark-row{
   padding: 12px 12px;
@@ -1434,11 +1416,65 @@ body,
   border-color: rgba(255,255,255,0.10);
   box-shadow: 0 14px 28px rgba(0,0,0,0.45);
 }
+/* ✅ A方案：呼吸感聚焦（取代金邊 pulse-highlight） */
+@keyframes breatheFocus {
+  0%   { background: rgba(212,163,115,0.00); box-shadow: 0 0 0 rgba(0,0,0,0); }
+  35%  { background: rgba(212,163,115,0.10); box-shadow: 0 10px 24px rgba(44,62,80,0.10); }
+  70%  { background: rgba(212,163,115,0.06); box-shadow: 0 6px 16px rgba(44,62,80,0.08); }
+  100% { background: rgba(212,163,115,0.00); box-shadow: 0 0 0 rgba(0,0,0,0); }
+}
+
+/* 亮色模式 */
+.focus-breathe {
+  border-radius: 14px;
+  animation: breatheFocus 1.05s ease both;
+}
+
+/* 深色模式 */
+[data-theme="dark"] .focus-breathe {
+  animation: breatheFocusDark 1.05s ease both;
+}
+
+@keyframes breatheFocusDark {
+  0%   { background: rgba(212,163,115,0.00); box-shadow: 0 0 0 rgba(0,0,0,0); }
+  35%  { background: rgba(212,163,115,0.10); box-shadow: 0 12px 26px rgba(0,0,0,0.45); }
+  70%  { background: rgba(212,163,115,0.06); box-shadow: 0 8px 18px rgba(0,0,0,0.35); }
+  100% { background: rgba(212,163,115,0.00); box-shadow: 0 0 0 rgba(0,0,0,0); }
+}
+/* ✅ 跳轉後的「呼吸感」提示：輕量、手機友善 */
+@keyframes focusBreathe {
+  0%   { box-shadow: 0 0 0 rgba(0,0,0,0); background: transparent; }
+  25%  { box-shadow: 0 10px 24px rgba(44,62,80,0.12); background: rgba(212,163,115,0.10); }
+  55%  { box-shadow: 0 6px 16px rgba(44,62,80,0.08); background: rgba(212,163,115,0.06); }
+  100% { box-shadow: 0 0 0 rgba(0,0,0,0); background: transparent; }
+}
+
+/* 這個 class 會加在「被跳到的 item」上 */
+#fav-list-container .item-list .item-div.focus-breathe{
+  animation: focusBreathe 1.2s ease both;
+  border-color: rgba(212,163,115,0.35) !important; /* 給一點點存在感但不金邊 */
+}
 
 /* ✅ 全站關閉玻璃 blur（效能救星） */
 *, *::before, *::after{
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+/* ✅ 收藏頁所有 bookmark 都小一點 + 往上 */
+#fav-list-container i.fa-bookmark,
+#fav-list-container i[class*="fa-bookmark"]{
+  font-size: 0.95rem !important;
+  position: relative;
+  top: -2px;
+  opacity: 0.65;
+}
+/* ✅ 去掉 bookmark 外面按鈕的白方塊底（只限收藏頁） */
+#fav-list-container button.mark-icon,
+#fav-list-container .mark-icon{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 </style>
@@ -1859,7 +1895,6 @@ body,
     </nav>
 <div id="favorites" class="content-section">
 <div id="fav-top-container" class="mb-3">
-    <h5 class="fav-head-icon"><i class="fa-regular fa-bookmark"></i></h5>
     <div id="fav-top-list"></div>
 </div>
 
@@ -1867,7 +1902,6 @@ body,
 
 <button class="btn btn-sm btn-primary mt-2" onclick="addFavoritePrompt()">+ 新增收藏</button>
 
-    <div id="fav-list-container"></div>
 </div>
 </div>
 <script>
@@ -2393,9 +2427,11 @@ function jumpToFavoriteItem(favId, itemId) {
         requestAnimationFrame(() => {
             itemEl.scrollIntoView({ behavior: "smooth", block: "center" });
 
-            itemEl.classList.add("pulse-highlight");
-            setTimeout(() => itemEl.classList.remove("pulse-highlight"), 950);
-        });
+    itemEl.classList.remove("focus-breathe");
+    void itemEl.offsetWidth; // 讓動畫每次都能重新播放
+    itemEl.classList.add("focus-breathe");
+    setTimeout(() => itemEl.classList.remove("focus-breathe"), 1200);
+            });
     };
 
     // 展開動畫時間你 CSS 是 0.35s，所以給 380ms 比較穩
