@@ -1093,16 +1093,20 @@ body,
 
 /* X 按鈕更小更像提示列 */
 #fav-top-list .topmark-x{
-  width:28px;
+  width:24px;
   height:28px;
   border:none;
   background:transparent;
   border-radius:8px;
   font-size:18px;
   line-height:1;
-  opacity:0.55;
+  cursor: pointer;
+  color: rgba(44,62,80,0.65);
+  opacity: 0.6;
 }
-
+[data-theme="dark"] #fav-top-list .topmark-x{
+  color: rgba(230,235,240,0.75);
+}
 #fav-top-list .topmark-x:active{
   background: rgba(200,70,70,0.18);
   opacity:1;
