@@ -1269,11 +1269,6 @@ body,
   order: 3;
   margin-left: 2px; /* 讓它跟前面膠囊有一點點距離 */
 }
-  /* ✅ 取代突兀左線：柔和點綴 */
-  border-left: 4px solid rgba(212,163,115,0.55);
-
-  box-shadow: 0 8px 18px rgba(0,0,0,0.06);
-}
 
 #fav-top-list .topmark-row:active{
   background: rgba(44,62,80,0.06);
@@ -1407,18 +1402,18 @@ body,
 
 /* Dark mode：維持同一邏輯 */
 [data-theme="dark"] #fav-top-list{
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,0.05),
-    rgba(255,255,255,0.02)
-  );
+  background: none,
   border-color: rgba(255,255,255,0.10);
 }
 
 [data-theme="dark"] #fav-top-list .topmark-row{
   background: #1f2a35;
   border-color: rgba(255,255,255,0.10);
-  box-shadow: 0 14px 28px rgba(0,0,0,0.45);
+
+  /* ✅ 套用收藏頁卡片同系的柔和夜間陰影 */
+  box-shadow:
+    0 6px 16px rgba(0,0,0,0.35),
+    0 12px 28px rgba(0,0,0,0.25);
 }
 /* ✅ A方案：呼吸感聚焦（取代金邊 pulse-highlight） */
 @keyframes breatheFocus {
@@ -1479,6 +1474,16 @@ body,
   border: none !important;
   box-shadow: none !important;
   padding: 0 !important;
+}
+/* ✅ 正式修正：fav-top-list 置頂列夜間陰影柔和化（貼在 style 最底部） */
+html[data-theme="dark"] #fav-top-list .topmark-row{
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35), 0 18px 44px rgba(0,0,0,0.25) !important;
+}
+html[data-theme="dark"] #fav-top-list .topmark-row{
+  /* 上方微弱白色高光（關鍵） */
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 12px 24px rgba(0,0,0,0.45) !important;
 }
 
 </style>
