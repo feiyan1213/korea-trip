@@ -2575,7 +2575,7 @@ editItemBtn.onclick = () => {
     
     // 這裡處理連結：將物件陣列轉回 "名稱:網址" 字串讓使用者編輯
     const currentLinksString = item.links.map(l => 
-        typeof l === 'object' ? `${l.name}:${l.url}` : l
+        typeof l === 'object' ? `${l.name}：${l.url}` : l
     ).join(" | ");
     
     const newLinksRaw = prompt("編輯連結 (格式：名稱：網址，多組用空格、 | 分隔)", currentLinksString);
@@ -2686,7 +2686,6 @@ function addItemPrompt(favId) {
     // 🔹 關鍵修正：將輸入的字串切開並轉換成物件格式
 // 1. 先用空格切開每一組
 const links = linksRaw.split(/\s+/).filter(s => s.trim()).map(s => {
-    // 2. 尋找第一個冒號的位置
     const colonIndex = s.indexOf('：');
     
     // 3. 只有當冒號存在，且不是在開頭(https://)的情況下才拆分
