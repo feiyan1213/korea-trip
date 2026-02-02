@@ -394,10 +394,9 @@ body,
 /* 🌙 主題切換按鈕位置 */
 .theme-toggle {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 10;
-}
+    top: 6px;
+    right: 6px;
+    line-height: 1; /* 避免字體造成垂直擠壓感 */}
 /* 🌙 Header 夜間背景 */
 [data-theme="dark"] .sticky-top {
     background-color: #121212 !important;
@@ -2663,7 +2662,7 @@ function updateThemeIcon(theme) {
     if (!btn) return;
 
     // 線條風 icon（非 emoji）
-    btn.textContent = theme === 'dark' ? '☀︎' : '☾';
+    btn.textContent = theme === 'dark' ? '☼' : '☾';
 }
     const html = document.documentElement;
     const current = html.getAttribute('data-theme') || 'light';
@@ -2678,7 +2677,7 @@ function updateThemeIcon(theme) {
     const btn = document.getElementById('themeBtn');
     if (!btn) return;
 
-    btn.textContent = theme === 'dark' ? '☀︎' : '☾';
+    btn.textContent = theme === 'dark' ? '☼' : '☾';
 }
 // 住宿資料庫 (請根據您的實際飯店名稱與 Google Map 連結修改)
 const hotelData = {
