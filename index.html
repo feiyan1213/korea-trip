@@ -308,10 +308,6 @@
 }
 
 [data-theme="dark"] .text-muted {
-    color: #888 !important;
-}
-
-[data-theme="dark"] .text-muted {
     color: #aaa !important;
 }
 
@@ -361,13 +357,6 @@
     color: #ffffff !important;
     transform: translateY(1px); /* 輕微下沈感，模擬真實按鈕 */
 }
-/* 🌙 簡約圖標按鈕：也要有統一的回饋感 */
-#themeBtn {
-    background: transparent !important;
-    border: none !important;
-    transition: all 0.2s ease;
-}
-
 #themeBtn:active {
     transform: scale(0.85); /* 點擊時縮小，這是一個很棒的簡約回饋感 */
     opacity: 0.7;
@@ -692,20 +681,6 @@ body,
 /* 展開時箭頭旋轉 */
 .card-custom.open .fav-icon.toggle-icon i {
     transform: rotate(180deg);
-}
-/* 頂端標記 */
-#fav-top-list .card-custom {
-    background-color: #5d8aa8; /* 背景 */
-    color: #5a4b2b;            /* 文字 */
-    padding: 6px 10px;
-    font-size: 0.9rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-[data-theme="dark"] #fav-top-list .card-custom {
-    background-color: #2a3b4d !important; /* 夜間背景，深色 */
-    color: #dcdcdc !important;            /* 夜間文字，淺色 */
 }
 /* ===== 大標題主文字 ===== */
 .fav-title-text {
@@ -1154,56 +1129,6 @@ body,
   background: rgba(255,255,255,0.06);
 }
 
-/* +N 連結膠囊 */
-#fav-top-list .topmark-more{
-  display:inline-flex;
-  align-items:center;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 2px 10px;
-  border-radius: 999px;
-  cursor: pointer;
-  user-select: none;
-
-  color: rgba(44,62,80,0.75);
-  background: rgba(44,62,80,0.06);
-  border: 1px solid rgba(44,62,80,0.14);
-}
-
-#fav-top-list .topmark-more:active{
-  transform: scale(0.96);
-  background: rgba(44,62,80,0.10);
-}
-
-[data-theme="dark"] #fav-top-list .topmark-more{
-  color: rgba(230,235,240,0.78);
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.16);
-}
-[data-theme="dark"] #fav-top-list .topmark-more:active{
-  background: rgba(255,255,255,0.12);
-}
-
-/* 多餘連結預設隱藏（點 +N 展開） */
-#fav-top-list .topmark-links-extra{
-  display:none;
-}
-#fav-top-list .topmark-row.links-expanded .topmark-links-extra{
-  display:inline-flex;
-}
-
-/* 回到原處：滑入 + 閃爍（加在目標 item 上） */
-@keyframes jumpFlashSlide {
-  0%   { transform: translateX(10px); box-shadow: 0 0 0 rgba(0,0,0,0); outline-color: rgba(212,163,115,0); background: rgba(212,163,115,0.00); }
-  35%  { transform: translateX(0);    outline-color: rgba(212,163,115,0.70); background: rgba(212,163,115,0.08); }
-  70%  { outline-color: rgba(212,163,115,0.35); background: rgba(212,163,115,0.04); }
-  100% { outline-color: rgba(212,163,115,0.00); background: rgba(212,163,115,0.00); }
-}
-
-/* =========================
-   fav-top-list：+N 展開/收合 連結膠囊
-   只影響 #fav-top-list
-========================= */
 
 /* +N 按鈕樣式（讓它像膠囊） */
 #fav-top-list .topmark-more{
@@ -1285,43 +1210,7 @@ body,
 [data-theme="dark"] #fav-top-list .topmark-row:active{
   background: rgba(255,255,255,0.06);
 }
-/* =========================
-   fav-top-list：連結/標籤膠囊（地圖/連結/+N）統一風格
-========================= */
 
-/* hover / active（桌機/手機都會有回饋） */
-#fav-top-list .topmark-links a.item-link:hover{
-  background: rgba(212,163,115,0.16);
-  border-color: rgba(212,163,115,0.35);
-  color: rgba(44,62,80,0.95) !important;
-}
-#fav-top-list .topmark-links a.item-link:active,
-#fav-top-list .topmark-more:active{
-  transform: scale(0.96);
-  background: rgba(44,62,80,0.08);
-}
-
-/* +N 特別做得更「次要」一點 */
-#fav-top-list .topmark-more{
-  font-weight: 700;
-  background: rgba(44,62,80,0.06);
-}
-
-/* 深色模式 */
-[data-theme="dark"] #fav-top-list .topmark-links a.item-link,
-[data-theme="dark"] #fav-top-list .topmark-more{
-  border-color: rgba(255,255,255,0.16);
-  color: rgba(230,235,240,0.82) !important;
-  background: rgba(35,45,55,0.50);
-}
-[data-theme="dark"] #fav-top-list .topmark-links a.item-link:hover{
-  background: rgba(212,163,115,0.14);
-  border-color: rgba(212,163,115,0.35);
-  color: rgba(255,255,255,0.92) !important;
-}
-[data-theme="dark"] #fav-top-list .topmark-more{
-  background: rgba(255,255,255,0.08);
-}
 /* =========================
    Favorites：非玻璃版（覆蓋 Glass Panel）
 ========================= */
@@ -1403,7 +1292,7 @@ body,
 
 /* Dark mode：維持同一邏輯 */
 [data-theme="dark"] #fav-top-list{
-  background: none,
+  background: none;
   border-color: rgba(255,255,255,0.10);
 }
 
@@ -1415,44 +1304,6 @@ body,
   box-shadow:
     0 6px 16px rgba(0,0,0,0.35),
     0 12px 28px rgba(0,0,0,0.25);
-}
-/* ✅ A方案：呼吸感聚焦（取代金邊 pulse-highlight） */
-@keyframes breatheFocus {
-  0%   { background: rgba(212,163,115,0.00); box-shadow: 0 0 0 rgba(0,0,0,0); }
-  35%  { background: rgba(212,163,115,0.10); box-shadow: 0 10px 24px rgba(44,62,80,0.10); }
-  70%  { background: rgba(212,163,115,0.06); box-shadow: 0 6px 16px rgba(44,62,80,0.08); }
-  100% { background: rgba(212,163,115,0.00); box-shadow: 0 0 0 rgba(0,0,0,0); }
-}
-
-/* 亮色模式 */
-.focus-breathe {
-  border-radius: 14px;
-  animation: breatheFocus 1.05s ease both;
-}
-
-/* 深色模式 */
-[data-theme="dark"] .focus-breathe {
-  animation: breatheFocusDark 1.05s ease both;
-}
-
-@keyframes breatheFocusDark {
-  0%   { background: rgba(212,163,115,0.00); box-shadow: 0 0 0 rgba(0,0,0,0); }
-  35%  { background: rgba(212,163,115,0.10); box-shadow: 0 12px 26px rgba(0,0,0,0.45); }
-  70%  { background: rgba(212,163,115,0.06); box-shadow: 0 8px 18px rgba(0,0,0,0.35); }
-  100% { background: rgba(212,163,115,0.00); box-shadow: 0 0 0 rgba(0,0,0,0); }
-}
-/* ✅ 跳轉後的「呼吸感」提示：輕量、手機友善 */
-@keyframes focusBreathe {
-  0%   { box-shadow: 0 0 0 rgba(0,0,0,0); background: transparent; }
-  25%  { box-shadow: 0 10px 24px rgba(44,62,80,0.12); background: rgba(212,163,115,0.10); }
-  55%  { box-shadow: 0 6px 16px rgba(44,62,80,0.08); background: rgba(212,163,115,0.06); }
-  100% { box-shadow: 0 0 0 rgba(0,0,0,0); background: transparent; }
-}
-
-/* 這個 class 會加在「被跳到的 item」上 */
-#fav-list-container .item-list .item-div.focus-breathe{
-  animation: focusBreathe 1.2s ease both;
-  border-color: rgba(212,163,115,0.35) !important; /* 給一點點存在感但不金邊 */
 }
 
 /* ✅ 全站關閉玻璃 blur（效能救星） */
@@ -1476,15 +1327,35 @@ body,
   box-shadow: none !important;
   padding: 0 !important;
 }
-/* ✅ 正式修正：fav-top-list 置頂列夜間陰影柔和化（貼在 style 最底部） */
-html[data-theme="dark"] #fav-top-list .topmark-row{
-  box-shadow: 0 10px 24px rgba(0,0,0,0.35), 0 18px 44px rgba(0,0,0,0.25) !important;
-}
 html[data-theme="dark"] #fav-top-list .topmark-row{
   /* 上方微弱白色高光（關鍵） */
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.05),
     0 12px 24px rgba(0,0,0,0.45) !important;
+}
+/* =========================
+   收藏頁：跳轉命中細項的金色「呼吸邊框」
+   使用 outline，避免影響版面與既有 border
+========================= */
+@keyframes favBreathOutline {
+  0% {
+    outline-color: rgba(0,0,0,0);
+  }
+  40% {
+    outline-color: rgba(212,163,115,0.6); /* 比原本淡 */
+  }
+  60% {
+    outline-color: rgba(212,163,115,0.6);
+  }
+  100% {
+    outline-color: rgba(0,0,0,0);
+  }
+}
+
+#fav-list-container .item-list .item-div.jump-highlight {
+  outline: 1px solid rgba(0,0,0,0);
+  outline-offset: 2px;
+  animation: favBreathOutline 1.5s ease-in-out 1;
 }
 
 </style>
@@ -2425,22 +2296,29 @@ function jumpToFavoriteItem(favId, itemId) {
     if (!card || !itemEl) return;
 
     // 3) 若卡片是關的 → 先打開，並等待展開動畫後再 scroll
-    const wasClosed = !card.classList.contains("open");
-    if (wasClosed) {
+const wasClosed = !card.classList.contains("open");
+
+if (wasClosed) {
+    // ✅ 讓瀏覽器先畫出「收合狀態」再展開，transition 才會跑
+    requestAnimationFrame(() => {
         card.classList.add("open");
         const toggleIcon = card.querySelector(".toggle-icon");
         if (toggleIcon) toggleIcon.style.transform = "rotate(180deg)";
-    }
+    });
+}
 
     const doScrollAndFlash = () => {
         // 再保險：下一個 frame 再滾，避免高度還沒長出來
         requestAnimationFrame(() => {
             itemEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        // ⭐ 加在這裡：金色細邊框「淡入淡出」
+        itemEl.classList.remove("jump-highlight");
+        void itemEl.offsetWidth; // 強制 reflow，確保動畫每次都會重新跑
+        itemEl.classList.add("jump-highlight");
 
-    itemEl.classList.remove("focus-breathe");
-    void itemEl.offsetWidth; // 讓動畫每次都能重新播放
-    itemEl.classList.add("focus-breathe");
-    setTimeout(() => itemEl.classList.remove("focus-breathe"), 1200);
+        setTimeout(() => {
+            itemEl.classList.remove("jump-highlight");
+        }, 2500);
             });
     };
 
@@ -2448,6 +2326,8 @@ function jumpToFavoriteItem(favId, itemId) {
     if (wasClosed) setTimeout(doScrollAndFlash, 380);
     else doScrollAndFlash();
 }
+
+
 // --- 渲染收藏列表 ---
 function renderFavorites() {
     const container = document.getElementById('fav-list-container');
