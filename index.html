@@ -398,21 +398,6 @@ body,
     right: 8px;
     line-height: 1; /* 避免字體造成垂直擠壓感 */}
 /* 2) 按鈕本體：縮小存在感（透明度） */
-#themeBtn{
-  opacity: 0.72;                 /* ✅ 降低搶眼（你可微調 0.6~0.85） */
-  transition: transform 0.15s ease, opacity 0.2s ease; /* 保留輕回饋 */
-}
-
-/* hover（桌機）稍微清楚一點 */
-#themeBtn:hover{
-  opacity: 0.9;
-}
-
-/* active（手機點擊）回饋，但不放大太多 */
-#themeBtn:active{
-  transform: scale(0.9);
-  opacity: 0.95;
-}
 /* 🌙 Header 夜間背景 */
 [data-theme="dark"] .sticky-top {
     background-color: #121212 !important;
@@ -1389,27 +1374,20 @@ html[data-theme="dark"] #fav-top-list .topmark-row{
   backdrop-filter: none !important; /* 關掉玻璃透視 */
   -webkit-backdrop-filter: none !important;
 }
-/* =========================
-   Theme Toggle：壓制 Bootstrap focus / active 視覺（關鍵）
-========================= */
-
-/* 1) 移除 Bootstrap 的 focus 邊框與亮色 */
-#themeBtn:focus,
-#themeBtn:focus-visible{
-  box-shadow: none !important;
-  outline: none !important;
+#themeBtn{
+  opacity: 0.72;                 /* ✅ 降低搶眼（你可微調 0.6~0.85） */
+  transition: transform 0.15s ease, opacity 0.2s ease; /* 保留輕回饋 */
 }
 
-/* 2) active 狀態不套 Bootstrap 的實心樣式 */
-#themeBtn.btn-outline-secondary:active,
-#themeBtn.btn-outline-secondary.active{
-  background-color: transparent !important;
-  border-color: transparent !important;
+/* hover（桌機）稍微清楚一點 */
+#themeBtn:hover{
+  opacity: 0.9;
 }
 
-/* 3) icon 顏色永遠跟著你定義的 opacity，而不是 Bootstrap */
-#themeBtn i{
-  color: currentColor !important;
+/* active（手機點擊）回饋，但不放大太多 */
+#themeBtn:active{
+  transform: scale(0.9);
+  opacity: 0.95;
 }
 
 </style>
