@@ -1389,6 +1389,28 @@ html[data-theme="dark"] #fav-top-list .topmark-row{
   backdrop-filter: none !important; /* 關掉玻璃透視 */
   -webkit-backdrop-filter: none !important;
 }
+/* =========================
+   Theme Toggle：壓制 Bootstrap focus / active 視覺（關鍵）
+========================= */
+
+/* 1) 移除 Bootstrap 的 focus 邊框與亮色 */
+#themeBtn:focus,
+#themeBtn:focus-visible{
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* 2) active 狀態不套 Bootstrap 的實心樣式 */
+#themeBtn.btn-outline-secondary:active,
+#themeBtn.btn-outline-secondary.active{
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+/* 3) icon 顏色永遠跟著你定義的 opacity，而不是 Bootstrap */
+#themeBtn i{
+  color: currentColor !important;
+}
 
 </style>
 </head>
