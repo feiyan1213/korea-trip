@@ -1368,6 +1368,11 @@ html[data-theme="dark"] #fav-top-list .topmark-row{
   outline-offset: 2px;
   animation: favBreathOutline 1.5s ease-in-out 1;
 }
+[data-theme="dark"] #todayBtn{
+  background: #1e1e1e !important;   /* 用你現有的深色卡片底 */
+  backdrop-filter: none !important; /* 關掉玻璃透視 */
+  -webkit-backdrop-filter: none !important;
+}
 
 </style>
 </head>
@@ -1415,8 +1420,7 @@ html[data-theme="dark"] #fav-top-list .topmark-row{
         class="btn btn-sm btn-outline-secondary"
         onclick="toggleTheme()"
         style="font-size: 0.9rem; line-height: 1;">
-    ☾
-</div>
+    <i class="fa-solid fa-moon"></i></div>
 </button>
 
 </div>
@@ -2657,13 +2661,6 @@ function initScrollSpy() {
     sections.forEach(sec => observer.observe(sec));
 }
 function toggleTheme() {
-function updateThemeIcon(theme) {
-    const btn = document.getElementById('themeBtn');
-    if (!btn) return;
-
-    // 線條風 icon（非 emoji）
-    btn.textContent = theme === 'dark' ? '☼' : '☾';
-}
     const html = document.documentElement;
     const current = html.getAttribute('data-theme') || 'light';
     const next = current === 'dark' ? 'light' : 'dark';
@@ -2673,11 +2670,16 @@ function updateThemeIcon(theme) {
 
     updateThemeIcon(next);
 }
+
 function updateThemeIcon(theme) {
     const btn = document.getElementById('themeBtn');
     if (!btn) return;
 
-    btn.textContent = theme === 'dark' ? '☼' : '☾';
+    const isDark = theme === 'dark';
+
+    btn.innerHTML = isDark
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
 }
 // 住宿資料庫 (請根據您的實際飯店名稱與 Google Map 連結修改)
 const hotelData = {
