@@ -394,9 +394,25 @@ body,
 /* 🌙 主題切換按鈕位置 */
 .theme-toggle {
     position: absolute;
-    top: 6px;
-    right: 6px;
+    top: 8px;
+    right: 8px;
     line-height: 1; /* 避免字體造成垂直擠壓感 */}
+/* 2) 按鈕本體：縮小存在感（透明度） */
+#themeBtn{
+  opacity: 0.72;                 /* ✅ 降低搶眼（你可微調 0.6~0.85） */
+  transition: transform 0.15s ease, opacity 0.2s ease; /* 保留輕回饋 */
+}
+
+/* hover（桌機）稍微清楚一點 */
+#themeBtn:hover{
+  opacity: 0.9;
+}
+
+/* active（手機點擊）回饋，但不放大太多 */
+#themeBtn:active{
+  transform: scale(0.9);
+  opacity: 0.95;
+}
 /* 🌙 Header 夜間背景 */
 [data-theme="dark"] .sticky-top {
     background-color: #121212 !important;
