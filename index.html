@@ -1420,26 +1420,6 @@ html[data-theme="dark"] #fav-top-list .topmark-row{
   transition: transform 0.16s ease, opacity 0.2s ease, color 0.2s ease;
 }
 
-/* 桌機 hover 稍微清楚一點 */
-#themeBtn:hover{
-  opacity: 0.85;
-}
-
-/* 點擊回饋：只縮小一次，不改亮度到刺眼 */
-#themeBtn:active{
-  transform: scale(0.88);
-  opacity: 0.78;
-  box-shadow: none !important;
-}
-
-/* focus 也不准出現任何框或變亮 */
-#themeBtn:focus,
-#themeBtn:focus-visible{
-  outline: none !important;
-  box-shadow: none !important;
-  opacity: 0.62; /* ✅ 點完如果瀏覽器保留 focus，也維持低調 */
-}
-
 /* ✅ 深色模式：icon 顏色固定金色（太陽/月亮都一致） */
 [data-theme="dark"] #themeBtn{
   color: #D4A373 !important; /* 你可以只改這個色碼 */
