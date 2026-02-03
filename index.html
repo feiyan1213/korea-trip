@@ -398,6 +398,21 @@ body,
     right: 8px;
     line-height: 1; /* 避免字體造成垂直擠壓感 */}
 /* 2) 按鈕本體：縮小存在感（透明度） */
+#themeBtn{
+  opacity: 0.72;                 /* ✅ 降低搶眼（你可微調 0.6~0.85） */
+  transition: transform 0.15s ease, opacity 0.2s ease; /* 保留輕回饋 */
+}
+
+/* hover（桌機）稍微清楚一點 */
+#themeBtn:hover{
+  opacity: 0.9;
+}
+
+/* active（手機點擊）回饋，但不放大太多 */
+#themeBtn:active{
+  transform: scale(0.9);
+  opacity: 0.95;
+}
 /* 🌙 Header 夜間背景 */
 [data-theme="dark"] .sticky-top {
     background-color: #121212 !important;
@@ -514,7 +529,6 @@ body,
     font-size: 1.2rem;
     border: none !important; /* 去除邊框 */
     background: transparent !important; /* 背景透明 */
-    color: #666; /* 日間模式使用中灰色 */
     transition: transform 0.3s ease;
 }
 
@@ -1374,20 +1388,15 @@ html[data-theme="dark"] #fav-top-list .topmark-row{
   backdrop-filter: none !important; /* 關掉玻璃透視 */
   -webkit-backdrop-filter: none !important;
 }
-#themeBtn{
-  opacity: 0.72;                 /* ✅ 降低搶眼（你可微調 0.6~0.85） */
-  transition: transform 0.15s ease, opacity 0.2s ease; /* 保留輕回饋 */
+/* ✅ themeBtn：focus/active 時也維持低調，不套 bootstrap 的亮效果 */
+#themeBtn:focus,
+#themeBtn:focus-visible{
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-/* hover（桌機）稍微清楚一點 */
-#themeBtn:hover{
-  opacity: 0.9;
-}
-
-/* active（手機點擊）回饋，但不放大太多 */
 #themeBtn:active{
-  transform: scale(0.9);
-  opacity: 0.95;
+  box-shadow: none !important;
 }
 
 </style>
@@ -1433,7 +1442,7 @@ html[data-theme="dark"] #fav-top-list .topmark-row{
 
 <div class="theme-toggle">
 <button id="themeBtn"
-        class="btn btn-sm btn-outline-secondary"
+        class="btn btn-sm"
         onclick="toggleTheme()"
         style="font-size: 0.9rem; line-height: 1;">
     <i class="fa-solid fa-moon"></i></div>
@@ -2684,7 +2693,10 @@ function toggleTheme() {
     html.setAttribute('data-theme', next);
     localStorage.setItem('trip_theme', next);
 
-    updateThemeIcon(next);
+updateThemeIcon(next);
+
+const btn = document.getElementById('themeBtn');
+if (btn) btn.blur(); // ✅ 點完不要停留在 focus 狀態
 }
 
 function updateThemeIcon(theme) {
