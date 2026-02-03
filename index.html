@@ -22,9 +22,6 @@ body{
 
 h1, h2, h3{ font-weight: 600; }
 small, .text-muted{ font-weight: 500; }
-
-
-}
         .content-section { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
         .content-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -501,26 +498,6 @@ body,
     box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 /* 🌗 主題切換按鈕固定尺寸 */
-#themeBtn {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    border: none !important; /* 去除邊框 */
-    background: transparent !important; /* 背景透明 */
-    transition: transform 0.3s ease;
-}
-
-[data-theme="dark"] #themeBtn {
-    color: #D4A373; /* 夜間模式使用金棕色圖標 */
-}
-
-#themeBtn:active {
-    transform: scale(0.8); /* 點擊時的縮放反饋 */
-}    
 /* 強制行李清單標題使用主題定義的 accent 顏色 */
 #pack-list-container .text-primary {
     color: var(--accent) !important;
@@ -575,45 +552,6 @@ body,
 .time-item.open .toggle-icon {
     transform: rotate(180deg);
 }
-#todayBtn {
-    width: auto;
-    height: 20px;
-    padding: 0 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: 0.6rem;
-    font-weight: 500;
-    letter-spacing: 0.4px;
-    border-radius: 999px;
-    border: 1px solid rgba(0,0,0,0.08);
-    background: rgba(255,255,255,0.6);
-    backdrop-filter: blur(6px);
-    color: #666;
-    white-space: nowrap;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    transition: transform 0.15s ease, background 0.2s ease;
-    cursor: pointer;
-    line-height: 1.1;
-}
-
-[data-theme="dark"] #todayBtn {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.15);
-    color: #ddd;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
-}
-
-#todayBtn:active {
-    transform: scale(0.9);
-}
-/* --- 強制修正：消除夜間模式連接處亮線與陰影 --- */
-
-/* 1. 頂部標題列與下方內容連接處 */
-
-/* 2. 橫向日期導覽列 (Day Nav) */
-
 /* 3. 底部頁籤 (Bottom Nav) 與上方內容連接處 */
 [data-theme="dark"] .bottom-nav {
     background: #1a1a1a !important;
@@ -1314,11 +1252,6 @@ body,
     0 12px 28px rgba(0,0,0,0.25);
 }
 
-/* ✅ 全站關閉玻璃 blur（效能救星） */
-*, *::before, *::after{
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
 /* ✅ 收藏頁所有 bookmark 都小一點 + 往上 */
 #fav-list-container i.fa-bookmark,
 #fav-list-container i[class*="fa-bookmark"]{
@@ -1464,6 +1397,200 @@ html[data-theme="dark"] #todayBtn{
   background-color: #1e1e1e !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+/* =========================
+   Header 日夜切換動畫（保留你的版本）
+========================= */
+.sticky-top, 
+.sticky-top .p-3,
+header{
+  background-color: var(--jp-wash) !important;
+  transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
+}
+
+[data-theme="dark"] .sticky-top,
+[data-theme="dark"] .sticky-top .p-3,
+[data-theme="dark"] header{
+  background-color: #121212 !important;
+  border-bottom-color: #2a2a2a !important;
+  transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
+}
+
+body{
+  transition: background-color 0.5s ease, color 0.5s ease !important;
+}
+
+/* =========================
+   Today 膠囊（融合版，取代舊多套）
+   - 日間保留玻璃 blur
+   - 夜間實心 + 關 blur 防閃
+========================= */
+#todayBtn{
+  width: auto;
+  height: 20px;
+  padding: 0 10px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.08);
+
+  /* ✅ 統一用 background-color（不要用 background） */
+  background-color: rgba(255,255,255,0.6);
+
+  /* ✅ 日間保留玻璃感 */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  color: #666;
+  white-space: nowrap;
+
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+
+  /* ✅ 統一 transition：不要只寫 background */
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease,
+    border-color 0.5s ease,
+    box-shadow 0.5s ease,
+    transform 0.15s ease;
+
+  cursor: pointer;
+  line-height: 1.1;
+}
+
+#todayBtn:active{
+  transform: scale(0.9);
+}
+
+/* 夜間：實心 + 關 blur（你 A 解法的核心） */
+html[data-theme="dark"] #todayBtn{
+  background-color: #1e1e1e !important;
+  border-color: rgba(255,255,255,0.15) !important;
+  color: #ddd !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4) !important;
+
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* =========================
+   只在收藏 top list 區塊關 blur（取代你原本的全站關 blur）
+   - 效能有救
+   - 不影響 Today 的玻璃感
+========================= */
+#fav-top-list, 
+#fav-top-list *{
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* =========================
+   Theme button（保留你「唯一最終版」）
+========================= */
+.theme-toggle{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  line-height: 1;
+}
+
+#themeBtn{
+  width: 40px;
+  height: 40px;
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1.15rem;
+  line-height: 1;
+
+  border: none !important;
+  background: transparent !important;
+
+  opacity: 0.62;
+
+  outline: none !important;
+  box-shadow: none !important;
+
+  transition: transform 0.16s ease, opacity 0.2s ease, color 0.2s ease;
+}
+
+[data-theme="dark"] #themeBtn{
+  color: #CFA56F !important;
+  opacity: 0.72;
+}
+
+html:not([data-theme="dark"]) #themeBtn{
+  color: rgba(44,62,80,0.70);
+}
+
+#themeBtn:focus,
+#themeBtn:focus-visible,
+#themeBtn:active{
+  outline: none !important;
+  box-shadow: none !important;
+}
+/* =========================
+   時鐘區塊：加入日夜漸變（補你現在漏掉的）
+   目標：夜->日、日->夜都柔和
+========================= */
+
+/* 1) 先抓到時鐘區塊本體（你目前用的是 .sticky-top .d-flex） */
+.sticky-top .d-flex{
+  /* ✅ 日間起始色一定要存在，否則切到 dark 會像跳 */
+  background-color: rgba(255,255,255,0.85) !important;
+
+  /* ✅ 同步 header 的漸變 */
+  transition:
+    background-color 0.5s ease,
+    border-color 0.5s ease,
+    box-shadow 0.5s ease !important;
+}
+
+/* 2) 夜間狀態：你原本有寫，但補上 transition（且只用 background-color） */
+html[data-theme="dark"] .sticky-top .d-flex{
+  background-color: #1e1e1e !important;
+  border-color: #2a2a2a !important;
+
+  transition:
+    background-color 0.5s ease,
+    border-color 0.5s ease,
+    box-shadow 0.5s ease !important;
+}
+/* ✅ 修掉「日→夜」時鐘區塊白底黑邊閃爍（壓掉 bg-white / border 的瞬間套用） */
+.sticky-top .d-flex{
+  /* 背景：用 background-color 鎖死，不給 bg-white 插隊 */
+  background-color: rgba(255,255,255,0.85) !important;
+
+  /* 邊框：日間就先給一個「不黑」的顏色 + 鎖 border-style，避免瞬間變黑框 */
+  border: 1px solid rgba(0,0,0,0.10) !important;
+
+  /* 陰影（如果你有用）也一起柔和 */
+  box-shadow: none !important;
+
+  transition:
+    background-color 0.5s ease,
+    border-color 0.5s ease,
+    box-shadow 0.5s ease !important;
+
+  will-change: background-color, border-color;
+}
+
+html[data-theme="dark"] .sticky-top .d-flex{
+  background-color: #1e1e1e !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  box-shadow: none !important;
 }
 
 </style>
