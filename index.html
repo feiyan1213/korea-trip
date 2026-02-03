@@ -8,1044 +8,927 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap">
 
-    <style>
-:root { --jp-wash: #F8F9F7; --accent: #2C3E50; --highlight: #D4A373; }
+<style>
+/* =========================
+   0) Theme variables + Base
+========================= */
+:root{
+  --jp-wash:#F8F9F7;
+  --accent:#2C3E50;
+  --highlight:#D4A373;
+  --timeline-x:16px;
+}
+
+html[data-theme="dark"]{
+  --jp-wash:#121212;
+  --accent:#EAEAEA;
+  --highlight:#D4A373;
+}
 
 body{
-  background: var(--jp-wash);
-  font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
-  padding-bottom: 80px;
-  color: #333;
-  letter-spacing: 0.02em;
-  font-weight: 400;
+  background:var(--jp-wash);
+  font-family:"Noto Sans TC",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang TC","Microsoft JhengHei",sans-serif;
+  padding-bottom:80px;
+  color:#333;
+  letter-spacing:.02em;
+  font-weight:400;
+  transition:background-color .5s ease,color .5s ease;
 }
+html[data-theme="dark"] body{ color:#ddd; }
 
-h1, h2, h3{ font-weight: 600; }
-small, .text-muted{ font-weight: 500; }
-        .content-section { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
-        .content-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.card-custom {
-  background: white;
-  border-radius: 12px;
-  padding: 18px;
-  margin-bottom: 12px;
+h1,h2,h3{ font-weight:600; }
+small,.text-muted{ font-weight:500; }
 
-  border: 1px solid transparent; /* ✅ 亮色先預留 1px，避免切換上下跳 */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
+/* sections fade */
+.content-section{ display:none; padding:15px; animation:fadeIn .3s ease; }
+.content-section.active{ display:block; }
+@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
 
-        .day-label { font-size: 1.1rem; font-weight: bold; border-bottom: 2.5px solid var(--accent); display: inline-block; margin: 15px 0 10px; letter-spacing: 1px; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #EEE; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
-        .nav-item { color: #BBB; text-decoration: none; text-align: center; font-size: 0.7rem; cursor: pointer; flex: 1; }
-        .nav-item.active { color: var(--accent); font-weight: bold; }
-        .nav-item i { font-size: 1.3rem; display: block; margin-bottom: 3px; }
-        .budget-sum { background: var(--accent); color: white; border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .btn-nav { background: #333; color: white; border-radius: 50px; font-size: 0.75rem; padding: 6px 15px; text-decoration: none; display: inline-flex; align-items: center; }
-        .pack-item { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f0f0f0; padding: 8px 0; }
-        .pack-text { flex-grow: 1; margin-left: 10px; cursor: pointer; font-size: 0.95rem; }
-        .pack-text.checked { text-decoration: line-through; color: #aaa; }
-/* 橫向導覽容器 */
-.day-nav-container {
-    display: flex;
-    overflow-x: auto;
-    background: white;
-    padding: 15px 10px;
-    gap: 15px;
-    position: sticky;
-    top: 105px; /* 這裡要根據標題欄的高度做調整，大約是 100-110px */
-    z-index: 999;
-    border-bottom: 1px solid #f0f0f0;
-    -webkit-overflow-scrolling: touch;
-}
-        .day-nav-container::-webkit-scrollbar { display: none; }
-
-        /* 日期卡片基礎樣式 */
-        .day-tab {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 0 0 auto;
-            min-width: 50px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        /* 上排：星期英文 */
-        .day-tab .day-week {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            color: #ccc; /* 未選中為淺灰色 */
-            margin-bottom: 4px;
-            letter-spacing: 0.5px;
-        }
-
-        /* 下排：日期數字 */
-        .day-tab .day-num {
-            font-size: 1.2rem;
-            font-weight: 400;
-            color: #ddd; /* 未選中為淺灰色 */
-            position: relative;
-            padding-bottom: 8px;
-        }
-
-        /* 選中狀態：深色強調 */
-        .day-tab.active .day-week {
-            color: #333;
-            font-weight: bold;
-        }
-        .day-tab.active .day-num {
-            color: #000;
-            font-weight: 700;
-        }
-
-        /* 選中狀態下方的紅點 */
-        .day-tab.active .day-num::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 4px;
-            background-color: #8B0000; /* 深紅色小點 */
-            border-radius: 50%;
-        }
-/* 住宿資訊固定框 */
-/* 住宿資訊固定框 */
-.accommodation-bar {
-    position: fixed;
-    bottom: 65px; 
-    left: 15px;
-    right: 15px;
-    background: white;
-    padding: 12px 18px;
-    border-radius: 12px;
-    box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
-    z-index: 998;
-    display: none; 
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #eee;
-}
-
-[data-theme="dark"] .accommodation-bar {
-    background: #1e1e1e;
-    border-color: #333;
-}
-
-/* 核心修正：地圖按鈕樣式 */
-.accommodation-bar .btn-map {
-    background-color: #2C3E50 !important; /* 強制使用您的主題深藍色 */
-    color: #ffffff !important;           /* 強制文字為白色，防止變成藍色字 */
-    border-radius: 20px;
-    font-size: 0.75rem;
-    padding: 6px 15px;
-    text-decoration: none !important;    /* 移除底線 */
-    border: 1px solid #3d5166 !important;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-}
-
-/* 點擊效果：與全站按鈕一致 */
-.accommodation-bar .btn-map:active {
-    transform: translateY(1px) scale(0.95);
-    background-color: #1a252f !important; /* 點擊時變深 */
-    opacity: 0.9;
-}
-
-/* 夜間模式下的微調 */
-[data-theme="dark"] .accommodation-bar .btn-map {
-    background-color: #2C3E50 !important;
-    border-color: #455a64 !important;
-}
-/* --- 1. 行程內容顯示控制 --- */
-.day-content { display: none; animation: fadeIn 0.4s ease; }
-.day-content.active { display: block; }
-/* 🌟 時間軸淡入動畫（取代原本 time-item 設定） */
-/* 🌟 時間軸共用基準線（不要改這個值） */
-:root {
-    --timeline-x: 16px;
-}
-.time-item {
-    position: relative;
-    padding-left: 32px;
-    padding-top: 12px;
-    padding-bottom: 24px;
-
-    opacity: 0;
-    transform: translateY(6px);
-    animation: timelineFade 0.6s ease forwards;
-}
-
-/* 🌟 用偽元素畫線（關鍵） */
-.time-item::before {
-    content: '';
-    position: absolute;
-    left: 15px;   /* ⭐ 關鍵 */
-    top: 12px;
-    bottom: -24px;              /* ⭐ 改成不是 0 */
-    width: 2px;
-    background-color: #ddd;
-}
-/* 每一筆稍微錯開出現 */
-.time-item:nth-child(1) { animation-delay: 0.05s; }
-.time-item:nth-child(2) { animation-delay: 0.15s; }
-.time-item:nth-child(3) { animation-delay: 0.25s; }
-.time-item:nth-child(4) { animation-delay: 0.35s; }
-
-/* 圓點同步動畫 */
-.time-node {
-    position: absolute;
-    left: calc(var(--timeline-x) - 6px);
-    top: 12px;
-    width: 12px;
-    height: 12px;
-    background-color: var(--accent);
-    border-radius: 50%;
-    border: 2px solid var(--jp-wash);
-
-    transform: scale(0.6);
-    opacity: 0;
-    animation: nodePop 0.4s ease forwards;
-    animation-delay: inherit;
-}
-
-/* 最後一筆不畫線 */
-.time-item:last-child::before {
-    display: none;
-}
-
-/* 動畫關鍵影格 */
-@keyframes timelineFade {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes nodePop {
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-/* 夜間模式適配 */
-[data-theme="dark"] .time-item::before {
-    background-color: #444;
-}
-[data-theme="dark"] .time-node { 
-    background-color: var(--highlight) !important; 
-    border-color: #1e1e1e; 
-}
-/* 同步中心卡片樣式 */
-        .sync-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border: 1px dashed #D4A373; /* 使用你定義的亮色作為邊框 */
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        .btn-sync {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            width: 100%;
-            border: none;
-        }
-        .btn-export {
-            background-color: #2C3E50; /* 使用你的 accent 色 */
-            color: white;
-            margin-bottom: 10px;
-        }
-        .btn-import {
-            background-color: white;
-            color: #2C3E50;
-            border: 1px solid #2C3E50;
-        }
-        .btn-sync:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-.day-content .text-primary {
-    color: #2C3E50 !important; /* <--- 您可以把 #2C3E50 改成任何您想要的深色 */
-}
-[data-theme="dark"] .day-content .text-primary {
-    color: #D4A373 !important; /* <--- 您可以把 #D4A373 改成任何您想要的淺色或金棕色 */
-}
-[data-theme="dark"] {
-    --jp-wash: #121212 !important;
-    --accent: #EAEAEA;
-    --highlight: #D4A373;
-}
-
-[data-theme="dark"] body {
-    color: #ddd;
-}
-
-[data-theme="dark"] .card-custom,
-[data-theme="dark"] .accommodation-bar,
-[data-theme="dark"] .sync-card,
-[data-theme="dark"] .list-group-item {
-    background-color: #1e1e1e !important;
-    border: 1px solid #2a2a2a !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
-}
-
-/* 修正導覽列與標題 */
-[data-theme="dark"] .bottom-nav,
-[data-theme="dark"] .day-nav-container {
-    background: #1a1a1a !important;
-    border-bottom: 1px solid #2a2a2a !important;
-    box-shadow: none !important;
-}
-
-/* 修正文字顏色 */
-[data-theme="dark"] .text-primary {
-    color: var(--highlight) !important; /* 將原本的藍色標題改為金棕色，更配夜間模式 */
-}
-
-[data-theme="dark"] .text-muted {
-    color: #aaa !important;
-}
-
-[data-theme="dark"] .budget-sum {
-    background: #252525; /* 改為深灰色背景 */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4); /* 加強陰影深度 */
-    border: 1px solid #333; /* 增加微弱邊框區隔 */
-}
-
-[data-theme="dark"] .day-tab .day-week,
-[data-theme="dark"] .day-tab .day-num {
-    color: #777;
-}
-
-[data-theme="dark"] .day-tab.active .day-week,
-[data-theme="dark"] .day-tab.active .day-num {
-    color: #fff;
-}
-/* 🌙 夜間模式：所有按鈕全狀態統一 */
-
-/* A. 平時的狀態：統一為深藍色 */
-[data-theme="dark"] .btn-dark, 
-[data-theme="dark"] .btn-primary,
-[data-theme="dark"] .btn-sync,
-[data-theme="dark"] .btn-export,
-[data-theme="dark"] .btn-import,
-[data-theme="dark"] .btn-outline-primary,
-[data-theme="dark"] .btn-outline-dark,
-[data-theme="dark"] .btn-info {
-    background-color: #2C3E50 !important;
-    color: #ffffff !important;
-    border: 1px solid #455a64 !important;
-    transition: all 0.2s ease !important; /* 讓變色平滑 */
-}
-
-/* B. 懸停 (Hover) 與 點擊 (Active) 的狀態：統一變深 */
-[data-theme="dark"] .btn-dark:hover, [data-theme="dark"] .btn-dark:active,
-[data-theme="dark"] .btn-primary:hover, [data-theme="dark"] .btn-primary:active,
-[data-theme="dark"] .btn-sync:hover, [data-theme="dark"] .btn-sync:active,
-[data-theme="dark"] .btn-export:hover, [data-theme="dark"] .btn-export:active,
-[data-theme="dark"] .btn-import:hover, [data-theme="dark"] .btn-import:active,
-[data-theme="dark"] .btn-outline-primary:hover, [data-theme="dark"] .btn-outline-primary:active,
-[data-theme="dark"] .btn-outline-dark:hover, [data-theme="dark"] .btn-outline-dark:active,
-[data-theme="dark"] .btn-info:hover, [data-theme="dark"] .btn-info:active {
-    background-color: #1a252f !important; /* 點擊時變成更深的藍黑色 */
-
-    color: #ffffff !important;
-    transform: translateY(1px); /* 輕微下沈感，模擬真實按鈕 */
-}
-/* 🌙 夜間模式切換動畫 */
-body,
+/* =========================
+   1) Header / Sticky / Clock area (smooth day<->night)
+   - 你已完成時鐘漸變，這裡保留「唯一版」避免互打
+========================= */
 .sticky-top,
-.card,
-.bg-white {
-    transition: 
-        background-color 0.5s ease,
-        color 0.5s ease,
-        border-color 0.5s ease;
+.sticky-top .p-3,
+header{
+  background-color:var(--jp-wash) !important;
+  transition:background-color .5s ease,border-color .5s ease,box-shadow .5s ease !important;
 }
-/* 🌙 標題夜間模式 */
-[data-theme="dark"] .trip-title {
-    color: #f1f3f5;
-}
-
-[data-theme="dark"] .trip-subtitle {
-    color: #adb5bd;
-}
-/* 🌙 主題切換按鈕位置 */
-.theme-toggle {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    line-height: 1; /* 避免字體造成垂直擠壓感 */}
-
-/* active（手機點擊）回饋，但不放大太多 */
-#themeBtn:active{
-  transform: scale(0.9);
-  opacity: 0.95;
-}
-/* 🌙 Header 夜間背景 */
-[data-theme="dark"] .sticky-top {
-    background-color: #121212 !important;
-    border-bottom: 1px solid #2a2a2a !important; /* 將原本可能的白線改為極深灰 */
-    box-shadow: none !important;
-}
-[data-theme="dark"] .sticky-top .p-3 {
-    background-color: #121212 !important;
-}
-/* 🌙 夜間模式－時鐘顏色 */
-[data-theme="dark"] #tw-time {
-    color: #999 !important;  /* 你日間用的淺灰色 */
+html[data-theme="dark"] .sticky-top,
+html[data-theme="dark"] .sticky-top .p-3,
+html[data-theme="dark"] header{
+  background-color:#121212 !important;
+  border-bottom-color:#2a2a2a !important;
+  transition:background-color .5s ease,border-color .5s ease,box-shadow .5s ease !important;
 }
 
-/* 夜間模式：歐洲時間保留白色或冷色對比 */
-[data-theme="dark"] #eu-time {
-    color: #f1f3f5 !important;
+.sticky-top{ min-height:105px; }
+
+/* Clock block (你用 .sticky-top .d-flex 當時鐘區塊) */
+.sticky-top .d-flex{
+  background-color:rgba(255,255,255,.85) !important;
+  border:1px solid rgba(0,0,0,.10) !important;
+  box-shadow:none !important;
+  transition:background-color .5s ease,border-color .5s ease,box-shadow .5s ease !important;
+  will-change:background-color,border-color;
 }
-[data-theme="dark"] #tw-date-label,
-[data-theme="dark"] #eu-date-label {
-    color: #adb5bd !important;
+html[data-theme="dark"] .sticky-top .d-flex{
+  background-color:#1e1e1e !important;
+  border-color:rgba(255,255,255,.12) !important;
+  box-shadow:none !important;
 }
 
-[data-theme="dark"] .sticky-top small {
-    color: #adb5bd !important;
-}
-/* 🌙 夜間模式－時鐘背景 */
-[data-theme="dark"] .sticky-top .d-flex {
-    background-color: #1e1e1e !important;
-    border: 1px solid #2a2a2a;
-}
-/* 🌙 夜間模式－隊友同步中心卡片 */
-[data-theme="dark"] .sync-card {
-    background: #1e1e1e;           /* 改為深色背景 */
-    border: 1px dashed #444;       /* 邊框顏色調深 */
-    color: #ddd;
-}
-
-[data-theme="dark"] .btn-import {
-    background-color: #2c2c2c;     /* 匯入按鈕背景變深 */
-    color: #EAEAEA;                /* 文字變亮 */
-    border-color: #555;
-}
-/* 🌙 夜間模式－輸入框與下拉選單 */
-[data-theme="dark"] .form-control, 
-[data-theme="dark"] .form-select,
-[data-theme="dark"] .input-group-text {
-    background-color: #2c2c2c !important; /* 深灰色背景 */
-    border-color: #444 !important;        /* 深色邊框 */
-    color: #eee !important;               /* 亮色文字 */
-}
-
-/* 修正輸入框內的 placeholder (提示文字) 顏色 */
-[data-theme="dark"] .form-control::placeholder {
-    color: #777 !important;
-}
-
-/* 修正行李清單的新增類別按鈕邊框 */
-[data-theme="dark"] .input-group .btn-dark {
-    border: 1px solid #444;
-}
-/* 🌙 夜間模式－記帳總額卡片 */
-[data-theme="dark"] .budget-sum {
-    background: #1a252f;           /* 深藍黑色 */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-/* 🌙 夜間模式－所有按鈕統一為深藍色系 */
-[data-theme="dark"] .btn-dark, 
-[data-theme="dark"] .btn-primary,
-[data-theme="dark"] .btn-outline-dark,
-[data-theme="dark"] .btn-outline-secondary,
-[data-theme="dark"] .btn-export,
-[data-theme="dark"] .btn-import,
-[data-theme="dark"] .btn-sync {
-    background-color: #2C3E50 !important; /* 原本「記錄這筆支出」的深藍色 */
-    color: #ffffff !important;
-    border: 1px solid #3d5166 !important;
-}
-
-/* 按鈕點擊時的微調 */
-[data-theme="dark"] .btn:active {
-    background-color: #1a252f !important;
-}
-/* 🌙 夜間模式－輸入框與下拉選單深色化 */
-[data-theme="dark"] .form-control, 
-[data-theme="dark"] .form-select {
-    background-color: #252525 !important;
-    border-color: #444 !important;
-    color: #eeeeee !important;
-}
-
-/* 修正輸入框內的提示文字顏色 */
-[data-theme="dark"] .form-control::placeholder {
-    color: #777 !important;
-}
-/* 🌙 夜間模式－區塊背景深色化 */
-[data-theme="dark"] .sync-card {
-    background: #1e1e1e !important;
-    border: 1px dashed #2C3E50 !important; /* 邊框也用深藍色 */
-}
-
-[data-theme="dark"] .budget-sum {
-    background: #1a252f !important; /* 支出總額改為更深一點的藍黑色 */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-/* 🌗 主題切換按鈕固定尺寸 */
-/* 強制行李清單標題使用主題定義的 accent 顏色 */
-#pack-list-container .text-primary {
-    color: var(--accent) !important;
-}
-
-/* 確保夜間模式下也同步跟隨主題色 */
-[data-theme="dark"] #pack-list-container .text-primary {
-    color: var(--highlight) !important;
-}
-/* 行程標題列（可點擊） */
-.time-header {
-    display: inline-flex;          /* ⭐ 關鍵 */
-    align-items: center;
-    gap: 6px;                      /* 文字與箭頭距離 */
-    cursor: pointer;
-    user-select: none;
-}
-/* 下拉箭頭 */
-.toggle-icon {
-    font-size: 0.9rem;
-    color: #999;
-    transition: transform 0.3s ease;
-}
-
-/* 細節內容（預設收合） */
-
-.card-custom.open .item-list {
-    max-height: 0;
-    transform: scaleY(1);
-    opacity: 1;
-}
-/* 展開狀態 */
-/* 行程頁：細節預設收合 */
-.time-detail {
-    max-height: 0px;
-    transform: scaleY(0);
-    transform-origin: top;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 0.35s ease, transform 0.35s ease, opacity 0.35s ease;
-}
-
-/* 行程頁：展開 */
-.time-item.open .time-detail {
-    max-height: 500px;
-    transform: scaleY(1);
-    opacity: 1;
-
-}
-
-/* 箭頭旋轉 */
-.time-item.open .toggle-icon {
-    transform: rotate(180deg);
-}
-/* 3. 底部頁籤 (Bottom Nav) 與上方內容連接處 */
-[data-theme="dark"] .bottom-nav {
-    background: #1a1a1a !important;
-    border-top: 1px solid #2a2a2a !important; /* 消除底部上方的亮線 */
-    box-shadow: 0 -1px 10px rgba(0,0,0,0.5) !important; /* 改為深色陰影 */
-}
-
-/* 4. 卡片元件 (Card) 的邊框與連接處 */
-
-/* 5. 行李清單與其他連接處線條 */
-[data-theme="dark"] .pack-item {
-    border-bottom: 1px solid #2a2a2a !important;
-}
-
-/* 6. 修正 body 確保背景顏色一致，避免滑動時邊緣露白 */
-/* icon 按鈕統一樣式 */
-.icon-btn {
-    padding: 2px 6px;
-    border-radius: 6px;
-    line-height: 0;
-    opacity: 0.6;
-}
-
-.icon-btn:hover {
-    opacity: 0;
-    background-color: rgba(0,0,0,0);
-}
-
-.fav-btn-group {
-    opacity: 1;
-    transition: opacity 0.2s ease;
-}
-.fav-icon:not(.text-danger) i {
-    color: #999;           /* 你想要的顏色 */
-    font-size: 0.9rem;
-    transition: color 0.3s ease, transform 0.3s ease;
-}
-/* 收藏卡片展開按鈕箭頭顏色 + 大小 */
-.fav-icon.toggle-icon i {
-    color: #999;                 /* 日夜模式都可見 */
-    font-size: 0.9rem;
-    transition: transform 0.3s ease, color 0.3s ease;
-}
-
-/* hover 效果 */
-.fav-icon.toggle-icon:hover i {
-    color: #555;
-}
-
-/* 收藏頁：細項預設收合 */
-.card-custom .item-list { 
-    max-height: 0;
-    transform: scaleY(0);
-    transform-origin: top;
-    opacity: 0;
-    overflow: hidden;
-    transition:
-        max-height 0.35s ease,
-        transform 0.35s ease,
-        opacity 0.35s ease;
-}
-/* 收藏頁：展開 */
-.card-custom.open .item-list {
-    max-height: 1000px;   /* 一定要比內容大 */
-    transform: scaleY(1);
-    opacity: 1;
-    overflow: visible;
-    transition:
-        max-height 0.35s ease,
-        transform 0.35s ease,
-        opacity 0.35s ease;
-}
-/* 展開時箭頭旋轉 */
-.card-custom.open .fav-icon.toggle-icon i {
-    transform: rotate(180deg);
-}
-/* ===== 大標題主文字 ===== */
-.fav-title-text {
-  font-weight: 700;
-  font-size: 1.05rem; /* 比原本大一點 */
-  line-height: 1.3;
-}
-
-/* ===== 分類膠囊（亮色模式） ===== */
-.fav-title-badge {
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 2px 8px;
-  margin-left: 6px;        /* ← 拉開與標題距離 */
-  border-radius: 999px;
-  background-color: #f8f9fa; /* 更淡 */
-  color: #868e96;            /* 灰階降低存在感 */
-  border: 1px solid #e9ecef; /* 用邊框取代實色 */
-  line-height: 1.4;
-}
-
-/* ===== 深色模式（配合 data-theme="dark"） ===== */
-[data-theme="dark"] .fav-title-text {
-  color: #e9ecef;
-}
-
-/* 深色模式－分類膠囊（提高一點對比，但仍低調） */
-[data-theme="dark"] .fav-title-badge {
-  background-color: #2a3440;   /* 比背景亮一階的藍灰 */
-  color: #ced4da;              /* 淡灰白文字 */
-  border: 1px solid #3a4653;   /* 柔和邊框 */
-}
-/* ---------------------- */
-/* 細項卡片 - 全局樣式 */
-/* ---------------------- */
-.item-list .item-div {
-    border-radius: 8px;                /* 圓角柔和 */
-    border: 1px solid #e0e0e0;         /* 淺灰邊框 */
-    padding: 8px 12px;                 /* 內距 */
-    margin-bottom: 6px;                /* 行間距 */
-    background-color: #ffffff;         /* 白色背景 */
-    transition: background 0.3s, box-shadow 0.3s; /* hover柔化 */
-}
-
-/* hover 提升感 */
-.item-list .item-div:hover {
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    background-color: #f9f9f9;
-}
-
-/* 內部文字小標題 / 連結 */
-.item-list .item-div .item-link {
-    color: #0d6efd;
-    text-decoration: none;
-}
-.item-list .item-div .item-link:hover {
-    text-decoration: underline;
-}
-
-/* ---------------------- */
-/* 深色模式細項卡片 */
-/* ---------------------- */
-[data-theme="dark"] .item-list .item-div {
-    border: 1px solid #3a4a56; /* 淡白邊框 */
-    background-color: #1f2a35;                 /* 輕微分層背景 */
-}
-
-[data-theme="dark"] .item-list .item-div:hover {
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);    /* 深色模式輕微浮起 */
-    background-color: #242f3a;                 /* hover微亮 */
-}
-
-
-/* --- 收藏頁連結按鈕化 --- */
-/* --- 更加精緻小巧的膠囊標籤 --- */
-#fav-list-container a.item-link {
-    display: inline-block !important;
-    color: var(--highlight) !important;
-    background: rgba(212, 163, 115, 0.1) !important;
-    text-decoration: none !important;
-    font-weight: 500 !important;
-    
-    /* 調整重點：更小的字體與更緊湊的內距 */
-    font-size: 0.75rem !important; 
-    padding: 1px 10px !important; 
-    
-    /* 調整重點：全圓角（膠囊狀） */
-    border-radius: 50px !important; 
-    
-    margin-top: 2px !important;
-    margin-right: 5px !important;
-    margin-bottom: 8px !important; /* 這是關鍵：距離下方備註的距離 */
-    border: 1px solid rgba(212, 163, 115, 0.2) !important;
-    transition: all 0.2s ease;
-}
-
-#fav-list-container a.item-link:hover {
-    background: var(--highlight) !important;
-    color: white !important;
-    transform: scale(1.05); /* 縮放微互動 */
-}
-/* =========================
-   收藏頁－新增地點（次要動作）
-========================= */
-/* 新增地點：工具列小＋ */
-#fav-list-container .item-list .btn-outline-primary {
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    border-radius: 8px;
-    font-size: 1.1rem;
-
-    background: transparent;
-    border: 1px dashed rgba(44,62,80,0.25);
-    color: rgba(44,62,80,0.85);
-}
-
-/* Dark */
-[data-theme="dark"] #fav-list-container .item-list .btn-outline-primary {
-    border-color: rgba(255,255,255,0.25);
-    color: rgba(255,255,255,0.85);
-}
-/* =========================
-   收藏頁－新增收藏（主要動作）
-========================= */
-
-/* 收藏頁 header icon 統一成「手機友善」點擊區 */
-#fav-list-container .fav-btn-group .fav-icon{
-  width: 34px;
-  height: 34px;
-  padding: 0 !important;
-  border: none !important;
-  background: transparent !important;
-  border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.12s ease, background 0.15s ease, opacity 0.15s ease;
-}
-
-/* icon 本體 */
-#fav-list-container .fav-btn-group .fav-icon i{
-  font-size: 0.95rem;
-  color: rgba(44,62,80,0.65);
-}
-
-/* 手機：點一下的回饋（比 hover 重要） */
-#fav-list-container .fav-btn-group .fav-icon:active{
-  transform: scale(0.90);
-  background: rgba(44,62,80,0.10) !important;
-}
-
-/* 鍵盤使用者（桌機） */
-#fav-list-container .fav-btn-group .fav-icon:focus-visible{
-  outline: 2px solid rgba(44,62,80,0.25);
-  outline-offset: 2px;
-}
-
-/* ➕ 新增地點 icon：略微強調，但仍低調 */
-#fav-list-container .fav-btn-group .fav-add-icon i{
-  color: rgba(44,62,80,0.80);
-}
-
-/* 深色模式 */
-[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon i{
-  color: rgba(230,235,240,0.75);
-}
-[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon:active{
-  background: rgba(255,255,255,0.10) !important;
-}
-/* 刪除 icon：低調危險提示 */
-#fav-list-container .fav-btn-group .fav-icon.text-danger i {
-  color: rgba(200, 70, 70, 0.75); /* 灰紅，不刺眼 */
-}
-
-/* 點擊回饋（手機最重要） */
-#fav-list-container .fav-btn-group .fav-icon.text-danger:active {
-  background: rgba(200, 70, 70, 0.18) !important;
-  transform: scale(0.9);
-}
-
-/* 深色模式 */
-[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon.text-danger i {
-  color: rgba(240, 120, 120, 0.85);
-}
-[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon.text-danger:active {
-  background: rgba(240, 120, 120, 0.22) !important;
-}
-/* =========================
-   行李頁－刪除 icon（低調紅，與收藏頁一致）
-========================= */
-
-/* 亮色模式 */
-#pack-list-container .text-danger i,
-#pack-list-container .text-danger {
-  color: rgba(200, 70, 70, 0.75) !important;
-}
-
-/* 手機點擊回饋 */
-#pack-list-container .text-danger:active {
-  background: rgba(200, 70, 70, 0.18) !important;
-  transform: scale(0.9);
-  border-radius: 10px;
-}
-
-/* 深色模式 */
-[data-theme="dark"]
-#pack-list-container .text-danger i,
-[data-theme="dark"]
-#pack-list-container .text-danger {
-  color: rgba(240, 120, 120, 0.85) !important;
-}
-
-[data-theme="dark"]
-#pack-list-container .text-danger:active {
-  background: rgba(240, 120, 120, 0.22) !important;
-}
-.nav-item,
-.day-tab .day-week,
-.day-tab .day-num {
-  font-weight: 500 !important;
-}
-.sticky-top {
-  min-height: 105px;
-}
-.content-section { 
-  display: none; 
-  padding: 15px; 
-  animation: fadeIn 0.3s ease; 
-}
-.content-section.active { 
-  display: block; 
-}
-/* =========================
-   收藏頁－新增收藏按鈕：跟行李頁新增類別同風格
-   （放在 style 最後面）
-========================= */
+/* Clock text in dark */
+html[data-theme="dark"] #tw-time{ color:#999 !important; }
+html[data-theme="dark"] #eu-time{ color:#f1f3f5 !important; }
+html[data-theme="dark"] #tw-date-label,
+html[data-theme="dark"] #eu-date-label,
+html[data-theme="dark"] .sticky-top small{ color:#adb5bd !important; }
 
 /* =========================
-   收藏頁－新增收藏按鈕：乾淨一致，但保留主色（主要動作）
+   2) Theme button (唯一最終版)
 ========================= */
+.theme-toggle{
+  position:absolute;
+  top:8px;
+  right:8px;
+  z-index:10;
+  line-height:1;
+}
+#themeBtn{
+  width:40px; height:40px; padding:0;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:1.15rem; line-height:1;
+  border:none !important;
+  background:transparent !important;
+  opacity:.62;
+  outline:none !important;
+  box-shadow:none !important;
+  transition:transform .16s ease,opacity .2s ease,color .2s ease;
+}
+html[data-theme="dark"] #themeBtn{
+  color:#CFA56F !important;
+  opacity:.72;
+}
+html:not([data-theme="dark"]) #themeBtn{ color:rgba(44,62,80,.70); }
+#themeBtn:focus,
+#themeBtn:focus-visible,
+#themeBtn:active{ outline:none !important; box-shadow:none !important; }
+#themeBtn:active{ transform:scale(.9); opacity:.95; }
 
-#fav-add-btn,
-#fav-list-container ~ .btn-primary,
-#fav-list-container + .btn-primary{
-  background: rgba(44,62,80,0.95) !important;
-  color: #fff !important;
-  border: 1px solid rgba(44,62,80,0.10) !important;
-  border-radius: 6px !important;
-  box-shadow: 0 10px 22px rgba(0,0,0,0.12) !important;
-  font-weight: 500 !important;
+/* =========================
+   3) Today pill (日玻璃 / 夜實心防閃)
+========================= */
+#todayBtn{
+  width:auto; height:20px; padding:0 10px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:.6rem; font-weight:500; letter-spacing:.4px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.08);
+  background-color:rgba(255,255,255,.6);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  color:#666;
+  white-space:nowrap;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
+  transition:background-color .5s ease,color .5s ease,border-color .5s ease,box-shadow .5s ease,transform .15s ease;
+  cursor:pointer;
+  line-height:1.1;
+}
+#todayBtn:active{ transform:scale(.9); }
+
+html[data-theme="dark"] #todayBtn{
+  background-color:#1e1e1e !important;
+  border-color:rgba(255,255,255,.15) !important;
+  color:#ddd !important;
+  box-shadow:0 1px 4px rgba(0,0,0,.4) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
 }
 
-#fav-add-btn:active,
-#fav-list-container ~ .btn-primary:active,
-#fav-list-container + .btn-primary:active{
-  transform: scale(0.98);
-  background: rgba(26,37,47,0.95) !important;
-}
-
-[data-theme="dark"] #fav-add-btn,
-[data-theme="dark"] #fav-list-container ~ .btn-primary,
-[data-theme="dark"] #fav-list-container + .btn-primary{
-  background: rgba(44,62,80,0.92) !important;
-  border-color: rgba(255,255,255,0.12) !important;
+/* 只關收藏 top list blur，避免你之前全站關 blur */
+#fav-top-list,
+#fav-top-list *{
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
 }
 
 /* =========================
-   收藏頁頂端標記區－連結樣式修正
-   只影響 #fav-top-list
+   4) Cards / Lists common
 ========================= */
-
-#fav-top-list .topmark-links a{
-  display: inline-flex;
-  align-items: center;
-
-  font-size: 0.75rem;
-  font-weight: 500;
-
-  padding: 2px 10px;
-  border-radius: 999px;
-
-  /* 關鍵：拿掉藍色連結感 */
-  color: rgba(44,62,80,0.85) !important;
-  background: rgba(44,62,80,0.08) !important;
-  border: 1px solid rgba(44,62,80,0.18);
-
-  text-decoration: none !important;
-  transition: all 0.18s ease;
+.card-custom{
+  background:#fff;
+  border-radius:12px;
+  padding:18px;
+  margin-bottom:12px;
+  border:1px solid transparent; /* 防切換跳動 */
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+html[data-theme="dark"] .card-custom,
+html[data-theme="dark"] .accommodation-bar,
+html[data-theme="dark"] .sync-card,
+html[data-theme="dark"] .list-group-item{
+  background-color:#1e1e1e !important;
+  border:1px solid #2a2a2a !important;
+  box-shadow:0 2px 8px rgba(0,0,0,.4) !important;
 }
 
-/* hover / 點擊 */
-#fav-top-list .topmark-links a:hover{
-  background: rgba(44,62,80,0.16);
-  color: rgba(44,62,80,1) !important;
-}
-
-#fav-top-list .topmark-links a:active{
-  transform: scale(0.96);
-}
-
-/* 深色模式 */
-[data-theme="dark"] #fav-top-list .topmark-links a{
-  color: rgba(230,235,240,0.85) !important;
-  background: rgba(255,255,255,0.10) !important;
-  border-color: rgba(255,255,255,0.20);
-}
-
-[data-theme="dark"] #fav-top-list .topmark-links a:hover{
-  background: rgba(255,255,255,0.18);
-}
-/* =========================
-   fav-top-list 高亮區（簡約一行提示列）
-   放在 style 最底部
-========================= */
-
-#fav-top-list{ 
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-
-/* 一行提示列 */
-#fav-top-list .topmark-row{
+.pack-item{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
+  border-bottom:1px solid #f0f0f0;
+  padding:8px 0;
+}
+.pack-text{ flex-grow:1; margin-left:10px; cursor:pointer; font-size:.95rem; }
+.pack-text.checked{ text-decoration:line-through; color:#aaa; }
+html[data-theme="dark"] .pack-item{ border-bottom:1px solid #2a2a2a !important; }
 
-  padding:6px 8px;
-  margin:0;
-
-  background: transparent;
-  border-left: 3px solid rgba(212,163,115,0.65);
-  border-radius: 8px;
-
-  box-shadow:none;
-  backdrop-filter:none;
-
+/* =========================
+   5) Bottom nav + Day nav
+========================= */
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#fff;
+  border-top:1px solid #EEE;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  z-index:1000;
+}
+.nav-item{
+  color:#BBB;
+  text-decoration:none;
+  text-align:center;
+  font-size:.7rem;
   cursor:pointer;
-  transition: background 0.15s ease;
+  flex:1;
+  font-weight:500 !important;
+}
+.nav-item.active{ color:var(--accent); font-weight:700; }
+.nav-item i{ font-size:1.3rem; display:block; margin-bottom:3px; }
+
+.day-nav-container{
+  display:flex;
+  overflow-x:auto;
+  background:#fff;
+  padding:15px 10px;
+  gap:15px;
+  position:sticky;
+  top:105px;
+  z-index:999;
+  border-bottom:1px solid #f0f0f0;
+  -webkit-overflow-scrolling:touch;
+}
+.day-nav-container::-webkit-scrollbar{ display:none; }
+
+.day-tab{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  flex:0 0 auto;
+  min-width:50px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.day-tab .day-week{
+  font-size:.65rem;
+  text-transform:uppercase;
+  color:#ccc;
+  margin-bottom:4px;
+  letter-spacing:.5px;
+  font-weight:500 !important;
+}
+.day-tab .day-num{
+  font-size:1.2rem;
+  font-weight:400;
+  color:#ddd;
+  position:relative;
+  padding-bottom:8px;
+  font-weight:500 !important;
+}
+.day-tab.active .day-week{ color:#333; font-weight:700; }
+.day-tab.active .day-num{ color:#000; font-weight:700; }
+.day-tab.active .day-num::after{
+  content:'';
+  position:absolute;
+  bottom:0; left:50%;
+  transform:translateX(-50%);
+  width:4px; height:4px;
+  background-color:#8B0000;
+  border-radius:50%;
 }
 
+html[data-theme="dark"] .bottom-nav{
+  background:#1a1a1a !important;
+  border-top:1px solid #2a2a2a !important;
+  box-shadow:0 -1px 10px rgba(0,0,0,.5) !important;
+}
+html[data-theme="dark"] .day-nav-container{
+  background:#1a1a1a !important;
+  border-bottom:1px solid #2a2a2a !important;
+  box-shadow:none !important;
+}
+html[data-theme="dark"] .day-tab .day-week,
+html[data-theme="dark"] .day-tab .day-num{ color:#777; }
+html[data-theme="dark"] .day-tab.active .day-week,
+html[data-theme="dark"] .day-tab.active .day-num{ color:#fff; }
+
+/* =========================
+   6) Budget + buttons + forms (dark unify)
+========================= */
+.budget-sum{
+  background:var(--accent);
+  color:#fff;
+  border-radius:15px;
+  padding:25px;
+  text-align:center;
+  margin-bottom:20px;
+  box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+html[data-theme="dark"] .budget-sum{
+  background:#1a252f !important;
+  box-shadow:0 4px 15px rgba(0,0,0,.5);
+}
+
+/* Dark buttons unify */
+html[data-theme="dark"] .btn-dark,
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] .btn-outline-dark,
+html[data-theme="dark"] .btn-outline-secondary,
+html[data-theme="dark"] .btn-outline-primary,
+html[data-theme="dark"] .btn-info,
+html[data-theme="dark"] .btn-export,
+html[data-theme="dark"] .btn-import,
+html[data-theme="dark"] .btn-sync{
+  background-color:#2C3E50 !important;
+  color:#fff !important;
+  border:1px solid #455a64 !important;
+  transition:background-color .2s ease,transform .12s ease !important;
+}
+html[data-theme="dark"] .btn-dark:hover,
+html[data-theme="dark"] .btn-primary:hover,
+html[data-theme="dark"] .btn-outline-dark:hover,
+html[data-theme="dark"] .btn-outline-secondary:hover,
+html[data-theme="dark"] .btn-outline-primary:hover,
+html[data-theme="dark"] .btn-info:hover,
+html[data-theme="dark"] .btn-export:hover,
+html[data-theme="dark"] .btn-import:hover,
+html[data-theme="dark"] .btn-sync:hover{
+  background-color:#1a252f !important;
+}
+html[data-theme="dark"] .btn-dark:active,
+html[data-theme="dark"] .btn-primary:active,
+html[data-theme="dark"] .btn-outline-dark:active,
+html[data-theme="dark"] .btn-outline-secondary:active,
+html[data-theme="dark"] .btn-outline-primary:active,
+html[data-theme="dark"] .btn-info:active,
+html[data-theme="dark"] .btn-export:active,
+html[data-theme="dark"] .btn-import:active,
+html[data-theme="dark"] .btn-sync:active{
+  background-color:#1a252f !important;
+  transform:scale(.98);
+}
+
+/* forms in dark */
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select,
+html[data-theme="dark"] .input-group-text{
+  background-color:#252525 !important;
+  border-color:#444 !important;
+  color:#eee !important;
+}
+html[data-theme="dark"] .form-control::placeholder{ color:#777 !important; }
+html[data-theme="dark"] .input-group .btn-dark{ border:1px solid #444; }
+
+/* =========================
+   7) Day content + timeline
+========================= */
+.day-content{ display:none; animation:fadeIn .4s ease; }
+.day-content.active{ display:block; }
+
+.day-content .text-primary{ color:#2C3E50 !important; }
+html[data-theme="dark"] .day-content .text-primary{ color:#D4A373 !important; }
+
+/* Timeline items */
+.time-item{
+  position:relative;
+  padding-left:32px;
+  padding-top:12px;
+  padding-bottom:24px;
+  opacity:0;
+  transform:translateY(6px);
+  animation:timelineFade .6s ease forwards;
+}
+.time-item::before{
+  content:'';
+  position:absolute;
+  left:15px;
+  top:12px;
+  bottom:-24px;
+  width:2px;
+  background-color:#ddd;
+}
+.time-item:last-child::before{ display:none; }
+
+.time-item:nth-child(1){ animation-delay:.05s; }
+.time-item:nth-child(2){ animation-delay:.15s; }
+.time-item:nth-child(3){ animation-delay:.25s; }
+.time-item:nth-child(4){ animation-delay:.35s; }
+
+.time-node{
+  position:absolute;
+  left:calc(var(--timeline-x) - 6px);
+  top:12px;
+  width:12px; height:12px;
+  background-color:var(--accent);
+  border-radius:50%;
+  border:2px solid var(--jp-wash);
+  transform:scale(.6);
+  opacity:0;
+  animation:nodePop .4s ease forwards;
+  animation-delay:inherit;
+}
+
+@keyframes timelineFade{ to{ opacity:1; transform:translateY(0) } }
+@keyframes nodePop{ to{ opacity:1; transform:scale(1) } }
+
+html[data-theme="dark"] .time-item::before{ background-color:#444; }
+html[data-theme="dark"] .time-node{
+  background-color:var(--highlight) !important;
+  border-color:#1e1e1e;
+}
+
+/* Time detail collapse/expand */
+.time-header{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  cursor:pointer;
+  user-select:none;
+}
+.toggle-icon{
+  font-size:.9rem;
+  color:#999;
+  transition:transform .3s ease;
+}
+.time-detail{
+  max-height:0;
+  transform:scaleY(0);
+  transform-origin:top;
+  opacity:0;
+  overflow:hidden;
+  transition:max-height .35s ease,transform .35s ease,opacity .35s ease;
+}
+.time-item.open .time-detail{
+  max-height:500px;
+  transform:scaleY(1);
+  opacity:1;
+}
+.time-item.open .toggle-icon{ transform:rotate(180deg); }
+
+/* =========================
+   8) Accommodation bar
+========================= */
+.accommodation-bar{
+  position:fixed;
+  bottom:65px;
+  left:15px;
+  right:15px;
+  background:#fff;
+  padding:12px 18px;
+  border-radius:12px;
+  box-shadow:0 -4px 15px rgba(0,0,0,.1);
+  z-index:998;
+  display:none;
+  justify-content:space-between;
+  align-items:center;
+  border:1px solid #eee;
+}
+html[data-theme="dark"] .accommodation-bar{
+  background:#1e1e1e;
+  border-color:#333;
+}
+.accommodation-bar .btn-map{
+  background-color:#2C3E50 !important;
+  color:#fff !important;
+  border-radius:20px;
+  font-size:.75rem;
+  padding:6px 15px;
+  text-decoration:none !important;
+  border:1px solid #3d5166 !important;
+  transition:all .2s ease;
+  display:inline-flex;
+  align-items:center;
+}
+.accommodation-bar .btn-map:active{
+  transform:translateY(1px) scale(.95);
+  background-color:#1a252f !important;
+  opacity:.9;
+}
+html[data-theme="dark"] .accommodation-bar .btn-map{
+  background-color:#2C3E50 !important;
+  border-color:#455a64 !important;
+}
+
+/* =========================
+   9) Sync card
+========================= */
+.sync-card{
+  background:linear-gradient(135deg,#fff 0%,#f8f9fa 100%);
+  border:1px dashed #D4A373;
+  border-radius:15px;
+  padding:20px;
+  margin-top:20px;
+}
+.btn-sync{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:12px;
+  border-radius:10px;
+  font-size:.9rem;
+  font-weight:500;
+  transition:all .2s;
+  width:100%;
+  border:none;
+}
+.btn-export{ background-color:#2C3E50; color:#fff; margin-bottom:10px; }
+.btn-import{ background-color:#fff; color:#2C3E50; border:1px solid #2C3E50; }
+.btn-sync:active{ transform:scale(.98); opacity:.9; }
+
+html[data-theme="dark"] .sync-card{
+  background:#1e1e1e !important;
+  border:1px dashed #444 !important;
+  color:#ddd;
+}
+html[data-theme="dark"] .btn-import{
+  background-color:#2c2c2c;
+  color:#EAEAEA;
+  border-color:#555;
+}
+
+/* =========================
+   10) Favorites: collapse + title badge + items + link pills
+========================= */
+/* 收藏頁細項收合（唯一版） */
+.card-custom .item-list{
+  max-height:0;
+  transform:scaleY(0);
+  transform-origin:top;
+  opacity:0;
+  overflow:hidden;
+  transition:max-height .35s ease,transform .35s ease,opacity .35s ease;
+}
+.card-custom.open .item-list{
+  max-height:1000px;
+  transform:scaleY(1);
+  opacity:1;
+  overflow:visible;
+}
+
+/* 收藏頁展開箭頭旋轉 */
+.card-custom.open .fav-icon.toggle-icon i{ transform:rotate(180deg); }
+
+/* fav title */
+.fav-title-text{ font-weight:700; font-size:1.05rem; line-height:1.3; }
+.fav-title-badge{
+  font-size:.75rem;
+  font-weight:500;
+  padding:2px 8px;
+  margin-left:6px;
+  border-radius:999px;
+  background-color:#f8f9fa;
+  color:#868e96;
+  border:1px solid #e9ecef;
+  line-height:1.4;
+}
+html[data-theme="dark"] .fav-title-text{ color:#e9ecef; }
+html[data-theme="dark"] .fav-title-badge{
+  background-color:#2a3440;
+  color:#ced4da;
+  border:1px solid #3a4653;
+}
+
+/* item card */
+.item-list .item-div{
+  border-radius:8px;
+  border:1px solid #e0e0e0;
+  padding:8px 12px;
+  margin-bottom:6px;
+  background-color:#fff;
+  transition:background .3s,box-shadow .3s;
+}
+.item-list .item-div:hover{
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
+  background-color:#f9f9f9;
+}
+.item-list .item-div .item-link{
+  color:#0d6efd;
+  text-decoration:none;
+}
+.item-list .item-div .item-link:hover{ text-decoration:underline; }
+
+html[data-theme="dark"] .item-list .item-div{
+  border:1px solid #3a4a56;
+  background-color:#1f2a35;
+}
+html[data-theme="dark"] .item-list .item-div:hover{
+  box-shadow:0 2px 6px rgba(0,0,0,.5);
+  background-color:#242f3a;
+}
+
+/* 收藏頁連結膠囊 */
+#fav-list-container a.item-link{
+  display:inline-block !important;
+  color:var(--highlight) !important;
+  background:rgba(212,163,115,.10) !important;
+  text-decoration:none !important;
+  font-weight:500 !important;
+  font-size:.75rem !important;
+  padding:1px 10px !important;
+  border-radius:50px !important;
+  margin-top:2px !important;
+  margin-right:5px !important;
+  margin-bottom:8px !important;
+  border:1px solid rgba(212,163,115,.20) !important;
+  transition:all .2s ease;
+}
+#fav-list-container a.item-link:hover{
+  background:var(--highlight) !important;
+  color:#fff !important;
+  transform:scale(1.05);
+}
+
+/* 收藏頁 header icons hit area */
+#fav-list-container .fav-btn-group .fav-icon{
+  width:34px; height:34px;
+  padding:0 !important;
+  border:none !important;
+  background:transparent !important;
+  border-radius:12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:transform .12s ease,background .15s ease,opacity .15s ease;
+}
+#fav-list-container .fav-btn-group .fav-icon i{
+  font-size:.95rem;
+  color:rgba(44,62,80,.65);
+}
+#fav-list-container .fav-btn-group .fav-icon:active{
+  transform:scale(.90);
+  background:rgba(44,62,80,.10) !important;
+}
+#fav-list-container .fav-btn-group .fav-icon:focus-visible{
+  outline:2px solid rgba(44,62,80,.25);
+  outline-offset:2px;
+}
+#fav-list-container .fav-btn-group .fav-add-icon i{ color:rgba(44,62,80,.80); }
+
+html[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon i{ color:rgba(230,235,240,.75); }
+html[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon:active{ background:rgba(255,255,255,.10) !important; }
+
+/* 刪除 icon（收藏頁） */
+#fav-list-container .fav-btn-group .fav-icon.text-danger i{ color:rgba(200,70,70,.75); }
+#fav-list-container .fav-btn-group .fav-icon.text-danger:active{
+  background:rgba(200,70,70,.18) !important;
+  transform:scale(.9);
+}
+html[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon.text-danger i{ color:rgba(240,120,120,.85); }
+html[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon.text-danger:active{ background:rgba(240,120,120,.22) !important; }
+
+/* 行李頁刪除 icon */
+#pack-list-container .text-danger,
+#pack-list-container .text-danger i{ color:rgba(200,70,70,.75) !important; }
+#pack-list-container .text-danger:active{
+  background:rgba(200,70,70,.18) !important;
+  transform:scale(.9);
+  border-radius:10px;
+}
+html[data-theme="dark"] #pack-list-container .text-danger,
+html[data-theme="dark"] #pack-list-container .text-danger i{ color:rgba(240,120,120,.85) !important; }
+html[data-theme="dark"] #pack-list-container .text-danger:active{ background:rgba(240,120,120,.22) !important; }
+
+/* 收藏頁 bookmark 小一點+上移 */
+#fav-list-container i.fa-bookmark,
+#fav-list-container i[class*="fa-bookmark"]{
+  font-size:.95rem !important;
+  position:relative;
+  top:-2px;
+  opacity:.65;
+}
+#fav-list-container button.mark-icon,
+#fav-list-container .mark-icon{
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  color:#c7cdd6 !important;
+}
+
+/* jump highlight outline */
+@keyframes favBreathOutline{
+  0%{ outline-color:rgba(0,0,0,0) }
+  40%,60%{ outline-color:rgba(212,163,115,.6) }
+  100%{ outline-color:rgba(0,0,0,0) }
+}
+#fav-list-container .item-list .item-div.jump-highlight{
+  outline:1px solid rgba(0,0,0,0);
+  outline-offset:2px;
+  animation:favBreathOutline 1.5s ease-in-out 1;
+}
+
+/* 收藏頁：新增地點按鈕 */
+#fav-list-container .item-list .btn-outline-primary{
+  width:28px; height:28px; padding:0;
+  border-radius:8px;
+  font-size:1.1rem;
+  background:transparent;
+  border:1px dashed rgba(44,62,80,.25);
+  color:rgba(44,62,80,.85);
+}
+html[data-theme="dark"] #fav-list-container .item-list .btn-outline-primary{
+  border-color:rgba(255,255,255,.25);
+  color:rgba(255,255,255,.85);
+}
+
+/* 收藏頁：新增收藏主按鈕 */
+#fav-add-btn,
+#fav-list-container ~ .btn-primary,
+#fav-list-container + .btn-primary{
+  background:rgba(44,62,80,.95) !important;
+  color:#fff !important;
+  border:1px solid rgba(44,62,80,.10) !important;
+  border-radius:6px !important;
+  box-shadow:0 10px 22px rgba(0,0,0,.12) !important;
+  font-weight:500 !important;
+}
+#fav-add-btn:active,
+#fav-list-container ~ .btn-primary:active,
+#fav-list-container + .btn-primary:active{
+  transform:scale(.98);
+  background:rgba(26,37,47,.95) !important;
+}
+html[data-theme="dark"] #fav-add-btn,
+html[data-theme="dark"] #fav-list-container ~ .btn-primary,
+html[data-theme="dark"] #fav-list-container + .btn-primary{
+  background:rgba(44,62,80,.92) !important;
+  border-color:rgba(255,255,255,.12) !important;
+}
+
+/* =========================
+   11) fav-top-list (你目前的最終視覺)
+========================= */
+#fav-top-container{ padding:6px 0; }
+#fav-top-list{
+  padding:6px 0;
+  border:none;
+  background:none;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+#fav-top-list .topmark-row{
+  padding:12px;
+  border-radius:16px;
+  background:#fff;
+  border:1px solid rgba(44,62,80,.08);
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
 #fav-top-list .topmark-row:active{
-  background: rgba(44,62,80,0.06);
+  transform:scale(.99);
+  background:rgba(44,62,80,.02);
 }
 
-/* 左側：同一行排版 */
+/* 內容排版 */
 #fav-top-list .topmark-info{
   display:flex;
   align-items:center;
   gap:8px;
-
   min-width:0;
   flex:1;
 }
-
-/* 標題（縮小、低調） */
 #fav-top-list .topmark-title{
-  font-size:0.78rem;
+  font-size:.78rem;
   font-weight:600;
-  opacity:0.75;
+  opacity:.75;
   white-space:nowrap;
 }
-
-/* 地點（主體，可省略號） */
 #fav-top-list .topmark-place{
-  font-size:0.86rem;
+  font-size:.86rem;
   font-weight:500;
-
   min-width:0;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-
-  margin:0; /* 把你原本 margin-top 影響拿掉 */
+  margin:0;
 }
-
-/* 連結膠囊同一行（不換行；多的就自己縮） */
 #fav-top-list .topmark-links{
   display:flex;
-  flex-wrap:nowrap;
+  align-items:center;
+  flex-wrap:wrap;
   gap:6px;
-  margin:0; /* 把你原本 margin-top 影響拿掉 */
+  margin:0;
 }
+#fav-top-list .topmark-links > a{ order:1; }
 
-/* X 按鈕更小更像提示列 */
+#fav-top-list .topmark-links a{
+  display:inline-flex;
+  align-items:center;
+  font-size:.75rem;
+  font-weight:500;
+  padding:2px 10px;
+  border-radius:999px;
+  color:rgba(44,62,80,.85) !important;
+  background:rgba(44,62,80,.08) !important;
+  border:1px solid rgba(44,62,80,.18);
+  text-decoration:none !important;
+  transition:all .18s ease;
+}
+#fav-top-list .topmark-links a:hover{
+  background:rgba(44,62,80,.16);
+  color:rgba(44,62,80,1) !important;
+}
+#fav-top-list .topmark-links a:active{ transform:scale(.96); }
+
 #fav-top-list .topmark-x{
-  width:24px;
-  height:28px;
+  width:24px; height:28px;
   border:none;
   background:transparent;
   border-radius:8px;
   font-size:18px;
   line-height:1;
-  cursor: pointer;
-  color: rgba(44,62,80,0.65);
-  opacity: 0.6;
+  cursor:pointer;
+  color:rgba(44,62,80,.65);
+  opacity:.6;
 }
-[data-theme="dark"] #fav-top-list .topmark-x{
-  color: rgba(230,235,240,0.75);
+#fav-top-list .topmark-x:active{ background:rgba(200,70,70,.18); opacity:1; }
+
+/* +N / 展開 */
+#fav-top-list .topmark-more{
+  order:3;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.75rem;
+  font-weight:600;
+  padding:2px 10px;
+  border-radius:999px;
+  cursor:pointer;
+  user-select:none;
+  color:rgba(44,62,80,.85);
+  background:rgba(44,62,80,.08);
+  border:1px solid rgba(44,62,80,.18);
 }
-#fav-top-list .topmark-x:active{
-  background: rgba(200,70,70,0.18);
-  opacity:1;
+#fav-top-list .topmark-links-extra{
+  order:2;
+  display:none;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-left:0;
+}
+#fav-top-list .topmark-links.links-expanded .topmark-links-extra{ display:inline-flex; }
+
+/* Dark version */
+html[data-theme="dark"] #fav-top-list .topmark-row{
+  background:#1f2a35;
+  border-color:rgba(255,255,255,.10);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 12px 24px rgba(0,0,0,.45) !important;
+}
+html[data-theme="dark"] #fav-top-list .topmark-links a{
+  color:rgba(230,235,240,.85) !important;
+  background:rgba(255,255,255,.10) !important;
+  border-color:rgba(255,255,255,.20);
+}
+html[data-theme="dark"] #fav-top-list .topmark-links a:hover{ background:rgba(255,255,255,.18); }
+html[data-theme="dark"] #fav-top-list .topmark-x{ color:rgba(230,235,240,.75); }
+html[data-theme="dark"] #fav-top-list .topmark-more{
+  color:rgba(230,235,240,.85);
+  background:rgba(255,255,255,.10);
+  border-color:rgba(255,255,255,.20);
 }
 
-/* 深色模式 */
-[data-theme="dark"] #fav-top-list .topmark-row{
-  border-left-color: rgba(212,163,115,0.85);
-}
-[data-theme="dark"] #fav-top-list .topmark-row:active{
-  background: rgba(255,255,255,0.06);
-}
 /* =========================
-   fav-top-list 高亮區：收合/展開 + 連結 +N + 回原處動畫
-   貼在 <style> 最底部
+   12) Small helpers you had
 ========================= */
+.day-label{
+  font-size:1.1rem;
+  font-weight:700;
+  border-bottom:2.5px solid var(--accent);
+  display:inline-block;
+  margin:15px 0 10px;
+  letter-spacing:1px;
+}
+.btn-nav{
+  background:#333;
+  color:#fff;
+  border-radius:50px;
+  font-size:.75rem;
+  padding:6px 15px;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+}
 
+/* icon-btn (你之前 hover 會 opacity:0，保留原樣) */
+.icon-btn{
+  padding:2px 6px;
+  border-radius:6px;
+  line-height:0;
+  opacity:.6;
+}
+.icon-btn:hover{ opacity:1; background-color:transparent; }
+
+/* 行李清單標題色跟主題色 */
+#pack-list-container .text-primary{ color:var(--accent) !important; }
+html[data-theme="dark"] #pack-list-container .text-primary{ color:var(--highlight) !important; }
+
+/* Trip title/subtitle in dark (你原本有) */
+html[data-theme="dark"] .trip-title{ color:#f1f3f5; }
+html[data-theme="dark"] .trip-subtitle{ color:#adb5bd; }
+
+/* Global transition helper (保留你想要的平滑切換) */
+body,.sticky-top,.card,.bg-white{
+  transition:background-color .5s ease,color .5s ease,border-color .5s ease;
+}
+/* 深色模式：提示/次文字統一提亮，避免融入背景 */
+html[data-theme="dark"] small,
+html[data-theme="dark"] .text-muted{
+  color:#c7cdd6 !important;
+}
+/* ✅ 收藏頁：地點細項的「編輯/刪除」兩顆 icon 永遠淺灰，不用 hover 才看得到 */
+#fav-list-container .item-list .item-div button{
+  opacity: 1 !important;              /* 壓掉任何讓它變淡的設定 */
+  background: transparent !important; /* 不要 hover 才有底色 */
+}
+
+#fav-list-container .item-list .item-div button i{
+  color: #999 !important;             /* 你要的淺灰（需要更亮就改 #aaa） */
+}
+
+/* ✅ 把 hover 也鎖死：滑過去不要再改色/改透明 */
+#fav-list-container .item-list .item-div button:hover,
+#fav-list-container .item-list .item-div button:active{
+  opacity: 1 !important;
+  background: transparent !important;
+}
+
+#fav-list-container .item-list .item-div button:hover i,
+#fav-list-container .item-list .item-div button:active i{
+  color: #999 !important;
+}
 /* 右下角「顯示更多/收合」控制列 */
 #fav-top-list .topmark-toggle-row{
   display:flex;
@@ -1075,523 +958,6 @@ body,
   background: rgba(255,255,255,0.06);
 }
 
-
-/* +N 按鈕樣式（讓它像膠囊） */
-#fav-top-list .topmark-more{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 2px 10px;
-  border-radius: 999px;
-  cursor: pointer;
-  user-select: none;
-
-  color: rgba(44,62,80,0.85);
-  background: rgba(44,62,80,0.08);
-  border: 1px solid rgba(44,62,80,0.18);
-}
-
-/* 其餘膠囊預設先隱藏 */
-#fav-top-list .topmark-links-extra{
-  display: none;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-left: 6px; /* 跟 +N 拉開距離 */
-}
-
-/* 當 links-expanded 被加上時才顯示 */
-#fav-top-list .topmark-links.links-expanded .topmark-links-extra{
-  display: inline-flex;
-}
-
-/* 深色模式 */
-[data-theme="dark"] #fav-top-list .topmark-more{
-  color: rgba(230,235,240,0.85);
-  background: rgba(255,255,255,0.10);
-  border-color: rgba(255,255,255,0.20);
-}
-/* =========================
-   fav-top-list：修正展開後順序
-   目標：展開時變成「連結 連結 其他連結… 收合」
-========================= */
-
-#fav-top-list .topmark-links{
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-/* 讓前面顯示的連結一定排在最前 */
-#fav-top-list .topmark-links > a{
-  order: 1;
-}
-
-/* 被收起來那一群（展開後顯示）排在中間 */
-#fav-top-list .topmark-links .topmark-links-extra{
-  order: 2;
-  margin-left: 0; /* 需要的話可留 0，避免多插一個空隙 */
-}
-
-/* +N / 收合按鈕永遠排最後 */
-#fav-top-list .topmark-links .topmark-more{
-  order: 3;
-  margin-left: 2px; /* 讓它跟前面膠囊有一點點距離 */
-}
-
-#fav-top-list .topmark-row:active{
-  background: rgba(44,62,80,0.06);
-}
-
-[data-theme="dark"] #fav-top-list .topmark-row{
-  background: rgba(20,20,20,0.45);
-  border-color: rgba(255,255,255,0.10);
-  border-left-color: rgba(212,163,115,0.75);
-  box-shadow: 0 12px 26px rgba(0,0,0,0.45);
-}
-
-[data-theme="dark"] #fav-top-list .topmark-row:active{
-  background: rgba(255,255,255,0.06);
-}
-
-/* =========================
-   Favorites：非玻璃版（覆蓋 Glass Panel）
-========================= */
-
-/* 收藏大卡（不透明、不卡） */
-#fav-list-container .card-custom{
-  background: #ffffff !important;
-  border: 1px solid #e9ecef !important;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.06) !important;
-  border-radius: 18px !important;
-}
-
-/* 細項卡片（不透明、不卡） */
-#fav-list-container .item-list .item-div{
-  background: #ffffff !important;
-  border: 1px solid #eef1f4 !important;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.05) !important;
-  border-radius: 14px !important;
-}
-
-/* 分隔線（維持乾淨） */
-#fav-list-container .item-list .item-div > .d-flex{
-  border-bottom: 1px solid rgba(0,0,0,0.06) !important;
-}
-
-/* 深色模式：改成純深色層級 */
-[data-theme="dark"] #fav-list-container .card-custom{
-  background: #1e1e1e !important;
-  border-color: #2a2a2a !important;
-  box-shadow: 0 14px 32px rgba(0,0,0,0.50) !important;
-}
-[data-theme="dark"] #fav-list-container .item-list .item-div{
-  background: #1f2a35 !important;
-  border-color: #2f3b47 !important;
-  box-shadow: 0 10px 22px rgba(0,0,0,0.45) !important;
-}
-[data-theme="dark"] #fav-list-container .item-list .item-div > .d-flex{
-  border-bottom: 1px solid rgba(255,255,255,0.10) !important;
-}
-/* =========================
-   fav-top-list：E-pure（最終建議版）
-========================= */
-
-#fav-top-container{
-  padding: 6px 0;
-}
-
-/* 整個高亮區＝一個被框住的集合 */
-#fav-top-list{
-  padding: 6px 0;      /* 保留一點呼吸感 */
-  border-radius: 0;    /* 不再是卡片 */
-  background: none;    /* 拿掉底色 */
-  border: none;        /* 拿掉邊框 */
-
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-/* 每一列：不標記、不染色 */
-#fav-top-list .topmark-row{
-  padding: 12px 12px;
-  border-radius: 16px;
-
-  background: #ffffff;
-  border: 1px solid rgba(44,62,80,0.08);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.05);
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-/* 點擊只是物理回饋，不是視覺強調 */
-#fav-top-list .topmark-row:active{
-  transform: scale(0.99);
-  background: rgba(44,62,80,0.02);
-}
-
-/* Dark mode：維持同一邏輯 */
-[data-theme="dark"] #fav-top-list{
-  background: none;
-  border-color: rgba(255,255,255,0.10);
-}
-
-[data-theme="dark"] #fav-top-list .topmark-row{
-  background: #1f2a35;
-  border-color: rgba(255,255,255,0.10);
-
-  /* ✅ 套用收藏頁卡片同系的柔和夜間陰影 */
-  box-shadow:
-    0 6px 16px rgba(0,0,0,0.35),
-    0 12px 28px rgba(0,0,0,0.25);
-}
-
-/* ✅ 收藏頁所有 bookmark 都小一點 + 往上 */
-#fav-list-container i.fa-bookmark,
-#fav-list-container i[class*="fa-bookmark"]{
-  font-size: 0.95rem !important;
-  position: relative;
-  top: -2px;
-  opacity: 0.65;
-}
-/* ✅ 去掉 bookmark 外面按鈕的白方塊底（只限收藏頁） */
-#fav-list-container button.mark-icon,
-#fav-list-container .mark-icon{
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-html[data-theme="dark"] #fav-top-list .topmark-row{
-  /* 上方微弱白色高光（關鍵） */
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    0 12px 24px rgba(0,0,0,0.45) !important;
-}
-/* =========================
-   收藏頁：跳轉命中細項的金色「呼吸邊框」
-   使用 outline，避免影響版面與既有 border
-========================= */
-@keyframes favBreathOutline {
-  0% {
-    outline-color: rgba(0,0,0,0);
-  }
-  40% {
-    outline-color: rgba(212,163,115,0.6); /* 比原本淡 */
-  }
-  60% {
-    outline-color: rgba(212,163,115,0.6);
-  }
-  100% {
-    outline-color: rgba(0,0,0,0);
-  }
-}
-
-#fav-list-container .item-list .item-div.jump-highlight {
-  outline: 1px solid rgba(0,0,0,0);
-  outline-offset: 2px;
-  animation: favBreathOutline 1.5s ease-in-out 1;
-}
-[data-theme="dark"] #todayBtn{
-  background: #1e1e1e !important;   /* 用你現有的深色卡片底 */
-  backdrop-filter: none !important; /* 關掉玻璃透視 */
-  -webkit-backdrop-filter: none !important;
-}
-/* ✅ themeBtn：focus/active 時也維持低調，不套 bootstrap 的亮效果 */
-#themeBtn:focus,
-#themeBtn:focus-visible{
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-#themeBtn:active{
-  box-shadow: none !important;
-}
-/* =========================
-   Theme button（唯一最終版）
-   - 不會點完變搶眼
-   - 深色模式 icon 一律金色
-========================= */
-
-.theme-toggle{
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 10;
-  line-height: 1;
-}
-
-/* 按鈕本體 */
-#themeBtn{
-  width: 40px;
-  height: 40px;
-  padding: 0;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 1.15rem;
-  line-height: 1;
-
-  border: none !important;
-  background: transparent !important;
-
-  /* ✅ 你要的「不搶眼」 */
-  opacity: 0.62;
-
-  /* ✅ 不要被 bootstrap focus/active 影響 */
-  outline: none !important;
-  box-shadow: none !important;
-
-  transition: transform 0.16s ease, opacity 0.2s ease, color 0.2s ease;
-}
-
-/* ✅ 深色模式：icon 顏色固定金色（太陽/月亮都一致） */
-[data-theme="dark"] #themeBtn{
-  color: #CFA56F !important; /* 你可以只改這個色碼 */
-  opacity: 0.72;             /* 深色底可以稍微清楚一點 */
-}
-
-/* 亮色模式 icon 顏色（保持低調） */
-html:not([data-theme="dark"]) #themeBtn{
-  color: rgba(44,62,80,0.70);
-}
-/* --- 修正 Header 日夜切換動畫 --- */
-
-/* 1. 確保日間模式也有基礎背景色與過渡屬性 */
-.sticky-top, 
-.sticky-top .p-3,
-header {
-    background-color: var(--jp-wash) !important; /* 確保日間有起始顏色 */
-    transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
-}
-
-/* 2. 修正夜間模式的過渡 */
-[data-theme="dark"] .sticky-top,
-[data-theme="dark"] .sticky-top .p-3,
-[data-theme="dark"] header {
-    background-color: #121212 !important; /* 與您之前的夜間背景一致 */
-    border-bottom-color: #2a2a2a !important;
-    transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
-}
-
-/* 3. 處理背景色差造成的閃爍 */
-body {
-    transition: background-color 0.5s ease, color 0.5s ease !important;
-}
-/* ✅ Today 膠囊：避免切換時 backdrop-filter 重繪造成閃爍 */
-#todayBtn{
-  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
-  background-color: rgba(255,255,255,0.6); /* 用 background-color，不用 background */
-}
-
-/* 夜間：改成「實心」+ 關閉 blur（閃爍殺手） */
-html[data-theme="dark"] #todayBtn{
-  background-color: #1e1e1e !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-/* =========================
-   Header 日夜切換動畫（保留你的版本）
-========================= */
-.sticky-top, 
-.sticky-top .p-3,
-header{
-  background-color: var(--jp-wash) !important;
-  transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
-}
-
-[data-theme="dark"] .sticky-top,
-[data-theme="dark"] .sticky-top .p-3,
-[data-theme="dark"] header{
-  background-color: #121212 !important;
-  border-bottom-color: #2a2a2a !important;
-  transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
-}
-
-body{
-  transition: background-color 0.5s ease, color 0.5s ease !important;
-}
-
-/* =========================
-   Today 膠囊（融合版，取代舊多套）
-   - 日間保留玻璃 blur
-   - 夜間實心 + 關 blur 防閃
-========================= */
-#todayBtn{
-  width: auto;
-  height: 20px;
-  padding: 0 10px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.6rem;
-  font-weight: 500;
-  letter-spacing: 0.4px;
-
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.08);
-
-  /* ✅ 統一用 background-color（不要用 background） */
-  background-color: rgba(255,255,255,0.6);
-
-  /* ✅ 日間保留玻璃感 */
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-
-  color: #666;
-  white-space: nowrap;
-
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-
-  /* ✅ 統一 transition：不要只寫 background */
-  transition:
-    background-color 0.5s ease,
-    color 0.5s ease,
-    border-color 0.5s ease,
-    box-shadow 0.5s ease,
-    transform 0.15s ease;
-
-  cursor: pointer;
-  line-height: 1.1;
-}
-
-#todayBtn:active{
-  transform: scale(0.9);
-}
-
-/* 夜間：實心 + 關 blur（你 A 解法的核心） */
-html[data-theme="dark"] #todayBtn{
-  background-color: #1e1e1e !important;
-  border-color: rgba(255,255,255,0.15) !important;
-  color: #ddd !important;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.4) !important;
-
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-/* =========================
-   只在收藏 top list 區塊關 blur（取代你原本的全站關 blur）
-   - 效能有救
-   - 不影響 Today 的玻璃感
-========================= */
-#fav-top-list, 
-#fav-top-list *{
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-/* =========================
-   Theme button（保留你「唯一最終版」）
-========================= */
-.theme-toggle{
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 10;
-  line-height: 1;
-}
-
-#themeBtn{
-  width: 40px;
-  height: 40px;
-  padding: 0;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 1.15rem;
-  line-height: 1;
-
-  border: none !important;
-  background: transparent !important;
-
-  opacity: 0.62;
-
-  outline: none !important;
-  box-shadow: none !important;
-
-  transition: transform 0.16s ease, opacity 0.2s ease, color 0.2s ease;
-}
-
-[data-theme="dark"] #themeBtn{
-  color: #CFA56F !important;
-  opacity: 0.72;
-}
-
-html:not([data-theme="dark"]) #themeBtn{
-  color: rgba(44,62,80,0.70);
-}
-
-#themeBtn:focus,
-#themeBtn:focus-visible,
-#themeBtn:active{
-  outline: none !important;
-  box-shadow: none !important;
-}
-/* =========================
-   時鐘區塊：加入日夜漸變（補你現在漏掉的）
-   目標：夜->日、日->夜都柔和
-========================= */
-
-/* 1) 先抓到時鐘區塊本體（你目前用的是 .sticky-top .d-flex） */
-.sticky-top .d-flex{
-  /* ✅ 日間起始色一定要存在，否則切到 dark 會像跳 */
-  background-color: rgba(255,255,255,0.85) !important;
-
-  /* ✅ 同步 header 的漸變 */
-  transition:
-    background-color 0.5s ease,
-    border-color 0.5s ease,
-    box-shadow 0.5s ease !important;
-}
-
-/* 2) 夜間狀態：你原本有寫，但補上 transition（且只用 background-color） */
-html[data-theme="dark"] .sticky-top .d-flex{
-  background-color: #1e1e1e !important;
-  border-color: #2a2a2a !important;
-
-  transition:
-    background-color 0.5s ease,
-    border-color 0.5s ease,
-    box-shadow 0.5s ease !important;
-}
-/* ✅ 修掉「日→夜」時鐘區塊白底黑邊閃爍（壓掉 bg-white / border 的瞬間套用） */
-.sticky-top .d-flex{
-  /* 背景：用 background-color 鎖死，不給 bg-white 插隊 */
-  background-color: rgba(255,255,255,0.85) !important;
-
-  /* 邊框：日間就先給一個「不黑」的顏色 + 鎖 border-style，避免瞬間變黑框 */
-  border: 1px solid rgba(0,0,0,0.10) !important;
-
-  /* 陰影（如果你有用）也一起柔和 */
-  box-shadow: none !important;
-
-  transition:
-    background-color 0.5s ease,
-    border-color 0.5s ease,
-    box-shadow 0.5s ease !important;
-
-  will-change: background-color, border-color;
-}
-
-html[data-theme="dark"] .sticky-top .d-flex{
-  background-color: #1e1e1e !important;
-  border-color: rgba(255,255,255,0.12) !important;
-  box-shadow: none !important;
-}
 
 </style>
 </head>
@@ -2279,28 +1645,43 @@ function initializePage() {
     if (typeof renderPackList === "function") renderPackList();
 }
 
-// 🔄 匯入同步代碼
+// 🔄 匯入同步代碼（修正版：收藏/行李/記帳都同步 + 立刻刷新畫面）
 function importData() {
     const code = prompt("請貼上朋友傳給你的同步代碼：");
     if (!code) return;
 
     try {
+        // 1) 解碼
         const decoded = JSON.parse(decodeURIComponent(atob(code)));
 
-        // 覆蓋 localStorage
-        if (decoded.favorites) localStorage.setItem('trip_favorites', JSON.stringify(decoded.favorites));
-        if (decoded.packing) localStorage.setItem('trip_pack_cat', JSON.stringify(decoded.packing));
-        if (decoded.expenses) localStorage.setItem('trip_v2026', JSON.stringify(decoded.expenses));
+        // 2) 覆蓋 localStorage（資料層）
+        const newFav = decoded.favorites || [];
+        const newPack = decoded.packing || [];
+        const newExp  = decoded.expenses || [];
 
-        alert('🚀 同步成功！即將更新畫面。');
+        localStorage.setItem('trip_favorites', JSON.stringify(newFav));
+        localStorage.setItem('trip_pack_cat', JSON.stringify(newPack));
+        localStorage.setItem('trip_v2026', JSON.stringify(newExp));
 
-        // 刷新畫面，重新渲染收藏清單
-        favorites = decoded.favorites || [];
-        renderFavorites();
-        // 這裡可依需要呼叫 renderPacking()、renderExpenses() 等刷新畫面函數
+        // 3) 覆蓋「目前正在使用的全域變數」（畫面層）
+        favorites = newFav;
+        categorizedPack = newPack;
+        expenses = newExp;
+
+        // 4) 重新渲染全部
+        if (typeof renderFavorites === "function") renderFavorites();
+        if (typeof renderTopMarked === "function") renderTopMarked(); // 保險：高亮列
+        if (typeof renderPackList === "function") renderPackList();
+        if (typeof render === "function") render();
+
+        // 5) 住宿框可能跟頁籤狀態有關，也順便刷新
+        if (typeof refreshHotelBar === "function") refreshHotelBar();
+
+        alert('🚀 同步成功！收藏 / 行李 / 記帳 已更新。');
+
     } catch (e) {
         console.error(e);
-        alert('❌ 代碼無效，請確保完整複製。');
+        alert('❌ 代碼無效，請確保完整複製（不要多空格或換行）。');
     }
 }
 
