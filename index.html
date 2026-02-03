@@ -1422,7 +1422,7 @@ html[data-theme="dark"] #fav-top-list .topmark-row{
 
 /* ✅ 深色模式：icon 顏色固定金色（太陽/月亮都一致） */
 [data-theme="dark"] #themeBtn{
-  color: #D4A373 !important; /* 你可以只改這個色碼 */
+  color: #CFA56F !important; /* 你可以只改這個色碼 */
   opacity: 0.72;             /* 深色底可以稍微清楚一點 */
 }
 
@@ -1430,7 +1430,29 @@ html[data-theme="dark"] #fav-top-list .topmark-row{
 html:not([data-theme="dark"]) #themeBtn{
   color: rgba(44,62,80,0.70);
 }
+/* --- 修正 Header 日夜切換動畫 --- */
 
+/* 1. 確保日間模式也有基礎背景色與過渡屬性 */
+.sticky-top, 
+.sticky-top .p-3,
+header {
+    background-color: var(--jp-wash) !important; /* 確保日間有起始顏色 */
+    transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
+}
+
+/* 2. 修正夜間模式的過渡 */
+[data-theme="dark"] .sticky-top,
+[data-theme="dark"] .sticky-top .p-3,
+[data-theme="dark"] header {
+    background-color: #121212 !important; /* 與您之前的夜間背景一致 */
+    border-bottom-color: #2a2a2a !important;
+    transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
+}
+
+/* 3. 處理背景色差造成的閃爍 */
+body {
+    transition: background-color 0.5s ease, color 0.5s ease !important;
+}
 </style>
 </head>
 <body>
