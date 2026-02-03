@@ -9,23 +9,19 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap">
 
     <style>
-        :root { --jp-wash: #F8F9F7; --accent: #2C3E50; --highlight: #D4A373; }
-        body { 
-    background: var(--jp-wash); 
-    /* 使用更現代的字體集，優先調用系統預設的無襯線字體 */
-    font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
-    padding-bottom: 80px; 
-    color: #333; 
-    letter-spacing: 0.02em; /* 稍微增加字距，提升閱讀舒適度 */
-body {
+:root { --jp-wash: #F8F9F7; --accent: #2C3E50; --highlight: #D4A373; }
+
+body{
+  background: var(--jp-wash);
+  font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+  padding-bottom: 80px;
+  color: #333;
+  letter-spacing: 0.02em;
   font-weight: 400;
 }
-h1, h2, h3 {
-  font-weight: 600;
-}
-small, .text-muted {
-  font-weight: 500;
-}
+
+h1, h2, h3{ font-weight: 600; }
+small, .text-muted{ font-weight: 500; }
 
 
 }
@@ -369,10 +365,6 @@ small, .text-muted {
     color: #ffffff !important;
     transform: translateY(1px); /* 輕微下沈感，模擬真實按鈕 */
 }
-#themeBtn:active {
-    transform: scale(0.85); /* 點擊時縮小，這是一個很棒的簡約回饋感 */
-    opacity: 0.7;
-}
 /* 🌙 夜間模式切換動畫 */
 body,
 .sticky-top,
@@ -397,16 +389,6 @@ body,
     top: 8px;
     right: 8px;
     line-height: 1; /* 避免字體造成垂直擠壓感 */}
-/* 2) 按鈕本體：縮小存在感（透明度） */
-#themeBtn{
-  opacity: 0.72;                 /* ✅ 降低搶眼（你可微調 0.6~0.85） */
-  transition: transform 0.15s ease, opacity 0.2s ease; /* 保留輕回饋 */
-}
-
-/* hover（桌機）稍微清楚一點 */
-#themeBtn:hover{
-  opacity: 0.9;
-}
 
 /* active（手機點擊）回饋，但不放大太多 */
 #themeBtn:active{
@@ -1397,6 +1379,76 @@ html[data-theme="dark"] #fav-top-list .topmark-row{
 
 #themeBtn:active{
   box-shadow: none !important;
+}
+/* =========================
+   Theme button（唯一最終版）
+   - 不會點完變搶眼
+   - 深色模式 icon 一律金色
+========================= */
+
+.theme-toggle{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  line-height: 1;
+}
+
+/* 按鈕本體 */
+#themeBtn{
+  width: 40px;
+  height: 40px;
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1.15rem;
+  line-height: 1;
+
+  border: none !important;
+  background: transparent !important;
+
+  /* ✅ 你要的「不搶眼」 */
+  opacity: 0.62;
+
+  /* ✅ 不要被 bootstrap focus/active 影響 */
+  outline: none !important;
+  box-shadow: none !important;
+
+  transition: transform 0.16s ease, opacity 0.2s ease, color 0.2s ease;
+}
+
+/* 桌機 hover 稍微清楚一點 */
+#themeBtn:hover{
+  opacity: 0.85;
+}
+
+/* 點擊回饋：只縮小一次，不改亮度到刺眼 */
+#themeBtn:active{
+  transform: scale(0.88);
+  opacity: 0.78;
+  box-shadow: none !important;
+}
+
+/* focus 也不准出現任何框或變亮 */
+#themeBtn:focus,
+#themeBtn:focus-visible{
+  outline: none !important;
+  box-shadow: none !important;
+  opacity: 0.62; /* ✅ 點完如果瀏覽器保留 focus，也維持低調 */
+}
+
+/* ✅ 深色模式：icon 顏色固定金色（太陽/月亮都一致） */
+[data-theme="dark"] #themeBtn{
+  color: #D4A373 !important; /* 你可以只改這個色碼 */
+  opacity: 0.72;             /* 深色底可以稍微清楚一點 */
+}
+
+/* 亮色模式 icon 顏色（保持低調） */
+html:not([data-theme="dark"]) #themeBtn{
+  color: rgba(44,62,80,0.70);
 }
 
 </style>
