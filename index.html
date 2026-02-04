@@ -1132,26 +1132,6 @@ html[data-theme="dark"] .text-muted{
 }
 .detail-pill:active{ transform:scale(.98); }
 
-/* 行程 header 右側的「詳情」icon（A 方案） */
-.time-header{
-  justify-content:space-between; /* 讓右側 icon 有位置 */
-}
-.time-header .detail-icon{
-  width:30px; height:30px;
-  border:none;
-  background:transparent;
-  border-radius:10px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  color:rgba(44,62,80,.55);
-  opacity:.8;
-}
-.time-header .detail-icon:active{
-  background:rgba(44,62,80,.08);
-  transform:scale(.96);
-}
-
 /* Dark mode */
 html[data-theme="dark"] .detail-sheet .detail-card{
   background:#1e1e1e;
@@ -1184,12 +1164,6 @@ html[data-theme="dark"] .detail-row .k{ color:#adb5bd; }
 html[data-theme="dark"] .detail-row .v{ color:#e9ecef; }
 html[data-theme="dark"] .detail-note{ color:#e9ecef; }
 
-html[data-theme="dark"] .time-header .detail-icon{
-  color:rgba(230,235,240,.7);
-}
-html[data-theme="dark"] .time-header .detail-icon:active{
-  background:rgba(255,255,255,.08);
-}
 /* =========================================================
    🌙 詳情頁（detail-sheet）夜間模式：低調旅行手帳感 LINK 膠囊
 ========================================================= */
@@ -2587,12 +2561,6 @@ switchDay = function(dayId, el) {
     originalSwitchDay(dayId, el); 
     refreshHotelBar(); // 直接執行剛寫好的工具
 };
-document.querySelectorAll('.time-header').forEach(header => {
-    header.addEventListener('click', () => {
-        const item = header.closest('.time-item');
-        item.classList.toggle('open');
-    });
-});
 // 🗓️ 顯示今天日期在按鈕上（歐洲時間）
 (function updateTodayLabel() {
     const now = new Date();
@@ -2881,42 +2849,25 @@ async function copyText(text){
   }
 }
 
-/* =========================================================
-   ✅ 自動在有詳情的行程項目加上「詳情 icon」（A 方案）
-   你只要在 time-item 上加 data-detail="某個key"
-   就會自動出現 icon；沒加就不出現（2a）
-========================================================= */
-function initDetailIcons(){
-  document.querySelectorAll(".time-item[data-detail]").forEach(item => {
-    const key = item.getAttribute("data-detail");
-    if (!key || !detailData[key]) return; // 2a：沒資料就不要顯示
-
-    const header = item.querySelector(".time-header");
-    if (!header) return;
-
-    // 避免重複插入
-    if (header.querySelector(".detail-icon")) return;
-
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "detail-icon";
-    btn.innerHTML = `<i class="fa-solid fa-circle-info"></i>`;
-    btn.title = "查看詳情";
-
-    // ✅ 關鍵：阻止冒泡，避免觸發 time-header 的展開/收合
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      openDetail(key);
-    });
-
-    header.appendChild(btn);
-  });
-
-  // 關閉行為
+function initDetailCloseBindings(){
   const backdrop = document.getElementById("detailBackdrop");
-  const closeBtn = document.getElementById("detailClose");
-  if (backdrop) backdrop.addEventListener("click", closeDetail);
-  if (closeBtn) closeBtn.addEventListener("click", closeDetail);
+
+  // 點遮罩關閉
+  if (backdrop) {
+    backdrop.addEventListener("click", closeDetail);
+  }
+
+  // ✅ 用事件委派處理 X（避免 id / pointer 問題）
+  document.addEventListener("click", (e) => {
+    const closeBtn = e.target.closest(".detail-close, .detail-x, [data-detail-close]");
+    if (!closeBtn) return;
+
+    // 防止被其他 handler 擋掉
+    e.preventDefault();
+    e.stopPropagation();
+
+    closeDetail();
+  });
 
   // Esc 關閉
   document.addEventListener("keydown", (e) => {
@@ -2928,7 +2879,7 @@ function initDetailIcons(){
 
 /* 在 DOM 準備好之後初始化 */
 document.addEventListener("DOMContentLoaded", () => {
-  initDetailIcons();
+  initDetailCloseBindings();   // ✅ 恢復：點空白處 / X / Esc
   initDetailDragToClose(); // ✅ 新增：等 sheet/backdrop 都在 DOM 了再綁拖曳
 });
 /* =========================================================
@@ -3015,6 +2966,10 @@ function initDetailDragToClose(){
     // 只允許 header 觸發
     if (!header.contains(e.target)) return;
 
+ // ✅ 關鍵：點到 X（或你之後可能加的 data-detail-close）時，不要進入拖曳模式
+  if (e.target.closest(".detail-close, .detail-x, [data-detail-close], a, button")) {
+    return;
+  }
     dragging = true;
     startY = e.clientY;
     currentY = 0;
@@ -3072,6 +3027,97 @@ function initDetailDragToClose(){
   document.addEventListener("pointerup", onPointerUp, { passive: true });
   document.addEventListener("pointercancel", onPointerUp, { passive: true });
 }
+/* =========================================================
+   ✅ C 方案：長按行程 header 開詳情（無提示）
+   - 短按：展開/收合備註（原本行為）
+   - 長按：若有詳情資料 -> openDetail(key)
+   - 沒資料：長按不反應
+========================================================= */
+(function initLongPressDetailOnHeaders(){
+  const LONGPRESS_MS = 450;     // ✅ 長按多久才觸發（想更難誤觸可改 500~600）
+  const MOVE_TOL = 10;          // ✅ 手指移動超過幾 px 就視為「不是長按」
+  
+  let pressTimer = null;
+  let pressStartX = 0;
+  let pressStartY = 0;
+  let longPressed = false;
+
+  function clearPressTimer(){
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  }
+
+  // 用「事件委派」：不用每個 header 都綁，且新內容也自動生效
+  document.addEventListener("pointerdown", (e) => {
+    const header = e.target.closest(".time-header");
+    if (!header) return;
+
+    const item = header.closest(".time-item");
+    if (!item) return;
+
+    // 只允許「左鍵/手指」觸發
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+
+    longPressed = false;
+    pressStartX = e.clientX;
+    pressStartY = e.clientY;
+
+    // 如果這個行程有 detail key 且 detailData 有資料 -> 才啟用長按
+    const key = item.getAttribute("data-detail");
+    const canOpenDetail = key && typeof detailData === "object" && detailData[key];
+
+    clearPressTimer();
+
+    if (!canOpenDetail) return; // ✅ 沒資料就不做長按計時（長按也不反應）
+
+    pressTimer = setTimeout(() => {
+      longPressed = true;
+
+      // ✅ 長按成功：開詳情
+      openDetail(key);
+
+      // ✅ 抑制接下來那一下 click（避免展開/收合被觸發）
+      header.dataset.suppressClick = "1";
+      setTimeout(() => { delete header.dataset.suppressClick; }, 600);
+    }, LONGPRESS_MS);
+  }, { passive: true });
+
+  document.addEventListener("pointermove", (e) => {
+    if (!pressTimer) return;
+
+    const dx = Math.abs(e.clientX - pressStartX);
+    const dy = Math.abs(e.clientY - pressStartY);
+
+    if (dx > MOVE_TOL || dy > MOVE_TOL) {
+      clearPressTimer(); // ✅ 手指滑動了 -> 取消長按
+    }
+  }, { passive: true });
+
+  document.addEventListener("pointerup", () => {
+    clearPressTimer();
+  }, { passive: true });
+
+  document.addEventListener("pointercancel", () => {
+    clearPressTimer();
+  }, { passive: true });
+
+  // ✅ 短按：展開/收合（取代你原本那段 querySelectorAll click）
+  document.addEventListener("click", (e) => {
+    const header = e.target.closest(".time-header");
+    if (!header) return;
+
+    // ✅ 如果剛剛是長按打開詳情，這一下 click 要忽略
+    if (header.dataset.suppressClick === "1") return;
+
+    const item = header.closest(".time-item");
+    if (!item) return;
+
+    item.classList.toggle("open");
+  });
+})();
+
 </script>
 <div id="hotel-bar" class="accommodation-bar">
     <div>
