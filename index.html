@@ -1009,6 +1009,8 @@ html[data-theme="dark"] .text-muted{
   gap:12px;
   padding:14px 16px 10px;
   border-bottom:1px solid rgba(0,0,0,.06);
+  touch-action: none; /* ✅ 只在 header 禁止系統捲動，避免拖曳時背景跟著滑 */
+  cursor: grab;       /* （桌機手感） */
 }
 .detail-meta{
   display:flex;
@@ -2928,6 +2930,147 @@ function initDetailIcons(){
 document.addEventListener("DOMContentLoaded", () => {
   initDetailIcons();
 });
+/* =========================================================
+   ✅ 詳情頁：Header 下拉拖曳關閉（只在 header 啟動 / 跟手 / 不夠距離回彈）
+   - 保留：X 關閉、點遮罩關閉
+========================================================= */
+(function initDetailDragToClose(){
+  const html = document.documentElement;
+  const sheet = document.getElementById("detailSheet");
+  const backdrop = document.getElementById("detailBackdrop");
+  if (!sheet || !backdrop) return;
+
+  // 只允許 header 開始拖曳
+  const getHeader = () => sheet.querySelector(".detail-head");
+
+  let dragging = false;
+  let startY = 0;
+  let currentY = 0;
+
+  const DRAG_START_THRESHOLD = 8;   // ✅ 小位移不算拖曳（避免誤觸）
+  const CLOSE_THRESHOLD_PX = 90;    // ✅ 超過這個距離就關閉（你也可改 80/100）
+  const MAX_FADE = 220;            // ✅ 拉到這裡遮罩最淡（不必全消失）
+
+  function isOpen(){
+    return html.classList.contains("detail-open");
+  }
+
+  function setBackdropOpacityByDrag(dy){
+    // dy 越大，遮罩越淡（低調）
+    const t = Math.min(Math.max(dy / MAX_FADE, 0), 1);
+    const op = 1 - t * 0.65; // 最多淡到 0.35（不會整個消失，視覺比較穩）
+    backdrop.style.opacity = String(op);
+  }
+
+  function resetBackdropOpacity(){
+    backdrop.style.opacity = ""; // 回到 CSS 控制（預設 1）
+  }
+
+  function snapBack(){
+    // 回彈：要有動畫
+    sheet.style.transition = "transform .28s ease";
+    sheet.style.transform = "translateY(0)";
+    resetBackdropOpacity();
+
+    // 讓桌機手感更像「放手」
+    setTimeout(() => {
+      sheet.style.transition = "";
+      sheet.style.transform = "";
+    }, 300);
+  }
+
+  function closeByDrag(){
+    // 用「同一套往下收回動畫」，但避免 inline transform 覆蓋 CSS
+    sheet.style.transition = "transform .28s ease";
+    sheet.style.transform = "translateY(100%)";
+    backdrop.style.transition = "opacity .25s ease";
+    backdrop.style.opacity = "0";
+
+    // 動畫結束後做乾淨收尾（沿用 closeDetail 的邏輯但避免互打）
+    setTimeout(() => {
+      // 清狀態
+      html.classList.remove("detail-open");
+      document.body.style.overflow = "";
+
+      // 隱藏
+      backdrop.style.display = "none";
+      sheet.style.display = "none";
+      sheet.setAttribute("aria-hidden","true");
+
+      // 清 inline
+      sheet.style.transition = "";
+      sheet.style.transform = "";
+      backdrop.style.transition = "";
+      backdrop.style.opacity = "";
+    }, 280);
+  }
+
+  function onPointerDown(e){
+    if (!isOpen()) return;
+
+    const header = getHeader();
+    if (!header) return;
+
+    // 只允許 header 觸發
+    if (!header.contains(e.target)) return;
+
+    dragging = true;
+    startY = e.clientY;
+    currentY = 0;
+
+    // 跟手拖曳：先關掉 transition
+    sheet.style.transition = "none";
+
+    // 捕捉指標，避免滑出 header 就斷
+    try{ header.setPointerCapture(e.pointerId); } catch(_) {}
+  }
+
+  function onPointerMove(e){
+    if (!dragging) return;
+
+    const dy = e.clientY - startY;
+
+    // 不處理往上推（避免怪手感）
+    if (dy <= 0) {
+      currentY = 0;
+      sheet.style.transform = "translateY(0)";
+      setBackdropOpacityByDrag(0);
+      return;
+    }
+
+    // 避免一點點抖動就開始「拖曳感」
+    if (dy < DRAG_START_THRESHOLD && currentY === 0) return;
+
+    currentY = dy;
+
+    // sheet 跟手
+    sheet.style.transform = `translateY(${dy}px)`;
+    setBackdropOpacityByDrag(dy);
+
+    // 防止頁面跟著滾
+    e.preventDefault?.();
+  }
+
+  function onPointerUp(){
+    if (!dragging) return;
+    dragging = false;
+
+    // 放手後恢復 transition
+    sheet.style.transition = "transform .28s ease";
+
+    if (currentY >= CLOSE_THRESHOLD_PX) {
+      closeByDrag();
+    } else {
+      snapBack();
+    }
+  }
+
+  // 綁在 document，避免漏接 move/up
+  document.addEventListener("pointerdown", onPointerDown, { passive: true });
+  document.addEventListener("pointermove", onPointerMove, { passive: false });
+  document.addEventListener("pointerup", onPointerUp, { passive: true });
+  document.addEventListener("pointercancel", onPointerUp, { passive: true });
+})();
 
 </script>
 <div id="hotel-bar" class="accommodation-bar">
