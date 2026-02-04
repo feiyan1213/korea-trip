@@ -957,7 +957,262 @@ html[data-theme="dark"] .text-muted{
 [data-theme="dark"] #fav-top-list .topmark-toggle-btn:active{
   background: rgba(255,255,255,0.06);
 }
+/* =========================================================
+   ✅ 行程詳情 Sheet（1a：底部彈出）
+   ★ 你要改樣式也都在這裡
+========================================================= */
 
+.detail-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+  z-index:2000;
+}
+
+.detail-sheet{
+  position:fixed;
+  left:0; right:0;
+  bottom:0;
+  transform:translateY(100%);
+  transition:transform .28s ease;
+  z-index:2001;
+  padding:10px 12px 16px;
+}
+
+.detail-sheet .detail-card{
+  max-width:640px;
+  margin:0 auto;
+  background:#fff;
+  border-radius:18px;
+  border:1px solid rgba(44,62,80,.10);
+  box-shadow:0 16px 40px rgba(0,0,0,.18);
+  overflow:hidden;
+}
+
+/* 顯示狀態 */
+.detail-open .detail-backdrop{
+  opacity:1;
+  pointer-events:auto;
+}
+.detail-open .detail-sheet{
+  transform:translateY(0);
+}
+
+/* Header */
+.detail-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 16px 10px;
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.detail-meta{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.detail-tag{
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.8px;
+  padding:2px 10px;
+  border-radius:999px;
+  border:1px solid rgba(44,62,80,.18);
+  background:rgba(44,62,80,.06);
+  color:rgba(44,62,80,.85);
+}
+.detail-time{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:.85rem;
+  font-weight:700;
+  color:rgba(44,62,80,.85);
+  opacity:.85;
+}
+
+.detail-title{
+  font-size:1.15rem;
+  font-weight:800;
+  margin:6px 0 0;
+  line-height:1.25;
+}
+.detail-sub{
+  margin:6px 0 0;
+  font-size:.82rem;
+  color:#6c757d;
+}
+
+.detail-close{
+  width:36px; height:36px;
+  border:none;
+  background:transparent;
+  border-radius:12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:rgba(44,62,80,.65);
+}
+.detail-close:active{
+  background:rgba(44,62,80,.08);
+  transform:scale(.98);
+}
+
+/* Body */
+.detail-body{
+  padding:12px 16px 16px;
+  max-height:min(68vh, 520px);
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.detail-block{
+  border:1px solid rgba(44,62,80,.08);
+  background:rgba(44,62,80,.03);
+  border-radius:14px;
+  padding:12px;
+  margin:10px 0;
+}
+
+.detail-block h6{
+  font-size:.78rem;
+  letter-spacing:.6px;
+  font-weight:800;
+  opacity:.75;
+  margin:0 0 8px;
+}
+
+.detail-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 0;
+  border-top:1px dashed rgba(44,62,80,.10);
+}
+.detail-row:first-of-type{ border-top:none; padding-top:0; }
+.detail-row .k{ font-size:.78rem; color:#6c757d; min-width:78px; }
+.detail-row .v{ flex:1; font-size:.86rem; font-weight:600; color:#2C3E50; }
+.detail-row .v a{ color:var(--highlight); text-decoration:none; }
+.detail-row .v a:hover{ text-decoration:underline; }
+
+.detail-note{
+  font-size:.86rem;
+  line-height:1.55;
+  color:#2C3E50;
+}
+.detail-note ul{ margin:0; padding-left:18px; }
+.detail-note li{ margin:4px 0; }
+
+.detail-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.detail-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:.78rem;
+  font-weight:700;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(212,163,115,.25);
+  background:rgba(212,163,115,.12);
+  color:rgba(44,62,80,.9);
+  text-decoration:none;
+}
+.detail-pill:active{ transform:scale(.98); }
+
+/* 行程 header 右側的「詳情」icon（A 方案） */
+.time-header{
+  justify-content:space-between; /* 讓右側 icon 有位置 */
+}
+.time-header .detail-icon{
+  width:30px; height:30px;
+  border:none;
+  background:transparent;
+  border-radius:10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:rgba(44,62,80,.55);
+  opacity:.8;
+}
+.time-header .detail-icon:active{
+  background:rgba(44,62,80,.08);
+  transform:scale(.96);
+}
+
+/* Dark mode */
+html[data-theme="dark"] .detail-sheet .detail-card{
+  background:#1e1e1e;
+  border-color:#2a2a2a;
+  box-shadow:0 16px 45px rgba(0,0,0,.55);
+}
+html[data-theme="dark"] .detail-head{
+  border-bottom-color:rgba(255,255,255,.08);
+}
+html[data-theme="dark"] .detail-tag{
+  border-color:rgba(255,255,255,.18);
+  background:rgba(255,255,255,.08);
+  color:rgba(230,235,240,.85);
+}
+html[data-theme="dark"] .detail-time{
+  color:rgba(230,235,240,.88);
+}
+html[data-theme="dark"] .detail-sub{ color:#adb5bd; }
+html[data-theme="dark"] .detail-close{ color:rgba(230,235,240,.75); }
+html[data-theme="dark"] .detail-close:active{ background:rgba(255,255,255,.08); }
+
+html[data-theme="dark"] .detail-block{
+  border-color:rgba(255,255,255,.10);
+  background:rgba(255,255,255,.06);
+}
+html[data-theme="dark"] .detail-row{
+  border-top-color:rgba(255,255,255,.10);
+}
+html[data-theme="dark"] .detail-row .k{ color:#adb5bd; }
+html[data-theme="dark"] .detail-row .v{ color:#e9ecef; }
+html[data-theme="dark"] .detail-note{ color:#e9ecef; }
+
+html[data-theme="dark"] .time-header .detail-icon{
+  color:rgba(230,235,240,.7);
+}
+html[data-theme="dark"] .time-header .detail-icon:active{
+  background:rgba(255,255,255,.08);
+}
+/* =========================================================
+   🌙 詳情頁（detail-sheet）夜間模式：低調旅行手帳感 LINK 膠囊
+========================================================= */
+html[data-theme="dark"] .detail-sheet .detail-pill{
+  color: #d6d9de; /* 柔灰白，不是亮白 */
+  background: rgba(255,255,255,0.06); /* 很淡的紙感底 */
+  border: 1px solid rgba(255,255,255,0.14); /* 細邊框 */
+  box-shadow: none; /* 不要立體感 */
+}
+
+html[data-theme="dark"] .detail-sheet .detail-pill i{
+  color: #cfd3d8; /* icon 跟文字接近 */
+  opacity: 0.85;
+}
+
+/* hover：不是變亮，只是「更實」 */
+html[data-theme="dark"] .detail-sheet .detail-pill:hover{
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.22);
+}
+
+/* active：像紙被按一下 */
+html[data-theme="dark"] .detail-sheet .detail-pill:active{
+  transform: scale(0.97);
+  background: rgba(255,255,255
 
 </style>
 </head>
@@ -1050,7 +1305,7 @@ html[data-theme="dark"] .text-muted{
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h6 class="fw-bold text-primary m-0">啟程飛行</h6>
         </div>
-        <div class="time-item">
+        <div class="time-item" data-detail="kaohsiung-airport-departure">
             <div class="time-node"></div>
 
             <div class="time-header">
@@ -2398,6 +2653,282 @@ document.addEventListener('DOMContentLoaded', () => {
         todayBtn.innerText = `9/${now.getDate()}`;
     }
 });
+/* =========================================================
+   ✅【行程詳情資料庫】你以後要新增/刪除/編輯「詳情內容」只改這裡就好
+   - key：你自己取（短一點、好記）
+   - 下面每一筆都是「一個行程項目」的詳情
+   - 沒填的欄位不會顯示（例如沒有票價就不會出現票價區）
+========================================================= */
+const detailData = {
+  // 範例：Toyota 取車（你可以照這個格式改成自己的）
+  "kaohsiung-airport-departure": {
+    tag: "TRANSPORT",
+    time: "11:30",
+    title: "取車 (Toyota Rent a Car)",
+    sub: "熊本｜取車與接駁注意事項",
+    location: {
+      text: "熊本縣菊池郡菊陽町大字辛川403-2",
+      map: "https://maps.google.com/?q=熊本縣菊池郡菊陽町大字辛川403-2"
+    },
+    contact: {
+      phone: "096-232-0100"
+    },
+    hours: "依預約取車時間",
+    price: "", // 沒有就留空字串或刪掉
+    reservation: {
+      provider: "Toyota Rent a Car (熊本)",
+      date: "3/14 取車",
+      confirmNo: "" // 可填訂單代碼
+    },
+    notes: [
+      "領完行李出關後，請往左手邊走，尋找「レンタカー (Rent a Car)」綜合櫃檯。",
+      "告知預約大名後，工作人員會指引到接駁車站牌（通常在 1 號站牌）。",
+      "搭乘 Toyota 專屬接駁車前往營業所。"
+    ],
+    links: [
+      { name: "官網", url: "https://rent.toyota.co.jp/" },
+      { name: "地圖", url: "https://maps.google.com/?q=熊本縣菊池郡菊陽町大字辛川403-2" }
+    ]
+  },
+
+  // 你可以繼續在這裡新增更多筆：
+  // "some-key": { ... }
+};
+
+
+/* =========================================================
+   ✅ Sheet 開關/渲染（你不用改，除非你想調排版）
+========================================================= */
+function escapeHtml(str){
+  return String(str ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function buildDetailBody(data){
+  const blocks = [];
+
+  // 位置
+  if (data.location && (data.location.text || data.location.map)) {
+    const locText = data.location.text ? escapeHtml(data.location.text) : "";
+    const locLink = data.location.map
+      ? `<a href="${escapeHtml(data.location.map)}" target="_blank" rel="noopener">開啟地圖</a>`
+      : "";
+    blocks.push(`
+      <div class="detail-block">
+        <h6>LOCATION</h6>
+        <div class="detail-row"><div class="k">地址</div><div class="v">${locText}</div></div>
+        ${locLink ? `<div class="detail-row"><div class="k">導航</div><div class="v">${locLink}</div></div>` : ""}
+      </div>
+    `);
+  }
+
+  // 訂位資訊
+  if (data.reservation && (data.reservation.provider || data.reservation.date || data.reservation.confirmNo)) {
+    const provider = escapeHtml(data.reservation.provider || "");
+    const date = escapeHtml(data.reservation.date || "");
+    const confirmNo = escapeHtml(data.reservation.confirmNo || "");
+    const copyBtn = confirmNo
+      ? `<button class="detail-pill" type="button" onclick="copyText('${confirmNo}')">
+           <i class="fa-regular fa-copy"></i> 複製訂單代碼
+         </button>`
+      : "";
+
+    blocks.push(`
+      <div class="detail-block">
+        <h6>RESERVATION</h6>
+        ${provider ? `<div class="detail-row"><div class="k">預訂</div><div class="v">${provider}</div></div>` : ""}
+        ${date ? `<div class="detail-row"><div class="k">日期</div><div class="v">${date}</div></div>` : ""}
+        ${confirmNo ? `<div class="detail-row"><div class="k">代碼</div><div class="v">${confirmNo}</div></div>` : ""}
+        ${copyBtn ? `<div class="detail-actions">${copyBtn}</div>` : ""}
+      </div>
+    `);
+  }
+
+  // 聯繫方式 / 營業時間 / 票價
+  if ((data.contact && (data.contact.phone || data.contact.email)) || data.hours || data.price) {
+    const rows = [];
+
+    if (data.contact?.phone) {
+      const p = escapeHtml(data.contact.phone);
+      rows.push(`<div class="detail-row"><div class="k">電話</div><div class="v"><a href="tel:${p}">${p}</a></div></div>`);
+    }
+    if (data.contact?.email) {
+      const e = escapeHtml(data.contact.email);
+      rows.push(`<div class="detail-row"><div class="k">Email</div><div class="v"><a href="mailto:${e}">${e}</a></div></div>`);
+    }
+    if (data.hours) rows.push(`<div class="detail-row"><div class="k">營業</div><div class="v">${escapeHtml(data.hours)}</div></div>`);
+    if (data.price) rows.push(`<div class="detail-row"><div class="k">票價</div><div class="v">${escapeHtml(data.price)}</div></div>`);
+
+    blocks.push(`
+      <div class="detail-block">
+        <h6>CONTACT</h6>
+        ${rows.join("")}
+      </div>
+    `);
+  }
+
+  // 注意事項
+  if (Array.isArray(data.notes) && data.notes.length) {
+    const lis = data.notes.map(n => `<li>${escapeHtml(n)}</li>`).join("");
+    blocks.push(`
+      <div class="detail-block">
+        <h6>NOTES</h6>
+        <div class="detail-note"><ul>${lis}</ul></div>
+      </div>
+    `);
+  }
+
+  // 相關連結
+  if (Array.isArray(data.links) && data.links.length) {
+    const pills = data.links
+      .filter(l => l?.url)
+      .map(l => `<a class="detail-pill" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">
+                  <i class="fa-solid fa-up-right-from-square"></i> ${escapeHtml(l.name || "連結")}
+                 </a>`)
+      .join("");
+    blocks.push(`
+      <div class="detail-block">
+        <h6>LINKS</h6>
+        <div class="detail-actions">${pills}</div>
+      </div>
+    `);
+  }
+
+  // 沒內容就給個提示（通常不會發生，因為你 2a 沒資料不顯示 icon）
+  if (!blocks.length) {
+    return `<div class="detail-block"><div class="detail-note">尚未建立詳情。</div></div>`;
+  }
+
+  return blocks.join("");
+}
+
+function openDetail(key){
+  const data = detailData[key];
+  if (!data) return; // 2a：沒資料不顯示 icon，也避免誤開
+
+  const html = document.documentElement;
+
+  // 塞 header
+  document.getElementById("detailTag").innerText = data.tag || "INFO";
+  document.getElementById("detailTime").innerHTML =
+    `<i class="fa-regular fa-clock"></i> ${escapeHtml(data.time || "--:--")}`;
+  document.getElementById("detailTitle").innerText = data.title || "";
+  document.getElementById("detailSub").innerText = data.sub || "";
+
+  // 塞 body
+  document.getElementById("detailBody").innerHTML = buildDetailBody(data);
+
+  // 顯示
+  const backdrop = document.getElementById("detailBackdrop");
+  const sheet = document.getElementById("detailSheet");
+// 顯示（先停在收合狀態）
+backdrop.style.display = "block";
+sheet.style.display = "block";
+sheet.setAttribute("aria-hidden","false");
+
+// ✅ 強制讓瀏覽器先把「收合狀態」畫出來
+html.classList.remove("detail-open"); // 保險：避免殘留狀態
+void sheet.offsetHeight;             // 強制 reflow
+
+// ✅ 下一個 frame 再打開，動畫就會從下往上跑
+requestAnimationFrame(() => {
+  html.classList.add("detail-open");
+});
+
+// 鎖背景滾動
+document.body.style.overflow = "hidden";
+}
+
+function closeDetail(){
+  const html = document.documentElement;
+  const backdrop = document.getElementById("detailBackdrop");
+  const sheet = document.getElementById("detailSheet");
+
+  html.classList.remove("detail-open");
+  sheet.setAttribute("aria-hidden","true");
+  document.body.style.overflow = "";
+
+  // 等動畫結束再 display none
+  setTimeout(() => {
+    backdrop.style.display = "none";
+    sheet.style.display = "none";
+  }, 280);
+}
+
+async function copyText(text){
+  try{
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      alert("✅ 已複製");
+    } else {
+      // fallback
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      alert("✅ 已複製");
+    }
+  }catch(e){
+    alert("❌ 複製失敗");
+  }
+}
+
+/* =========================================================
+   ✅ 自動在有詳情的行程項目加上「詳情 icon」（A 方案）
+   你只要在 time-item 上加 data-detail="某個key"
+   就會自動出現 icon；沒加就不出現（2a）
+========================================================= */
+function initDetailIcons(){
+  document.querySelectorAll(".time-item[data-detail]").forEach(item => {
+    const key = item.getAttribute("data-detail");
+    if (!key || !detailData[key]) return; // 2a：沒資料就不要顯示
+
+    const header = item.querySelector(".time-header");
+    if (!header) return;
+
+    // 避免重複插入
+    if (header.querySelector(".detail-icon")) return;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "detail-icon";
+    btn.innerHTML = `<i class="fa-solid fa-circle-info"></i>`;
+    btn.title = "查看詳情";
+
+    // ✅ 關鍵：阻止冒泡，避免觸發 time-header 的展開/收合
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openDetail(key);
+    });
+
+    header.appendChild(btn);
+  });
+
+  // 關閉行為
+  const backdrop = document.getElementById("detailBackdrop");
+  const closeBtn = document.getElementById("detailClose");
+  if (backdrop) backdrop.addEventListener("click", closeDetail);
+  if (closeBtn) closeBtn.addEventListener("click", closeDetail);
+
+  // Esc 關閉
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && document.documentElement.classList.contains("detail-open")) {
+      closeDetail();
+    }
+  });
+}
+
+/* 在 DOM 準備好之後初始化 */
+document.addEventListener("DOMContentLoaded", () => {
+  initDetailIcons();
+});
+
 </script>
 <div id="hotel-bar" class="accommodation-bar">
     <div>
@@ -2408,5 +2939,33 @@ document.addEventListener('DOMContentLoaded', () => {
         <i class="fas fa-map-marker-alt"></i> 
     </a>
 </div>
+<!-- =========================================================
+     ✅ 行程詳情 Sheet（1a：底部彈出）
+========================================================= -->
+<div id="detailBackdrop" class="detail-backdrop" style="display:none;"></div>
+
+<div id="detailSheet" class="detail-sheet" style="display:none;" aria-hidden="true">
+  <div class="detail-card">
+    <div class="detail-head">
+      <div style="min-width:0;">
+        <div class="detail-meta">
+          <span id="detailTag" class="detail-tag">INFO</span>
+          <span id="detailTime" class="detail-time"><i class="fa-regular fa-clock"></i> --:--</span>
+        </div>
+        <div id="detailTitle" class="detail-title">標題</div>
+        <div id="detailSub" class="detail-sub"></div>
+      </div>
+
+      <button id="detailClose" class="detail-close" type="button" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div id="detailBody" class="detail-body">
+      <!-- JS 動態塞內容 -->
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
