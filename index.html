@@ -2929,12 +2929,13 @@ function initDetailIcons(){
 /* 在 DOM 準備好之後初始化 */
 document.addEventListener("DOMContentLoaded", () => {
   initDetailIcons();
+  initDetailDragToClose(); // ✅ 新增：等 sheet/backdrop 都在 DOM 了再綁拖曳
 });
 /* =========================================================
    ✅ 詳情頁：Header 下拉拖曳關閉（只在 header 啟動 / 跟手 / 不夠距離回彈）
    - 保留：X 關閉、點遮罩關閉
 ========================================================= */
-(function initDetailDragToClose(){
+function initDetailDragToClose(){
   const html = document.documentElement;
   const sheet = document.getElementById("detailSheet");
   const backdrop = document.getElementById("detailBackdrop");
@@ -3070,8 +3071,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("pointermove", onPointerMove, { passive: false });
   document.addEventListener("pointerup", onPointerUp, { passive: true });
   document.addEventListener("pointercancel", onPointerUp, { passive: true });
-})();
-
+}
 </script>
 <div id="hotel-bar" class="accommodation-bar">
     <div>
