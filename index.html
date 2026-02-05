@@ -2700,10 +2700,25 @@ function initBudgetPageIfNeeded(){
   // 更新匯率提示
   updateRateHintUI();
 
-  // 若尚未成功抓過，就進頁抓一次（不跳 alert）
-  if (!lastRateFetchedAt){
-    refreshRates(false);
+// ✅ 先讀快取：讓「最後更新時間」立刻有內容（也可用快取 rates 顯示）
+if (!lastRateFetchedAt){
+  const cache = localStorage.getItem('trip_budget_rates_cache');
+  if (cache){
+    try{
+      const parsed = JSON.parse(cache);
+      if (parsed?.at) lastRateFetchedAt = parsed.at;
+      if (parsed?.rates) rates = { ...rates, ...parsed.rates };
+      // 有快取不代表現在在線，所以不硬改 ratesStatus；讓 refreshRates 自己決定
+    }catch(_){}
   }
+}
+
+// 若仍沒任何更新時間，才進頁抓一次（不跳 alert）
+if (!lastRateFetchedAt){
+  refreshRates(false);
+} else {
+  // 有快取就先刷新提示文字（顯示最後更新）
+  updateRateHintUI();
 }
 
 
