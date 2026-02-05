@@ -1188,7 +1188,280 @@ html[data-theme="dark"] .detail-sheet .detail-pill:hover{
 /* active：像紙被按一下 */
 html[data-theme="dark"] .detail-sheet .detail-pill:active{
   transform: scale(0.97);
-  background: rgba(255,255,255
+  border-color: rgba(255,255,255,0.22);
+}
+/* =========================
+   Budget UI: pay pills + day groups
+========================= */
+
+/* 付款方式 pills */
+.pay-pills{
+  display:flex;
+  gap:8px;
+  justify-content:flex-end;
+  align-items:center;
+}
+.pay-pill{
+  border:1px solid rgba(44,62,80,.18);
+  background:rgba(44,62,80,.06);
+  color:rgba(44,62,80,.85);
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:.72rem;
+  font-weight:700;
+  line-height:1;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .12s ease, background .15s ease, opacity .15s ease;
+  white-space:nowrap;
+}
+.pay-pill:active{ transform:scale(.98); }
+.pay-pill.active{
+  background:rgba(44,62,80,.16);
+  border-color:rgba(44,62,80,.28);
+}
+
+html[data-theme="dark"] .pay-pill{
+  border-color:rgba(255,255,255,.18);
+  background:rgba(255,255,255,.08);
+  color:rgba(230,235,240,.85);
+}
+html[data-theme="dark"] .pay-pill.active{
+  background:rgba(255,255,255,.16);
+  border-color:rgba(255,255,255,.26);
+}
+
+/* 今日卡頭（日期＋今日總額） */
+.budget-today-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:10px;
+}
+.budget-today-date{
+  font-size:.85rem;
+  font-weight:800;
+  letter-spacing:.4px;
+}
+.budget-today-sub{
+  font-size:.72rem;
+  font-weight:600;
+  opacity:.65;
+}
+.budget-today-total{
+  font-size:1.25rem;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+/* 清單每筆：左右對齊（左資訊 / 右金額） */
+.exp-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.exp-left{
+  min-width:0;
+  flex:1;
+}
+.exp-cat{
+  font-weight:800;
+  font-size:.92rem;
+  line-height:1.2;
+}
+.exp-meta{
+  margin-top:4px;
+  font-size:.75rem;
+  color:#6c757d;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+html[data-theme="dark"] .exp-meta{ color:#adb5bd; }
+
+.exp-right{
+  text-align:right;
+  white-space:nowrap;
+}
+.exp-amt{
+  font-weight:900;
+  font-size:.92rem;
+}
+.exp-twd{
+  margin-top:4px;
+  font-size:.76rem;
+  font-weight:700;
+  opacity:.8;
+}
+.exp-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+  margin-top:6px;
+}
+
+/* 其他日期：收合列 */
+.day-group{
+  border:1px solid rgba(44,62,80,.08);
+  border-radius:14px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+  margin-bottom:10px;
+}
+html[data-theme="dark"] .day-group{
+  background:#1e1e1e;
+  border-color:#2a2a2a;
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+
+.day-group-head{
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  user-select:none;
+}
+.day-group-head:active{ transform:scale(.99); }
+.day-group-title{
+  font-weight:900;
+  font-size:.9rem;
+}
+.day-group-sum{
+  font-weight:900;
+  font-size:.9rem;
+  white-space:nowrap;
+}
+.day-group-body{
+  max-height:0;
+  overflow:hidden;
+  transform:scaleY(0);
+  transform-origin:top;
+  opacity:0;
+  transition:max-height .35s ease, transform .35s ease, opacity .35s ease;
+}
+
+.day-group.open .day-group-body{
+  max-height: 5000px;
+  transform: scaleY(1);
+  opacity: 1;
+}
+.day-group-toggle{
+  margin-left:8px;
+  opacity:.7;
+  transition: transform .25s ease;
+}
+.day-group.open .day-group-toggle{
+  transform: rotate(180deg);
+}
+/* =========================
+   Budget: Edit-day popover (B2)
+========================= */
+.budget-popover{
+  position:absolute;
+  z-index:1800;
+  min-width: 240px;
+  max-width: 280px;
+  background:#fff;
+  border:1px solid rgba(44,62,80,.14);
+  border-radius:14px;
+  box-shadow:0 14px 28px rgba(0,0,0,.16);
+  padding:10px;
+}
+
+.budget-popover .pop-title{
+  font-size:.78rem;
+  font-weight:900;
+  letter-spacing:.4px;
+  opacity:.82;
+  margin-bottom:6px;
+}
+
+.budget-popover .pop-pills{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-bottom:8px;
+}
+
+.budget-popover .pop-pill{
+  border:1px solid rgba(44,62,80,.18);
+  background:rgba(44,62,80,.06);
+  color:rgba(44,62,80,.88);
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:.72rem;
+  font-weight:800;
+  line-height:1;
+  cursor:pointer;
+  user-select:none;
+}
+.budget-popover .pop-pill:active{ transform:scale(.98); }
+
+.budget-popover .pop-row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.budget-popover input{
+  width:100%;
+  border-radius:10px;
+  border:1px solid rgba(44,62,80,.16);
+  padding:6px 10px;
+  font-size:.85rem;
+  outline:none;
+}
+
+.budget-popover .pop-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:8px;
+}
+
+.budget-popover .pop-btn{
+  border:none;
+  background:transparent;
+  padding:6px 8px;
+  border-radius:10px;
+  font-size:.78rem;
+  font-weight:900;
+  cursor:pointer;
+  color:rgba(44,62,80,.78);
+}
+.budget-popover .pop-btn.primary{
+  background:rgba(44,62,80,.92);
+  color:#fff;
+  padding:6px 10px;
+}
+.budget-popover .pop-btn:active{ transform:scale(.98); }
+
+html[data-theme="dark"] .budget-popover{
+  background:#1e1e1e;
+  border-color:#2a2a2a;
+  box-shadow:0 16px 45px rgba(0,0,0,.55);
+}
+html[data-theme="dark"] .budget-popover .pop-pill{
+  border-color:rgba(255,255,255,.18);
+  background:rgba(255,255,255,.08);
+  color:rgba(230,235,240,.88);
+}
+html[data-theme="dark"] .budget-popover input{
+  background:#252525;
+  border-color:#444;
+  color:#eee;
+}
+html[data-theme="dark"] .budget-popover .pop-btn{
+  color:rgba(230,235,240,.75);
+}
+html[data-theme="dark"] .budget-popover .pop-btn.primary{
+  background:rgba(44,62,80,.92);
+  color:#fff;
+}
 
 </style>
 </head>
@@ -1236,9 +1509,9 @@ html[data-theme="dark"] .detail-sheet .detail-pill:active{
         class="btn btn-sm"
         onclick="toggleTheme()"
         style="font-size: 0.9rem; line-height: 1;">
-    <i class="fa-solid fa-moon"></i></div>
+    <i class="fa-solid fa-moon"></i>
 </button>
-
+</div>
 </div>
     </div>
 </div>
@@ -1509,40 +1782,101 @@ html[data-theme="dark"] .detail-sheet .detail-pill:active{
         </div>
     </div>
 </div> 
-
 <div id="budget" class="content-section">
-    <div class="budget-sum">
-        <small style="opacity: 0.8; letter-spacing: 1px;">旅程總支出估算 (TWD)</small>
-        <div class="h1 my-2">NT$ <span id="total-twd">0</span></div>
-        <div class="small" style="font-size:0.75rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px;">
-            CHF: <span id="total-chf">0</span> | EUR: <span id="total-eur">0</span> | HKD: <span id="total-hkd">0</span>
-        </div>
+
+
+  <!-- 新增記帳：輸入卡 -->
+  <div class="card-custom">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h6 class="fw-bold m-0">新增支出</h6>
+      <button id="rateRefreshBtn" class="btn btn-sm btn-outline-dark" style="font-size: 0.7rem;" onclick="refreshRates(true)">
+        <i class="fas fa-sync-alt"></i>
+      </button>
     </div>
 
-    <div class="card-custom">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="fw-bold m-0">匯率設定</h6>
-            <button class="btn btn-sm btn-outline-dark" style="font-size: 0.7rem;" onclick="fetchRates()">
-                <i class="fas fa-sync-alt"></i> 
-            </button>
-        </div>
-        <div class="row g-2 mb-3">
-            <div class="col-4"><label class="small text-muted">CHF➔TWD</label><input type="number" id="rate-chf" class="form-control form-control-sm" value="38.5" onchange="render()"></div>
-            <div class="col-4"><label class="small text-muted">EUR➔TWD</label><input type="number" id="rate-eur" class="form-control form-control-sm" value="34.2" onchange="render()"></div>
-            <div class="col-4"><label class="small text-muted">HKD➔TWD</label><input type="number" id="rate-hkd" class="form-control form-control-sm" value="4.1" onchange="render()"></div>
-        </div>
-        <hr>
-        <input type="text" id="exp-name" class="form-control form-control-sm mb-2" placeholder="項目 (如: 機場晚餐)">
-        <div class="input-group input-group-sm mb-2">
-            <select id="exp-curr" class="form-select" style="max-width: 85px;"><option>CHF</option><option>EUR</option><option>HKD</option><option>TWD</option></select>
-            <input type="number" id="exp-amt" class="form-control" placeholder="金額">
-        </div>
-        <textarea id="exp-note" class="form-control form-control-sm mb-2" placeholder="備註內容"></textarea>
-        <button class="btn btn-dark w-100 btn-sm shadow-sm" onclick="addExp()">記錄這筆支出</button>
+    <!-- 幣別 + 金額 -->
+    <div class="input-group input-group-sm mb-2">
+      <select id="exp-curr" class="form-select" style="max-width: 92px;" onchange="onBudgetCurrencyChange()">
+        <option value="TWD">TWD</option>
+        <option value="CHF">CHF</option>
+        <option value="EUR">EUR</option>
+        <option value="HKD">HKD</option>
+      </select>
+      <input type="number" id="exp-amt" class="form-control" placeholder="金額">
     </div>
-    <div id="exp-list"></div>
-    <button class="btn btn-link btn-sm w-100 text-muted mt-4" onclick="clearAll()">清空所有記帳紀錄</button>
+
+    <!-- 匯率顯示（即時/離線提示 + 手動備援只顯示目前幣別） -->
+    <div class="small text-muted" id="rateHint" style="margin-top:-2px;">
+      匯率：載入中…
+    </div>
+    <div id="manualRateWrap" style="display:none;" class="mt-2">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text" id="manualRateLabel">CHF→TWD</span>
+        <input type="number" id="manualRateInput" class="form-control" placeholder="手動匯率（離線備援）" step="0.01">
+      </div>
+      <div class="small text-muted mt-1">提示：離線也能記帳；此匯率只影響「新增的這筆」，舊帳不變。</div>
+    </div>
+
+    <hr class="my-3">
+
+    <!-- 分類 + 付款方式 pills（同一列，不增加行數） -->
+    <div class="row g-2 align-items-center mb-2">
+      <div class="col-6">
+        <select id="exp-cat" class="form-select form-select-sm">
+          <option value="餐飲">餐飲</option>
+          <option value="交通">交通</option>
+          <option value="門票">門票</option>
+          <option value="住宿">住宿</option>
+          <option value="購物">購物</option>
+          <option value="超市">超市</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="col-6">
+        <div class="pay-pills">
+          <button type="button" class="pay-pill active" data-pay="card" onclick="setPayMethod('card', this)">信用卡</button>
+          <button type="button" class="pay-pill" data-pay="cash" onclick="setPayMethod('cash', this)">現金</button>
+          <button type="button" class="pay-pill" data-pay="other" onclick="setPayMethod('other', this)">其他</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 備註 -->
+    <textarea id="exp-note" class="form-control form-control-sm mb-2" placeholder="備註（需要記卡別就寫這裡，例如：玉山VISA）"></textarea>
+
+    <!-- 加入 -->
+    <button class="btn btn-dark w-100 btn-sm shadow-sm" onclick="addExp()">加入這筆記帳</button>
+  </div>
+
+  <!-- 今日 -->
+  <div class="card-custom">
+    <div class="budget-today-head">
+      <div>
+        <div class="budget-today-date" id="todayLabel">Today</div>
+        <div class="budget-today-sub" id="todaySub">CHF 0 | EUR 0 | HKD 0</div>
+      </div>
+      <div class="budget-today-total">NT$ <span id="todayTotal">0</span></div>
+    </div>
+    <div class="mt-3" id="todayList"></div>
+  </div>
+
+  <!-- 其他日期（預設收合，但你點開後會保留，直到整頁 reload） -->
+  <div class="mt-2">
+    <div class="small text-muted mb-2" style="font-weight:700; letter-spacing:.4px;">其他日期</div>
+    <div id="dayGroups"></div>
+  </div>
+  <!-- 旅程總覽（沿用你原本卡片概念） -->
+  <div class="budget-sum">
+    <small style="opacity: 0.8; letter-spacing: 1px;">旅程總支出 (TWD)</small>
+    <div class="h1 my-2">NT$ <span id="total-twd">0</span></div>
+    <div class="small" style="font-size:0.75rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px;">
+      CHF: <span id="total-chf">0</span> | EUR: <span id="total-eur">0</span> | HKD: <span id="total-hkd">0</span>
+    </div>
+  </div>
+
+  <button class="btn btn-link btn-sm w-100 text-muted mt-4" onclick="clearAll()">清空所有記帳紀錄</button>
 </div>
+
 <div id="packing" class="content-section">
     <div class="day-label">🧳 行李清單</div>
     <div class="card-custom mb-3" id="packing-progress-container" style="display: none;">
@@ -1667,6 +2001,11 @@ function switchTab(id, el) {
     if (typeof refreshHotelBar === 'function') {
         refreshHotelBar();
     }
+    // ✅ 切到記帳頁：自動抓一次匯率（不彈通知）
+    if (id === 'budget' && typeof initBudgetPageIfNeeded === 'function') {
+        initBudgetPageIfNeeded();
+    }
+
 }
 
 function switchDay(dayId, el) {
@@ -1678,95 +2017,571 @@ function switchDay(dayId, el) {
     if (target) target.classList.add('active');
     window.scrollTo(0, 0);
 }
-
-// --- 記帳邏輯 ---
+// --- 記帳邏輯（新版：每筆鎖匯率 / 今日+分日 / 展開狀態保留） ---
 let expenses = JSON.parse(localStorage.getItem('trip_v2026')) || [];
 
-function addExp() {
-    const name = document.getElementById('exp-name').value;
-    const amt = document.getElementById('exp-amt').value;
-    const curr = document.getElementById('exp-curr').value;
-    const note = document.getElementById('exp-note').value;
-    
-    if (name && amt) {
-        expenses.push({ name, amt: parseFloat(amt), curr, note, id: Date.now() });
-        document.getElementById('exp-name').value = ''; 
-        document.getElementById('exp-amt').value = ''; 
-        document.getElementById('exp-note').value = '';
-        render(); // 重新渲染
+// 匯率狀態（只影響新增，不回頭改舊帳）
+let rates = { CHF: null, EUR: null, HKD: null };   // foreign -> TWD
+let ratesStatus = "loading"; // "ok" | "offline" | "loading"
+let lastRateFetchedAt = 0;
+
+// UI 狀態：其他日期展開狀態（直到整頁 reload；但 render 不會把你打開的收回）
+let openDaySet = new Set(JSON.parse(localStorage.getItem('trip_budget_open_days') || '[]'));
+
+// 付款方式：記住上一次
+let currentPay = localStorage.getItem('trip_budget_last_pay') || 'card';
+
+// 小工具：取得「本地日期 key」（依手機所在時區，不指定 timeZone）
+function getLocalDayKey(date = new Date()) {
+  // 以 YYYY-MM-DD 做 key，比較穩定
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function formatLocalDayLabel(dayKey){
+  // dayKey: YYYY-MM-DD
+  const [y,m,d] = dayKey.split('-').map(n => parseInt(n,10));
+  const dt = new Date(y, (m-1), d);
+  // 例：Thu, 9/10
+  const wk = new Intl.DateTimeFormat('en-US', { weekday:'short' }).format(dt);
+  return `${wk} · ${m}/${d}`;
+}
+
+function num(n){
+  const x = Number(n);
+  return Number.isFinite(x) ? x : 0;
+}
+
+function toMoney(n){
+  return Math.round(num(n)).toLocaleString();
+}
+
+// 當幣別變更：更新匯率顯示 / 手動備援欄位
+function onBudgetCurrencyChange(){
+  updateRateHintUI();
+}
+
+// 付款方式 pill
+function setPayMethod(pay, btnEl){
+  currentPay = pay;
+  localStorage.setItem('trip_budget_last_pay', pay);
+
+  document.querySelectorAll('#budget .pay-pill').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  else {
+    // fallback：找同 pay 的按鈕
+    const t = document.querySelector(`#budget .pay-pill[data-pay="${pay}"]`);
+    if (t) t.classList.add('active');
+  }
+}
+
+// 匯率提示 UI
+function updateRateHintUI(){
+  const curr = document.getElementById('exp-curr')?.value || 'TWD';
+  const hint = document.getElementById('rateHint');
+  const manualWrap = document.getElementById('manualRateWrap');
+  const manualLabel = document.getElementById('manualRateLabel');
+  const manualInput = document.getElementById('manualRateInput');
+
+  if (!hint) return;
+
+  if (curr === 'TWD'){
+    hint.innerText = `匯率：TWD（不需要換算）`;
+    if (manualWrap) manualWrap.style.display = 'none';
+    return;
+  }
+
+  const r = rates[curr];
+  if (ratesStatus === 'ok' && r){
+    hint.innerText = `匯率：${curr} → TWD ${r.toFixed(2)}（即時）`;
+    if (manualWrap) manualWrap.style.display = 'none';
+  } else {
+    hint.innerText = `匯率：目前無法取得（離線/失敗）— 可用手動備援`;
+    if (manualWrap) {
+      manualWrap.style.display = 'block';
+      if (manualLabel) manualLabel.innerText = `${curr}→TWD`;
+      if (manualInput){
+        // 預帶入你上次該幣別手動值
+        const saved = localStorage.getItem(`trip_budget_manual_rate_${curr}`);
+        if (saved && manualInput.value === '') manualInput.value = saved;
+      }
+    }
+  }
+}
+
+// 抓匯率（進入頁面抓一次；想更新才按按鈕）
+async function refreshRates(showToast = false){
+  ratesStatus = "loading";
+  updateRateHintUI();
+
+  try{
+    // 取 TWD base，回來是 1 TWD = ? foreign
+    const res = await fetch('https://open.er-api.com/v6/latest/TWD', { cache: "no-store" });
+    const data = await res.json();
+
+    if (!data || !data.rates) throw new Error("No rates");
+
+    // foreign -> TWD = 1 / (TWD -> foreign)
+    rates.CHF = data.rates.CHF ? (1 / data.rates.CHF) : null;
+    rates.EUR = data.rates.EUR ? (1 / data.rates.EUR) : null;
+    rates.HKD = data.rates.HKD ? (1 / data.rates.HKD) : null;
+
+    ratesStatus = "ok";
+    lastRateFetchedAt = Date.now();
+
+    // 緩存一份（離線時至少顯示最後成功的）
+    localStorage.setItem('trip_budget_rates_cache', JSON.stringify({
+      at: lastRateFetchedAt,
+      rates
+    }));
+
+    if (showToast) alert('✅ 匯率已更新（僅影響新紀錄）');
+  }catch(e){
+    // 失敗：嘗試用 cache 顯示（但仍視為 offline，新增時若非 TWD 會出手動備援）
+    ratesStatus = "offline";
+
+    const cache = localStorage.getItem('trip_budget_rates_cache');
+    if (cache){
+      try{
+        const parsed = JSON.parse(cache);
+        if (parsed?.rates) rates = { ...rates, ...parsed.rates };
+      }catch(_){}
+    }
+
+    if (showToast) alert('⚠️ 無法獲取即時匯率（可用手動備援繼續記帳）');
+  }finally{
+    updateRateHintUI();
+  }
+}
+
+// 新增記帳：鎖定匯率 + 鎖定換算 TWD
+function addExp(){
+  const curr = document.getElementById('exp-curr').value;
+  const amtRaw = document.getElementById('exp-amt').value;
+  const cat = document.getElementById('exp-cat').value;
+  const note = document.getElementById('exp-note').value || "";
+
+  const amt = parseFloat(amtRaw);
+
+  if (!Number.isFinite(amt) || amt <= 0){
+    alert("請輸入正確金額");
+    return;
+  }
+
+  // 決定這筆使用的匯率
+  let rateAtSave = 1; // TWD
+  let rateSource = "auto";
+
+  if (curr !== 'TWD'){
+    const r = ratesStatus === "ok" ? rates[curr] : null;
+
+    if (r && Number.isFinite(r)){
+      rateAtSave = r;
+      rateSource = "auto";
     } else {
-        alert("請輸入項目名稱與金額");
+      // 離線備援：只顯示目前幣別那一格
+      const manualInput = document.getElementById('manualRateInput');
+      const manual = parseFloat(manualInput?.value);
+
+      if (!Number.isFinite(manual) || manual <= 0){
+        alert(`目前無法取得即時匯率，請先輸入 ${curr}→TWD 的手動匯率`);
+        return;
+      }
+      rateAtSave = manual;
+      rateSource = "manual";
+      localStorage.setItem(`trip_budget_manual_rate_${curr}`, String(manual));
     }
+  }
+
+  const twdAtSave = (curr === 'TWD') ? amt : (amt * rateAtSave);
+
+  const now = new Date();
+  const dayKey = getLocalDayKey(now);
+
+  expenses.push({
+    id: Date.now(),
+    createdAt: now.toISOString(),
+    localDay: dayKey,           // 用本地日期分組（你在台灣/歐洲都跟著手機）
+    cat,
+    pay: currentPay,            // cash/card/other
+    curr,
+    amt,
+    rateAtSave,                 // foreign -> TWD（每筆鎖死）
+    rateSource,                 // auto/manual
+    twdAtSave,                  // 每筆鎖死的換算 TWD
+    note
+  });
+
+  localStorage.setItem('trip_v2026', JSON.stringify(expenses));
+
+  // 清輸入（保留你選的幣別/分類/付款方式，減少旅行中反覆操作）
+  document.getElementById('exp-amt').value = '';
+  document.getElementById('exp-note').value = '';
+
+  render(); // 重新渲染（但會保留你打開的日期狀態）
 }
 
-function deleteExp(id) {
-    expenses = expenses.filter(e => e.id !== id);
-    render();
+function deleteExp(id){
+  expenses = expenses.filter(e => e.id !== id);
+  localStorage.setItem('trip_v2026', JSON.stringify(expenses));
+  render();
 }
 
-function clearAll() {
-    if(confirm("確定要清空所有記帳紀錄嗎？")) {
-        expenses = [];
-        render();
-    }
-}
-
-// 核心修正：補回 render 函數
-function render() {
+function clearAll(){
+  if(confirm("確定要清空所有記帳紀錄嗎？")){
+    expenses = [];
     localStorage.setItem('trip_v2026', JSON.stringify(expenses));
-    
-    const rCHF = parseFloat(document.getElementById('rate-chf').value) || 0;
-    const rEUR = parseFloat(document.getElementById('rate-eur').value) || 0;
-    const rHKD = parseFloat(document.getElementById('rate-hkd').value) || 0;
-    
-    let tTWD = 0, tCHF = 0, tEUR = 0, tHKD = 0;
-    let html = '';
-
-    expenses.forEach(e => {
-        let twd = 0;
-        if (e.curr === 'CHF') { twd = e.amt * rCHF; tCHF += e.amt; }
-        else if (e.curr === 'EUR') { twd = e.amt * rEUR; tEUR += e.amt; }
-        else if (e.curr === 'HKD') { twd = e.amt * rHKD; tHKD += e.amt; }
-        else { twd = e.amt; }
-        tTWD += twd;
-
-        html += `
-            <div class="card-custom mb-2">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <span class="fw-bold">${e.name}</span>
-                        <div class="small text-muted">${Number(e.amt).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 1})} ${e.curr}<i class="fas fa-arrow-right mx-1"></i> NT$ ${Math.round(twd).toLocaleString()}
-</div>
-                        ${e.note ? `<div class="small text-secondary mt-1">${e.note}</div>` : ''}
-                    </div>
-                    <button class="btn btn-sm text-danger" onclick="deleteExp(${e.id})"><i class="fas fa-trash-alt"></i></button>
-                </div>
-            </div>`;
-    });
-
-    document.getElementById('exp-list').innerHTML = html;
-    document.getElementById('total-twd').innerText = Math.round(tTWD).toLocaleString();
-    document.getElementById('total-chf').innerText = tCHF.toFixed(1);
-    document.getElementById('total-eur').innerText = tEUR.toFixed(1);
-    document.getElementById('total-hkd').innerText = tHKD.toFixed(1);
+    render();
+  }
 }
 
-// --- 匯率獲取 ---
-async function fetchRates() {
-    try {
-        const res = await fetch('https://open.er-api.com/v6/latest/TWD');
-        const data = await res.json();
-        if (data && data.rates) {
-            document.getElementById('rate-chf').value = (1 / data.rates.CHF).toFixed(2);
-            document.getElementById('rate-eur').value = (1 / data.rates.EUR).toFixed(2);
-            document.getElementById('rate-hkd').value = (1 / data.rates.HKD).toFixed(2);
-            alert('匯率已更新！');
-            render();
-        }
-    } catch (e) {
-        alert('無法獲取即時匯率');
+// 渲染（新版）
+function render(){
+  // 兼容舊資料：補 localDay / twdAtSave / rateAtSave / pay
+  let changed = false;
+  expenses.forEach(e => {
+    if (!e.localDay){
+      const dt = e.createdAt ? new Date(e.createdAt) : new Date();
+      e.localDay = getLocalDayKey(dt);
+      changed = true;
     }
+    if (!Number.isFinite(Number(e.twdAtSave))){
+      // 舊版用當下匯率算；我們只能用「目前欄位」補一次（避免爆掉）
+      const amt = num(e.amt);
+      const curr = e.curr || 'TWD';
+      const r = num(e.rateAtSave) || 1;
+      e.twdAtSave = (curr === 'TWD') ? amt : (amt * r);
+      changed = true;
+    }
+    if (!e.pay){
+      e.pay = 'card';
+      changed = true;
+    }
+  });
+  if (changed){
+    localStorage.setItem('trip_v2026', JSON.stringify(expenses));
+  }
+
+  // 更新今日標籤
+  const todayKey = getLocalDayKey(new Date());
+  const todayLabel = document.getElementById('todayLabel');
+  if (todayLabel) todayLabel.innerText = `Today · ${formatLocalDayLabel(todayKey)}`;
+
+  // 分組（依 localDay）
+  const byDay = new Map();
+  expenses.forEach(e => {
+    const k = e.localDay || todayKey;
+    if (!byDay.has(k)) byDay.set(k, []);
+    byDay.get(k).push(e);
+  });
+
+  // 日期排序：新到舊
+  const dayKeys = Array.from(byDay.keys()).sort((a,b) => (a < b ? 1 : -1));
+
+  // 旅程總覽（沿用你的總覽顯示）
+  let totalTWD = 0, totalCHF = 0, totalEUR = 0, totalHKD = 0;
+  expenses.forEach(e => {
+    totalTWD += num(e.twdAtSave);
+    if (e.curr === 'CHF') totalCHF += num(e.amt);
+    if (e.curr === 'EUR') totalEUR += num(e.amt);
+    if (e.curr === 'HKD') totalHKD += num(e.amt);
+  });
+
+  document.getElementById('total-twd').innerText = toMoney(totalTWD);
+  document.getElementById('total-chf').innerText = totalCHF.toFixed(1);
+  document.getElementById('total-eur').innerText = totalEUR.toFixed(1);
+  document.getElementById('total-hkd').innerText = totalHKD.toFixed(1);
+
+  // 今日區塊
+  const todayListEl = document.getElementById('todayList');
+  const todayTotalEl = document.getElementById('todayTotal');
+  const todaySubEl = document.getElementById('todaySub');
+
+  const todayItems = byDay.get(todayKey) || [];
+  let todayTWD = 0, todayCHF = 0, todayEUR = 0, todayHKD = 0;
+
+  todayItems.forEach(e => {
+    todayTWD += num(e.twdAtSave);
+    if (e.curr === 'CHF') todayCHF += num(e.amt);
+    if (e.curr === 'EUR') todayEUR += num(e.amt);
+    if (e.curr === 'HKD') todayHKD += num(e.amt);
+  });
+
+  if (todayTotalEl) todayTotalEl.innerText = toMoney(todayTWD);
+  if (todaySubEl) todaySubEl.innerText = `CHF ${todayCHF.toFixed(1)} | EUR ${todayEUR.toFixed(1)} | HKD ${todayHKD.toFixed(1)}`;
+
+  if (todayListEl){
+    todayListEl.innerHTML = todayItems.length
+      ? todayItems
+          .slice()
+          .sort((a,b) => (a.createdAt < b.createdAt ? 1 : -1))
+          .map(e => renderExpCard(e))
+          .join('')
+      : `<div class="text-center small text-muted py-2">今天尚無記帳</div>`;
+  }
+
+  // 其他日期（排除今日）
+  const dayGroupsEl = document.getElementById('dayGroups');
+  if (dayGroupsEl){
+    const otherDays = dayKeys.filter(k => k !== todayKey);
+    if (!otherDays.length){
+      dayGroupsEl.innerHTML = `<div class="text-center small text-muted py-2">尚無其他日期紀錄</div>`;
+    } else {
+      dayGroupsEl.innerHTML = otherDays.map(k => renderDayGroup(k, byDay.get(k))).join('');
+    }
+  }
+
+  // 恢復付款方式 pill（避免 reload 以外的 render 把 UI 弄回去）
+  setPayMethod(currentPay, null);
+
+  // 匯率提示更新
+  updateRateHintUI();
 }
+
+// 單筆卡片 HTML（左：分類+備註+付款方式；右：原幣+TWD）
+function payLabel(pay){
+  if (pay === 'cash') return '現金';
+  if (pay === 'other') return '其他';
+  return '信用卡';
+}
+function payIcon(pay){
+  if (pay === 'cash') return 'fa-coins';
+  if (pay === 'other') return 'fa-ellipsis';
+  return 'fa-credit-card';
+}
+// =========================
+// Budget: Edit-day popover (B2)
+// =========================
+let activePop = null; // { id, el }
+
+function closeEditPopover(){
+  if (activePop?.el) activePop.el.remove();
+  activePop = null;
+}
+
+function ymdFromDate(dt){
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth()+1).padStart(2,'0');
+  const d = String(dt.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+
+function addDays(dt, delta){
+  const x = new Date(dt);
+  x.setDate(x.getDate() + delta);
+  return x;
+}
+
+function isValidYMD(s){
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const [y,m,d] = s.split('-').map(n=>parseInt(n,10));
+  const test = new Date(y, m-1, d);
+  return test.getFullYear()===y && (test.getMonth()+1)===m && test.getDate()===d;
+}
+
+function setPopoverDateInput(popEl, ymd){
+  const input = popEl.querySelector('input[data-role="day"]');
+  if (input) input.value = ymd;
+}
+
+function saveEditedDay(expId, newDay){
+  if (!isValidYMD(newDay)){
+    alert("日期格式請用 YYYY-MM-DD（例如 2026-09-10）");
+    return;
+  }
+  const idx = expenses.findIndex(e => e.id === expId);
+  if (idx < 0) return;
+
+  // ✅ 只改付款日（分組用的 localDay）
+  expenses[idx].localDay = newDay;
+
+  localStorage.setItem('trip_v2026', JSON.stringify(expenses));
+  closeEditPopover();
+  render();
+}
+
+// anchorBtn：你點的 ✏️ 那顆
+function openEditPopover(expId, anchorBtn){
+  closeEditPopover();
+
+  const e = expenses.find(x => x.id === expId);
+  if (!e) return;
+
+  // 建 popover
+  const pop = document.createElement('div');
+  pop.className = 'budget-popover';
+  pop.dataset.popover = 'budget-edit';
+  pop.innerHTML = `
+    <div class="pop-title">付款日（刷卡/付款那天）</div>
+
+    <div class="pop-pills">
+      <div class="pop-pill" data-delta="0">今天</div>
+      <div class="pop-pill" data-delta="-1">昨天</div>
+      <div class="pop-pill" data-delta="-2">前天</div>
+    </div>
+
+    <div class="pop-row">
+      <input data-role="day" inputmode="numeric" placeholder="YYYY-MM-DD" />
+    </div>
+
+    <div class="pop-actions">
+      <button type="button" class="pop-btn" data-act="cancel">取消</button>
+      <button type="button" class="pop-btn primary" data-act="save">保存</button>
+    </div>
+  `;
+
+  // 預填原本日期
+  setPopoverDateInput(pop, e.localDay || getLocalDayKey(new Date(e.createdAt || Date.now())));
+
+  // 定位：貼在按鈕旁邊（右側/下方）
+  const rect = anchorBtn.getBoundingClientRect();
+  const scrollX = window.scrollX || document.documentElement.scrollLeft;
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+  pop.style.left = `${scrollX + rect.left - 240}px`; // 先往左推，避免超出右邊
+  pop.style.top  = `${scrollY + rect.bottom + 8}px`;
+
+  // 若太靠左，拉回來
+  setTimeout(() => {
+    const pr = pop.getBoundingClientRect();
+    if (pr.left < 8) pop.style.left = `${scrollX + 8}px`;
+    if (pr.right > window.innerWidth - 8) pop.style.left = `${scrollX + window.innerWidth - pr.width - 8}px`;
+  }, 0);
+
+  document.body.appendChild(pop);
+  activePop = { id: expId, el: pop };
+
+  // 快速 pill
+  pop.querySelectorAll('.pop-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const delta = parseInt(pill.dataset.delta, 10);
+      const ymd = ymdFromDate(addDays(new Date(), delta));
+      setPopoverDateInput(pop, ymd);
+    });
+  });
+
+  // Cancel/Save
+  pop.querySelector('[data-act="cancel"]').addEventListener('click', closeEditPopover);
+  pop.querySelector('[data-act="save"]').addEventListener('click', () => {
+    const input = pop.querySelector('input[data-role="day"]');
+    const val = (input?.value || '').trim();
+    saveEditedDay(expId, val);
+  });
+
+  // Enter 直接保存
+  pop.querySelector('input[data-role="day"]').addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter'){
+      ev.preventDefault();
+      const val = ev.target.value.trim();
+      saveEditedDay(expId, val);
+    }
+  });
+}
+
+// 點空白處關閉（只綁一次）
+document.addEventListener('click', (ev) => {
+  if (!activePop?.el) return;
+
+  const pop = activePop.el;
+  const clickedInsidePop = pop.contains(ev.target);
+  const clickedEditBtn = ev.target.closest?.('[data-editday-btn="1"]');
+
+  if (!clickedInsidePop && !clickedEditBtn){
+    closeEditPopover();
+  }
+});
+
+function renderExpCard(e){
+  const noteHtml = e.note ? `<div class="exp-meta"><span>${escapeHtml(e.note)}</span></div>` : `<div class="exp-meta"></div>`;
+  const metaPay = `<span><i class="fa-solid ${payIcon(e.pay)}"></i> ${payLabel(e.pay)}</span>`;
+
+  return `
+    <div class="card-custom mb-2">
+      <div class="exp-row">
+        <div class="exp-left">
+          <div class="exp-cat">${escapeHtml(e.cat || '其他')}</div>
+          <div class="exp-meta">
+            ${metaPay}
+          </div>
+          ${e.note ? `<div class="exp-meta"><span>${escapeHtml(e.note)}</span></div>` : ``}
+        </div>
+
+        <div class="exp-right">
+          <div class="exp-amt">${num(e.amt).toLocaleString(undefined, { maximumFractionDigits: 1 })} ${escapeHtml(e.curr || 'TWD')}</div>
+          <div class="exp-twd">NT$ ${toMoney(e.twdAtSave)}</div>
+
+<div class="exp-actions">
+  <button class="btn btn-sm text-muted" data-editday-btn="1"
+          onclick="openEditPopover(${e.id}, this)" title="編輯付款日">
+    <i class="fas fa-pen"></i>
+  </button>
+
+  <button class="btn btn-sm text-danger" onclick="deleteExp(${e.id})" title="刪除">
+    <i class="fas fa-trash-alt"></i>
+  </button>
+</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// 日期群組（收合/展開：render 不會重置你已展開的狀態）
+function renderDayGroup(dayKey, items){
+  const sumTWD = items.reduce((acc, e) => acc + num(e.twdAtSave), 0);
+  const isOpen = openDaySet.has(dayKey);
+
+  const body = items
+    .slice()
+    .sort((a,b) => (a.createdAt < b.createdAt ? 1 : -1))
+    .map(e => renderExpCard(e))
+    .join('');
+
+  return `
+    <div class="day-group ${isOpen ? 'open' : ''}" data-day="${dayKey}">
+      <div class="day-group-head" onclick="toggleDayGroup('${dayKey}')">
+        <div class="day-group-title">${formatLocalDayLabel(dayKey)}</div>
+        <div class="d-flex align-items-center">
+          <div class="day-group-sum">NT$ ${toMoney(sumTWD)}</div>
+          <div class="day-group-toggle">▾</div>
+        </div>
+      </div>
+      <div class="day-group-body">
+        ${body}
+      </div>
+    </div>
+  `;
+}
+
+function toggleDayGroup(dayKey){
+  if (openDaySet.has(dayKey)) openDaySet.delete(dayKey);
+  else openDaySet.add(dayKey);
+
+  // 你要求「除非 reload 否則保留」，render 時不會重置；
+  // 這裡順便寫入 localStorage，避免你切換分頁後仍想保留。
+  localStorage.setItem('trip_budget_open_days', JSON.stringify(Array.from(openDaySet)));
+
+  // 只切 class，不整頁重畫（更穩）
+  const el = document.querySelector(`.day-group[data-day="${dayKey}"]`);
+  if (el) el.classList.toggle('open');
+}
+
+// 記帳頁進場初始化：抓匯率 + UI 恢復
+function initBudgetPageIfNeeded(){
+  // 恢復付款方式（按你上次）
+  setPayMethod(currentPay, null);
+
+  // 更新匯率提示
+  updateRateHintUI();
+
+  // 若尚未成功抓過，就進頁抓一次（不跳 alert）
+  if (!lastRateFetchedAt){
+    refreshRates(false);
+  }
+}
+
 
 // --- 行李清單邏輯 ---
 let categorizedPack = JSON.parse(localStorage.getItem('trip_pack_cat')) || [];
