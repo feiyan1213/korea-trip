@@ -1462,7 +1462,76 @@ html[data-theme="dark"] .budget-popover .pop-btn.primary{
   background:rgba(44,62,80,.92);
   color:#fff;
 }
+/* =========================
+   Budget: More actions (⋯)
+========================= */
+.more-btn{
+  border:none;
+  background:transparent;
+  padding:4px 6px;
+  border-radius:8px;
+  font-size:1.1rem;
+  line-height:1;
+  color:rgba(44,62,80,.55);
+  cursor:pointer;
+}
+.more-btn:active{
+  transform: scale(.95);
+}
 
+html[data-theme="dark"] .more-btn{
+  color:rgba(230,235,240,.55);
+}
+
+/* 小選單（編輯 / 刪除） */
+.more-menu{
+  position:absolute;
+  z-index:1700;
+  background:#fff;
+  border:1px solid rgba(44,62,80,.14);
+  border-radius:12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.18);
+  padding:6px;
+  min-width:140px;
+}
+
+.more-menu .menu-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:8px;
+  font-size:.85rem;
+  font-weight:700;
+  cursor:pointer;
+  color:#2c3e50;
+}
+.more-menu .menu-item:hover{
+  background:rgba(44,62,80,.08);
+}
+.more-menu .menu-item.danger{
+  color:#b42318;
+}
+.more-menu .menu-item.danger:hover{
+  background:rgba(220,53,69,.12);
+}
+
+html[data-theme="dark"] .more-menu{
+  background:#1e1e1e;
+  border-color:#2a2a2a;
+  box-shadow:0 14px 45px rgba(0,0,0,.55);
+}
+html[data-theme="dark"] .more-menu .menu-item{
+  color:#e6ebf0;
+}
+html[data-theme="dark"] .more-menu .menu-item:hover{
+  background:rgba(255,255,255,.08);
+}
+/* 記帳頁：項目寬度與幣值一致 */
+#budget #exp-cat{
+  max-width: 92px;   /* 跟 exp-curr 一樣 */
+  width: 92px;
+}
 </style>
 </head>
 <body>
@@ -2481,14 +2550,18 @@ function openEditPopover(expId, anchorBtn){
 }
 
 // 點空白處關閉（只綁一次）
+// 點空白處關閉（只綁一次）✅ 修正版：點到 more-menu / more-btn 不要立刻關掉
 document.addEventListener('click', (ev) => {
   if (!activePop?.el) return;
 
   const pop = activePop.el;
-  const clickedInsidePop = pop.contains(ev.target);
-  const clickedEditBtn = ev.target.closest?.('[data-editday-btn="1"]');
 
-  if (!clickedInsidePop && !clickedEditBtn){
+  const clickedInsidePop = pop.contains(ev.target);
+  const clickedMoreMenu  = ev.target.closest?.('.more-menu');
+  const clickedMoreBtn   = ev.target.closest?.('[data-more-btn="1"]');
+  const clickedEditBtn   = ev.target.closest?.('[data-editday-btn="1"]'); // 你目前其實沒用到，但留著也OK
+
+  if (!clickedInsidePop && !clickedMoreMenu && !clickedMoreBtn && !clickedEditBtn) {
     closeEditPopover();
   }
 });
@@ -2513,13 +2586,10 @@ function renderExpCard(e){
           <div class="exp-twd">NT$ ${toMoney(e.twdAtSave)}</div>
 
 <div class="exp-actions">
-  <button class="btn btn-sm text-muted" data-editday-btn="1"
-          onclick="openEditPopover(${e.id}, this)" title="編輯付款日">
-    <i class="fas fa-pen"></i>
-  </button>
-
-  <button class="btn btn-sm text-danger" onclick="deleteExp(${e.id})" title="刪除">
-    <i class="fas fa-trash-alt"></i>
+  <button class="more-btn" data-more-btn="1"
+          onclick="openMoreMenu(${e.id}, this)"
+          title="更多">
+    &hellip;
   </button>
 </div>
         </div>
@@ -2527,6 +2597,60 @@ function renderExpCard(e){
     </div>
   `;
 }
+// =========================
+// Budget: more actions menu (⋯)
+// =========================
+let activeMoreMenu = null;
+
+function closeMoreMenu(){
+  if (activeMoreMenu) activeMoreMenu.remove();
+  activeMoreMenu = null;
+}
+
+function openMoreMenu(expId, anchorBtn){
+  closeMoreMenu();
+  closeEditPopover(); // 避免兩個 popover 疊在一起
+
+  const menu = document.createElement('div');
+  menu.className = 'more-menu';
+  menu.innerHTML = `
+    <div class="menu-item" data-act="edit">
+      <i class="fas fa-pen"></i> 編輯付款日
+    </div>
+    <div class="menu-item danger" data-act="delete">
+      <i class="fas fa-trash-alt"></i> 刪除
+    </div>
+  `;
+
+  // 定位
+  const rect = anchorBtn.getBoundingClientRect();
+  const scrollX = window.scrollX || document.documentElement.scrollLeft;
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+  menu.style.left = `${scrollX + rect.right - 140}px`;
+  menu.style.top  = `${scrollY + rect.bottom + 6}px`;
+
+  document.body.appendChild(menu);
+  activeMoreMenu = menu;
+
+  // 行為
+  menu.querySelector('[data-act="edit"]').onclick = () => {
+    closeMoreMenu();
+    openEditPopover(expId, anchorBtn);
+  };
+  menu.querySelector('[data-act="delete"]').onclick = () => {
+    closeMoreMenu();
+    deleteExp(expId);
+  };
+}
+
+// 點空白處關閉
+document.addEventListener('click', (ev) => {
+  if (activeMoreMenu && !activeMoreMenu.contains(ev.target) && !ev.target.closest('[data-more-btn="1"]')){
+    closeMoreMenu();
+  }
+});
+
 
 // 日期群組（收合/展開：render 不會重置你已展開的狀態）
 function renderDayGroup(dayKey, items){
