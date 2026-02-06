@@ -1349,6 +1349,8 @@ html[data-theme="dark"] .day-group{
   transform-origin:top;
   opacity:0;
   transition:max-height .35s ease, transform .35s ease, opacity .35s ease;
+      padding: 0 14px;   /* ✅ 讓內容左右留白，對齊 head 的 14px */
+      box-sizing: border-box;
 }
 
 .day-group.open .day-group-body{
@@ -2494,7 +2496,7 @@ function payLabel(pay){
 function payIcon(pay){
   if (pay === 'cash') return 'fa-coins';
   if (pay === 'mobile') return 'fa-mobile-screen-button';
-  if (pay === 'other') return 'fa-ellipsis';
+  if (pay === 'other') return 'fa-shapes';
   return 'fa-credit-card';
 }
 // =========================
