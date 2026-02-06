@@ -1284,6 +1284,13 @@ html[data-theme="dark"] .exp-meta{ color:#adb5bd; }
   text-align:right;
   white-space:nowrap;
 }
+.exp-right-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-end;
+  gap:6px; /* 金額跟 ⋯ 的距離 */
+}
+
 .exp-amt{
   font-weight:900;
   font-size:.92rem;
@@ -1532,6 +1539,42 @@ html[data-theme="dark"] .more-menu .menu-item:hover{
   max-width: 92px;   /* 跟 exp-curr 一樣 */
   width: 92px;
 }
+.exp-meta{
+  margin-top:6px;
+  font-size:0.85rem;
+  opacity:.9;
+  display:flex;
+  align-items:center;
+  gap:0px;
+}
+
+.pay-ic{
+  opacity:.75;
+}
+
+.note{
+  opacity:.9;
+}
+/* 記帳卡：左側備註行 */
+.exp-note{
+  margin-top: 4px;
+  font-size: 0.85rem;
+  opacity: 0.8;
+  line-height: 1.25;
+}
+
+/* 金額列內 icon 與文字對齊 */
+.exp-amt{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exp-amt .pay-ic{
+  font-size: 0.95em;
+  line-height: 1;
+}
+
 </style>
 </head>
 <body>
@@ -1902,11 +1945,12 @@ html[data-theme="dark"] .more-menu .menu-item:hover{
         </select>
       </div>
       <div class="col-6">
-        <div class="pay-pills">
-          <button type="button" class="pay-pill active" data-pay="card" onclick="setPayMethod('card', this)">信用卡</button>
-          <button type="button" class="pay-pill" data-pay="cash" onclick="setPayMethod('cash', this)">現金</button>
-          <button type="button" class="pay-pill" data-pay="other" onclick="setPayMethod('other', this)">其他</button>
-        </div>
+<div class="pay-pills">
+  <button type="button" class="pay-pill active" data-pay="card" onclick="setPayMethod('card', this)">信用卡</button>
+  <button type="button" class="pay-pill" data-pay="cash" onclick="setPayMethod('cash', this)">現金</button>
+  <button type="button" class="pay-pill" data-pay="mobile" onclick="setPayMethod('mobile', this)">行動支付</button>
+  <button type="button" class="pay-pill" data-pay="other" onclick="setPayMethod('other', this)">其他</button>
+</div>
       </div>
     </div>
 
@@ -2126,6 +2170,13 @@ function num(n){
 function toMoney(n){
   return Math.round(num(n)).toLocaleString();
 }
+function fmtHHMM(ts){
+  if (!ts) return "";
+  const d = new Date(ts);
+  const hh = String(d.getHours()).padStart(2,'0');
+  const mm = String(d.getMinutes()).padStart(2,'0');
+  return `${hh}:${mm}`;
+}
 
 // 當幣別變更：更新匯率顯示 / 手動備援欄位
 function onBudgetCurrencyChange(){
@@ -2157,27 +2208,30 @@ function updateRateHintUI(){
   if (!hint) return;
 
   if (curr === 'TWD'){
-    hint.innerText = `匯率：TWD（不需要換算）`;
+    hint.innerText = `匯率：TWD`;
     if (manualWrap) manualWrap.style.display = 'none';
     return;
   }
 
   const r = rates[curr];
-  if (ratesStatus === 'ok' && r){
-    hint.innerText = `匯率：${curr} → TWD ${r.toFixed(2)}（即時）`;
-    if (manualWrap) manualWrap.style.display = 'none';
-  } else {
-    hint.innerText = `匯率：目前無法取得（離線/失敗）— 可用手動備援`;
-    if (manualWrap) {
-      manualWrap.style.display = 'block';
-      if (manualLabel) manualLabel.innerText = `${curr}→TWD`;
-      if (manualInput){
-        // 預帶入你上次該幣別手動值
-        const saved = localStorage.getItem(`trip_budget_manual_rate_${curr}`);
-        if (saved && manualInput.value === '') manualInput.value = saved;
-      }
+const t = fmtHHMM(lastRateFetchedAt);
+const tLabel = t ? `（最後更新 ${t}）` : "";
+
+if (ratesStatus === 'ok' && r){
+  hint.innerText = `匯率：${curr} → TWD ${r.toFixed(2)}${tLabel}`;
+  if (manualWrap) manualWrap.style.display = 'none';
+} else {
+  // ✅ 離線/失敗時：如果有快取時間，也顯示最後更新
+  hint.innerText = `匯率：目前無法取得（離線/失敗）— 可用手動備援${tLabel}`;
+  if (manualWrap) {
+    manualWrap.style.display = 'block';
+    if (manualLabel) manualLabel.innerText = `${curr}→TWD`;
+    if (manualInput){
+      const saved = localStorage.getItem(`trip_budget_manual_rate_${curr}`);
+      if (saved && manualInput.value === '') manualInput.value = saved;
     }
   }
+}
 }
 
 // 抓匯率（進入頁面抓一次；想更新才按按鈕）
@@ -2412,11 +2466,14 @@ function render(){
 // 單筆卡片 HTML（左：分類+備註+付款方式；右：原幣+TWD）
 function payLabel(pay){
   if (pay === 'cash') return '現金';
+  if (pay === 'mobile') return '行動支付';
   if (pay === 'other') return '其他';
   return '信用卡';
 }
+
 function payIcon(pay){
   if (pay === 'cash') return 'fa-coins';
+  if (pay === 'mobile') return 'fa-mobile-screen-button';
   if (pay === 'other') return 'fa-ellipsis';
   return 'fa-credit-card';
 }
@@ -2567,31 +2624,30 @@ document.addEventListener('click', (ev) => {
 });
 
 function renderExpCard(e){
-  const noteHtml = e.note ? `<div class="exp-meta"><span>${escapeHtml(e.note)}</span></div>` : `<div class="exp-meta"></div>`;
-  const metaPay = `<span><i class="fa-solid ${payIcon(e.pay)}"></i> ${payLabel(e.pay)}</span>`;
-
   return `
     <div class="card-custom mb-2">
       <div class="exp-row">
         <div class="exp-left">
           <div class="exp-cat">${escapeHtml(e.cat || '其他')}</div>
-          <div class="exp-meta">
-            ${metaPay}
-          </div>
-          ${e.note ? `<div class="exp-meta"><span>${escapeHtml(e.note)}</span></div>` : ``}
+
+          ${e.note ? `<div class="exp-note">${escapeHtml(e.note)}</div>` : ``}
         </div>
 
         <div class="exp-right">
-          <div class="exp-amt">${num(e.amt).toLocaleString(undefined, { maximumFractionDigits: 1 })} ${escapeHtml(e.curr || 'TWD')}</div>
-          <div class="exp-twd">NT$ ${toMoney(e.twdAtSave)}</div>
+          <div class="exp-right-top">
+            <div class="exp-amt">
+              <i class="fa-solid ${payIcon(e.pay)} pay-ic"></i>
+              <span class="amt-val">${num(e.amt).toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
+              <span class="amt-curr">${escapeHtml(e.curr || 'TWD')}</span>
+            </div>
 
-<div class="exp-actions">
-  <button class="more-btn" data-more-btn="1"
-          onclick="openMoreMenu(${e.id}, this)"
-          title="更多">
-    &hellip;
-  </button>
-</div>
+            <button class="more-btn" data-more-btn="1"
+                    onclick="openMoreMenu(${e.id}, this)">
+              &hellip;
+            </button>
+          </div>
+
+          <div class="exp-twd">NT$ ${toMoney(e.twdAtSave)}</div>
         </div>
       </div>
     </div>
