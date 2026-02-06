@@ -1198,7 +1198,7 @@ html[data-theme="dark"] .detail-sheet .detail-pill:active{
 .pay-pills{
   display:flex;
   gap:8px;
-  justify-content:flex-end;
+  justify-content:flex-start;
   align-items:center;
 }
 .pay-pill{
@@ -1574,6 +1574,26 @@ html[data-theme="dark"] .more-menu .menu-item:hover{
   font-size: 0.95em;
   line-height: 1;
 }
+/* 只影響付款方式 pills */
+#pay-method-pills{
+  display:flex;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+
+  /* 關鍵：只讓容器寬度等於前三顆 */
+  max-width:100%;
+}
+
+#pay-method-pills::-webkit-scrollbar{
+  display:none;
+}
+
+#pay-method-pills .pay-pill{
+  flex:0 0 auto; /* 不壓縮 */
+}
 
 </style>
 </head>
@@ -1945,7 +1965,7 @@ html[data-theme="dark"] .more-menu .menu-item:hover{
         </select>
       </div>
       <div class="col-6">
-<div class="pay-pills">
+<div class="pay-pills" id="pay-method-pills">
   <button type="button" class="pay-pill active" data-pay="card" onclick="setPayMethod('card', this)">信用卡</button>
   <button type="button" class="pay-pill" data-pay="cash" onclick="setPayMethod('cash', this)">現金</button>
   <button type="button" class="pay-pill" data-pay="mobile" onclick="setPayMethod('mobile', this)">行動支付</button>
