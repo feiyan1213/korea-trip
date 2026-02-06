@@ -1280,27 +1280,69 @@ html[data-theme="dark"] .pay-pill.active{
 }
 html[data-theme="dark"] .exp-meta{ color:#adb5bd; }
 
+/* 右側：三欄（icon / 金額兩行 / …） */
 .exp-right{
-  text-align:right;
   white-space:nowrap;
 }
+
 .exp-right-top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:flex-end;
-  gap:6px; /* 金額跟 ⋯ 的距離 */
+  display:grid;
+  grid-template-columns: auto 1fr; /* icon | money */
+  column-gap:8px;
+  align-items:start;
+  justify-content:end;
 }
 
-.exp-amt{
-  font-weight:900;
-  font-size:.92rem;
+/* ① icon 欄：只在第一行出現 */
+.exp-pay-ic{
+  line-height:1;
+  margin-top:5px; /* 需要可微調 0~2px */
 }
-.exp-twd{
+
+/* ② 金額欄：兩行靠左貼齊 */
+.exp-money{
+  text-align:left;
+  min-width:0;
+}
+
+.exp-money .exp-amt{
+  display:inline-flex;
+  align-items:flex-start;
+  gap:8px;
+  line-height:1;
+}
+
+/* 台幣換算：跟主金額左緣對齊 */
+.exp-money .exp-twd{
   margin-top:4px;
   font-size:.76rem;
   font-weight:700;
   opacity:.8;
+  text-align:left;
 }
+
+.exp-left-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between; /* 項目在左，…在右 */
+  gap:10px;
+}
+
+.exp-left-top .exp-cat{
+  min-width:0;
+}
+
+/* 左側的 … 降低存在感、縮小一點 */
+.more-btn.exp-more-left{
+  opacity:.55;
+  padding:2px 4px;
+  font-size:1rem;
+  line-height:1;
+}
+html[data-theme="dark"] .more-btn.exp-more-left{
+  opacity:.55;
+}
+
 .exp-actions{
   display:flex;
   align-items:center;
@@ -1568,7 +1610,7 @@ html[data-theme="dark"] .more-menu .menu-item:hover{
 /* 金額列內 icon 與文字對齊 */
 .exp-amt{
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
 }
 
@@ -2649,28 +2691,35 @@ function renderExpCard(e){
   return `
     <div class="card-custom mb-2">
       <div class="exp-row">
-        <div class="exp-left">
-          <div class="exp-cat">${escapeHtml(e.cat || '其他')}</div>
+<div class="exp-left">
+  <div class="exp-left-top">
+    <div class="exp-cat">${escapeHtml(e.cat || '其他')}</div>
 
-          ${e.note ? `<div class="exp-note">${escapeHtml(e.note)}</div>` : ``}
-        </div>
+    <button class="more-btn exp-more-left" data-more-btn="1"
+            onclick="openMoreMenu(${e.id}, this)">
+      &hellip;
+    </button>
+  </div>
 
-        <div class="exp-right">
-          <div class="exp-right-top">
-            <div class="exp-amt">
-              <i class="fa-solid ${payIcon(e.pay)} pay-ic"></i>
-              <span class="amt-val">${num(e.amt).toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
-              <span class="amt-curr">${escapeHtml(e.curr || 'TWD')}</span>
-            </div>
+  ${e.note ? `<div class="exp-note">${escapeHtml(e.note)}</div>` : ``}
+</div>
 
-            <button class="more-btn" data-more-btn="1"
-                    onclick="openMoreMenu(${e.id}, this)">
-              &hellip;
-            </button>
-          </div>
+<div class="exp-right">
+  <div class="exp-right-top">
+    <!-- ① icon 獨立欄（只有第一行） -->
+    <i class="fa-solid ${payIcon(e.pay)} pay-ic exp-pay-ic"></i>
 
-          <div class="exp-twd">NT$ ${toMoney(e.twdAtSave)}</div>
-        </div>
+    <!-- ② 金額欄：第一行主金額 / 第二行台幣換算（左對齊） -->
+    <div class="exp-money">
+      <div class="exp-amt">
+        <span class="amt-val">${num(e.amt).toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
+        <span class="amt-curr">${escapeHtml(e.curr || 'TWD')}</span>
+      </div>
+      <div class="exp-twd">NT$ ${toMoney(e.twdAtSave)}</div>
+    </div>
+
+  </div>
+</div>
       </div>
     </div>
   `;
