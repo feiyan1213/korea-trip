@@ -2630,8 +2630,8 @@ function openEditPopover(expId, anchorBtn){
   const scrollX = window.scrollX || document.documentElement.scrollLeft;
   const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-  pop.style.left = `${scrollX + rect.left - 240}px`; // 先往左推，避免超出右邊
-  pop.style.top  = `${scrollY + rect.bottom + 8}px`;
+  pop.style.left = `${scrollX +  rect.left}px`; // 先往左推，避免超出右邊
+  pop.style.top  = `${scrollY + rect.bottom + 6}px`;
 
   // 若太靠左，拉回來
   setTimeout(() => {
@@ -2754,10 +2754,18 @@ function openMoreMenu(expId, anchorBtn){
   const scrollX = window.scrollX || document.documentElement.scrollLeft;
   const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-  menu.style.left = `${scrollX + rect.right - 140}px`;
+  menu.style.left = `${scrollX + rect.left}px`;
   menu.style.top  = `${scrollY + rect.bottom + 6}px`;
 
   document.body.appendChild(menu);
+const menuRect = menu.getBoundingClientRect();
+const minLeft = 8; // 你想留的邊界
+const maxLeft = window.scrollX + document.documentElement.clientWidth - menuRect.width - 8;
+
+let left = scrollX + rect.left;
+left = Math.max(window.scrollX + minLeft, Math.min(left, maxLeft));
+menu.style.left = `${left}px`;
+
   activeMoreMenu = menu;
 
   // 行為
