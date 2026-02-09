@@ -1638,6 +1638,90 @@ margin-left:-40px;
 #pay-method-pills .pay-pill{
   flex:0 0 auto; /* 不壓縮 */
 }
+/* ================================
+   🧳 行李模板操作：淡色膠囊按鈕（方案 B）
+   不影響其他 .btn，只作用在 .pack-pill
+================================ */
+.pack-pill{
+  --pill-bg: rgba(44,62,80,0.06);
+  --pill-bd: rgba(44,62,80,0.14);
+  --pill-tx: rgba(44,62,80,0.85);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+
+  padding: 6px 10px !important;
+  border-radius: 999px !important;
+  font-size: 0.78rem !important;
+  line-height: 1;
+  letter-spacing: 0.02em;
+
+  background: var(--pill-bg);
+  border: 1px solid var(--pill-bd);
+  color: var(--pill-tx);
+
+  box-shadow: none;
+  transition: transform .08s ease, background .15s ease, border-color .15s ease, opacity .15s ease;
+}
+
+.pack-pill:hover{
+  background: rgba(44,62,80,0.10);
+  border-color: rgba(44,62,80,0.22);
+}
+
+.pack-pill:active{
+  transform: scale(0.98);
+}
+
+/* 主按鈕（合併）：低調但略強一點 */
+.pack-pill-primary{
+  --pill-bg: rgba(212,163,115,0.18);   /* 你的 highlight 淡化 */
+  --pill-bd: rgba(212,163,115,0.35);
+  --pill-tx: rgba(44,62,80,0.92);
+}
+
+.pack-pill-primary:hover{
+  background: rgba(212,163,115,0.26);
+  border-color: rgba(212,163,115,0.45);
+}
+
+/* 危險操作（重建）：淡紅描邊，不要刺眼 */
+.pack-pill-danger{
+  --pill-bg: rgba(220,53,69,0.06);
+  --pill-bd: rgba(220,53,69,0.22);
+  --pill-tx: rgba(220,53,69,0.85);
+}
+
+.pack-pill-danger:hover{
+  background: rgba(220,53,69,0.10);
+  border-color: rgba(220,53,69,0.30);
+}
+
+/* Dark mode（你網站的 data-theme="dark" 風格相容） */
+[data-theme="dark"] .pack-pill{
+  --pill-bg: rgba(255,255,255,0.06);
+  --pill-bd: rgba(255,255,255,0.14);
+  --pill-tx: rgba(230,235,240,0.88);
+}
+
+[data-theme="dark"] .pack-pill:hover{
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.22);
+}
+
+[data-theme="dark"] .pack-pill-primary{
+  --pill-bg: rgba(212,163,115,0.20);
+  --pill-bd: rgba(212,163,115,0.40);
+  --pill-tx: rgba(245,245,245,0.92);
+}
+
+[data-theme="dark"] .pack-pill-danger{
+  --pill-bg: rgba(255,90,110,0.10);
+  --pill-bd: rgba(255,90,110,0.26);
+  --pill-tx: rgba(255,150,160,0.95);
+}
 
 </style>
 </head>
@@ -2055,28 +2139,69 @@ margin-left:-40px;
 </div>
 
 <div id="packing" class="content-section">
-    <div class="day-label">🧳 行李清單</div>
-    <div class="card-custom mb-3" id="packing-progress-container" style="display: none;">
-    <div class="d-flex justify-content-between mb-1">
-        <span class="small fw-bold">打包進度</span>
-        <span class="small text-muted" id="packing-percent">0%</span>
-    </div>
-    <div class="progress" style="height: 8px; background-color: #eee; border-radius: 4px;">
-        <div id="packing-bar" class="progress-bar" style="width: 0%; height: 100%; transition: width 0.3s; background-color: #5d8aa8;">
-</div>
-    </div>
-</div>
-    <div class="card-custom mb-3">
-        <div class="input-group input-group-sm">
-            <input type="text" id="new-cat-input" class="form-control" placeholder="新增類別 (如：化妝品)">
-            <button class="btn btn-dark" onclick="addNewCategory()">建立分類</button>
+  <div class="day-label">🧳 行李清單</div>
+
+  <!-- ✅ 行李：模式控制列（新版） -->
+  <div class="card-custom mb-3">
+    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+      <!-- 左側：本次 + 隨身小包 -->
+      <div class="d-flex align-items-center gap-3">
+        <div class="btn-group btn-group-sm" role="group" aria-label="packing mode">
+          <button class="btn btn-outline-dark" id="btn-pack-trip" onclick="setPackView('trip')">本次清單</button>
         </div>
+
+        <div class="form-check form-switch m-0">
+          <input class="form-check-input" type="checkbox" id="carryModeSwitch" onchange="toggleCarryMode(this.checked)">
+          <label class="form-check-label small text-muted" for="carryModeSwitch">隨身小包模式</label>
+        </div>
+      </div>
+
+      <!-- 右側：模板 -->
+      <div class="btn-group btn-group-sm" role="group" aria-label="packing mode">
+        <button class="btn btn-outline-dark" id="btn-pack-template" onclick="setPackView('template')">模板</button>
+      </div>
     </div>
 
-    <div id="pack-list-container"></div>
-    
-    <button class="btn btn-link btn-sm w-100 text-muted mt-2" onclick="clearCheckedItems()">清除所有已勾選項目</button>
-</div>
+    <!-- ✅ 只在模板視圖才顯示的操作列 -->
+    <div id="template-actions" class="mt-2" style="display:none;">
+      <div class="d-flex flex-wrap gap-2 justify-content-end">
+<button class="btn pack-pill pack-pill-primary" onclick="applyTemplateToTripMerge()">合併</button>
+<button class="btn pack-pill pack-pill-danger" onclick="resetTripFromTemplate()">重建</button>
+      </div>
+      <div class="small text-muted mt-1">
+        合併：只補模板新增的分類/項目，不會覆蓋你本次新增與勾選。重建：會整份覆蓋本次清單。
+      </div>
+    </div>
+
+    <div class="small text-muted mt-2">
+      模板：長期固定；本次清單：這趟旅行調整與打勾用。<br>
+      隨身小包模式：只顯示「隨身包/證件/藥品/電子/必需」等分類，避免把必要物品寄走。
+    </div>
+  </div>
+
+  <!-- 進度條（模板視圖會被 JS 隱藏） -->
+  <div class="card-custom mb-3" id="packing-progress-container" style="display: none;">
+    <div class="d-flex justify-content-between mb-1">
+      <span class="small fw-bold">打包進度</span>
+      <span class="small text-muted" id="packing-percent">0%</span>
+    </div>
+    <div class="progress" style="height: 8px; background-color: #eee; border-radius: 4px;">
+      <div id="packing-bar" class="progress-bar" style="width: 0%; height: 100%; transition: width 0.3s; background-color: #5d8aa8;"></div>
+    </div>
+  </div>
+
+  <!-- 新增分類 -->
+  <div class="card-custom mb-3">
+    <div class="input-group input-group-sm">
+      <input type="text" id="new-cat-input" class="form-control" placeholder="新增類別 (如：化妝品)">
+      <button class="btn btn-dark" onclick="addNewCategory()">建立分類</button>
+    </div>
+  </div>
+
+  <!-- 清單容器（一定只能有一個） -->
+  <div id="pack-list-container"></div>
+
+  <button class="btn btn-link btn-sm w-100 text-muted mt-2" onclick="clearCheckedItems()">清除所有已勾選項目</button>
 </div>
 
 <div id="info" class="content-section">
@@ -2840,110 +2965,353 @@ function initBudgetPageIfNeeded(){
     refreshRates(false);
   }
 }
+// --- 行李清單邏輯（模板 + 本次清單 + 隨身小包模式） ---
 
+// ✅ localStorage keys
+const PACK_OLD_KEY = 'trip_pack_cat';          // 你原本的 key（用來 migration）
+const PACK_TEMPLATE_KEY = 'trip_pack_template';
+const PACK_TRIP_KEY = 'trip_pack_trip_current';
+const PACK_VIEW_KEY = 'trip_pack_view';        // 'trip' | 'template'
+const PACK_CARRY_KEY = 'trip_pack_carry_mode'; // '0' | '1'
 
-// --- 行李清單邏輯 ---
-let categorizedPack = JSON.parse(localStorage.getItem('trip_pack_cat')) || [];
+// ✅ 資料容器
+let packTemplate = [];
+let packTrip = [];
 
+// ✅ 畫面狀態
+let packView = 'trip';     // 'trip' 或 'template'
+let carryMode = false;     // 隨身小包模式（只影響顯示）
+
+// ---------- 工具 ----------
+function deepCopy(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function loadJSON(key, fallback) {
+  try {
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : fallback;
+  } catch (e) {
+    console.error('loadJSON error', key, e);
+    return fallback;
+  }
+}
+
+function saveJSON(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+// ---------- 初始化 / Migration ----------
+function initPacking() {
+  // 1) 先讀新結構
+  packTemplate = loadJSON(PACK_TEMPLATE_KEY, null);
+  packTrip = loadJSON(PACK_TRIP_KEY, null);
+
+  // 2) 讀 UI 狀態
+  packView = localStorage.getItem(PACK_VIEW_KEY) || 'trip';
+  carryMode = (localStorage.getItem(PACK_CARRY_KEY) || '0') === '1';
+
+  // 3) 若新結構不存在 → 用舊資料 migration
+  if (!Array.isArray(packTemplate) || !Array.isArray(packTrip)) {
+    const old = loadJSON(PACK_OLD_KEY, []);
+    // 如果舊的有資料：把它當作模板 + 本次清單
+    if (Array.isArray(old) && old.length > 0) {
+      packTemplate = deepCopy(old);
+      packTrip = deepCopy(old);
+    } else {
+      // 舊的也沒資料 → 建空結構
+      packTemplate = [];
+      packTrip = [];
+    }
+    saveJSON(PACK_TEMPLATE_KEY, packTemplate);
+    saveJSON(PACK_TRIP_KEY, packTrip);
+  }
+
+  // 4) 同步 UI 控制元件狀態（如果元素存在）
+  syncPackControlsUI();
+}
+function syncPackControlsUI() {
+  const btnTrip = document.getElementById('btn-pack-trip');
+  const btnTpl = document.getElementById('btn-pack-template');
+
+  if (btnTrip && btnTpl) {
+    btnTrip.classList.toggle('btn-dark', packView === 'trip');
+    btnTrip.classList.toggle('btn-outline-dark', packView !== 'trip');
+
+    btnTpl.classList.toggle('btn-dark', packView === 'template');
+    btnTpl.classList.toggle('btn-outline-dark', packView !== 'template');
+  }
+
+  const sw = document.getElementById('carryModeSwitch');
+  if (sw) sw.checked = !!carryMode;
+
+  // ✅ 模板視圖才顯示「套用模板」操作列
+  const actions = document.getElementById('template-actions');
+  if (actions) actions.style.display = (packView === 'template') ? 'block' : 'none';
+}
+// ---------- 取得目前正在編輯的清單 ----------
+function getActivePackRef() {
+  return packView === 'template' ? packTemplate : packTrip;
+}
+
+function saveActivePack() {
+  if (packView === 'template') {
+    saveJSON(PACK_TEMPLATE_KEY, packTemplate);
+  } else {
+    saveJSON(PACK_TRIP_KEY, packTrip);
+  }
+}
+
+// ---------- 模式切換 / 重建 ----------
+function setPackView(view) {
+  packView = (view === 'template') ? 'template' : 'trip';
+  localStorage.setItem(PACK_VIEW_KEY, packView);
+  syncPackControlsUI();
+  renderPackList();
+}
+
+function toggleCarryMode(on) {
+  carryMode = !!on;
+  localStorage.setItem(PACK_CARRY_KEY, carryMode ? '1' : '0');
+  renderPackList();
+}
+
+// 從模板重建本次清單（會清掉本次的勾選與新增/刪除的調整）
+function resetTripFromTemplate() {
+  if (!confirm("確定要用「模板」重建「本次清單」嗎？\n這會覆蓋本次清單目前的調整與勾選狀態。")) return;
+  packTrip = deepCopy(packTemplate);
+  saveJSON(PACK_TRIP_KEY, packTrip);
+  // 回到本次清單視圖
+  setPackView('trip');
+  alert("已從模板重建本次清單。");
+}
+// ✅ 合併套用模板：只補模板新增的分類/項目，不覆蓋本次新增與勾選
+function applyTemplateToTripMerge() {
+  if (!confirm("確定要把「模板」合併套用到「本次清單」嗎？\n只會新增本次缺少的分類/項目，不會覆蓋或刪除本次內容。")) return;
+
+  // 建索引：本次分類名稱 -> 分類物件
+  const tripByCat = new Map();
+  packTrip.forEach(cat => tripByCat.set(cat.category, cat));
+
+  packTemplate.forEach(tCat => {
+    const tItems = tCat.items || [];
+
+    // 本次沒有此分類：整個分類新增（保留 checked=false）
+    if (!tripByCat.has(tCat.category)) {
+      const newCat = { category: tCat.category, items: [] };
+      tItems.forEach(it => {
+        newCat.items.push({ text: it.text, checked: false });
+      });
+      packTrip.push(newCat);
+      tripByCat.set(newCat.category, newCat);
+      return;
+    }
+
+    // 本次有此分類：逐項補齊（以 text 去重）
+    const tripCat = tripByCat.get(tCat.category);
+    tripCat.items = tripCat.items || [];
+
+    const tripTextSet = new Set(tripCat.items.map(it => it.text));
+    tItems.forEach(it => {
+      if (!tripTextSet.has(it.text)) {
+        tripCat.items.push({ text: it.text, checked: false });
+        tripTextSet.add(it.text);
+      }
+    });
+  });
+
+  saveJSON(PACK_TRIP_KEY, packTrip);
+
+  // ✅ 套用後跳回本次清單（你指定要這樣）
+  setPackView('trip');
+  alert("已合併套用模板到本次清單（不覆蓋本次新增與勾選）。");
+}
+
+// ---------- CRUD：新增/刪除/勾選 ----------
 function addNewCategory() {
-    const catInput = document.getElementById('new-cat-input');
-    const catName = catInput.value.trim();
-    if (!catName) return;
-    if (categorizedPack.find(c => c.category === catName)) { alert("此類別已存在"); return; }
-    categorizedPack.push({ category: catName, items: [] });
-    catInput.value = "";
-    renderPackList();
+  const catInput = document.getElementById('new-cat-input');
+  const catName = (catInput?.value || '').trim();
+  if (!catName) return;
+
+  const active = getActivePackRef();
+  if (active.find(c => c.category === catName)) {
+    alert("此類別已存在");
+    return;
+  }
+
+  active.push({ category: catName, items: [] });
+  catInput.value = "";
+
+  saveActivePack();
+  renderPackList();
 }
 
 function addItemToCat(catIdx) {
-    const itemName = prompt(`在「${categorizedPack[catIdx].category}」新增項目：`);
-    if (itemName && itemName.trim() !== "") {
-        categorizedPack[catIdx].items.push({ text: itemName.trim(), checked: false });
-        renderPackList();
-    }
+  const active = getActivePackRef();
+  const cat = active[catIdx];
+  if (!cat) return;
+
+  const itemName = prompt(`在「${cat.category}」新增項目：`);
+  if (!itemName || itemName.trim() === "") return;
+
+  cat.items = cat.items || [];
+  cat.items.push({ text: itemName.trim(), checked: false });
+
+  saveActivePack();
+  renderPackList();
 }
 
 function toggleItem(catIdx, itemIdx) {
-    categorizedPack[catIdx].items[itemIdx].checked = !categorizedPack[catIdx].items[itemIdx].checked;
-    renderPackList();
+  const active = getActivePackRef();
+  const cat = active[catIdx];
+  if (!cat || !cat.items || !cat.items[itemIdx]) return;
+
+  cat.items[itemIdx].checked = !cat.items[itemIdx].checked;
+
+  saveActivePack();
+  renderPackList();
 }
 
 function deleteCategory(catIdx) {
-    if(confirm(`確定要刪除「${categorizedPack[catIdx].category}」整個分類嗎？`)) {
-        categorizedPack.splice(catIdx, 1);
-        renderPackList();
-    }
+  const active = getActivePackRef();
+  const cat = active[catIdx];
+  if (!cat) return;
+
+  if (confirm(`確定要刪除「${cat.category}」整個分類嗎？`)) {
+    active.splice(catIdx, 1);
+    saveActivePack();
+    renderPackList();
+  }
 }
 
 function deleteSingleItem(catIdx, itemIdx) {
-    categorizedPack[catIdx].items.splice(itemIdx, 1);
-    renderPackList();
+  const active = getActivePackRef();
+  const cat = active[catIdx];
+  if (!cat || !cat.items) return;
+
+  cat.items.splice(itemIdx, 1);
+
+  saveActivePack();
+  renderPackList();
 }
 
+// 清除已勾選：只對「本次清單」有意義（模板通常不需要 checked）
+// 但為了不破壞你原本按鈕行為：
+// - 若在模板視圖：也會清掉已勾（如果你模板也曾勾選）
+// - 建議你平常在「本次清單」使用它
+function clearCheckedItems() {
+  if (!confirm("確定要清除所有已勾選項目嗎？")) return;
+
+  const active = getActivePackRef();
+  active.forEach(cat => {
+    cat.items = (cat.items || []).filter(item => !item.checked);
+  });
+
+  saveActivePack();
+  renderPackList();
+}
+
+// ---------- 隨身小包模式：分類顯示規則 ----------
+function isCarryCategory(name) {
+  // 你可以依自己習慣加字詞
+  const s = (name || '').toLowerCase();
+  const keywords = [
+    '隨身', '隨身包', '證件', '護照', '錢包', '信用卡',
+    '藥', '藥品', '電子', '充電', '手機', '相機',
+    '必帶', 'must', '重要', '急用', '盥洗', '保養'
+  ];
+  return keywords.some(k => s.includes(String(k).toLowerCase()));
+}
+
+// ---------- Render ----------
 function renderPackList() {
-    const container = document.getElementById('pack-list-container');
-    if (!container) return;
-    container.innerHTML = '';
-    categorizedPack.forEach((catObj, catIdx) => {
-        let catHtml = `<div class="card-custom mb-3">
-            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
-                <span class="fw-bold text-primary"># ${catObj.category}</span>
-                <div>
-                    <button class="btn btn-sm btn-outline-dark py-0" onclick="addItemToCat(${catIdx})">+ 項目</button>
-                    <button class="btn btn-sm text-danger ms-2" onclick="deleteCategory(${catIdx})"><i class="fas fa-trash-alt"></i></button>
-                </div>
-            </div>`;
-        if (catObj.items.length === 0) {
-            catHtml += `<div class="text-center py-2 small text-muted">暫無項目</div>`;
-        }
-        catObj.items.forEach((item, itemIdx) => {
-            catHtml += `<div class="pack-item d-flex align-items-center justify-content-between py-1">
-                <div class="d-flex align-items-center flex-grow-1" onclick="toggleItem(${catIdx}, ${itemIdx})">
-                    <input type="checkbox" ${item.checked ? 'checked' : ''}>
-                    <span class="pack-text ${item.checked ? 'checked' : ''} ms-2">${item.text}</span>
-                </div>
-                <button class="btn btn-sm text-muted" onclick="deleteSingleItem(${catIdx}, ${itemIdx})">×</button>
-            </div>`;
-        });
-        catHtml += `</div>`;
-        container.innerHTML += catHtml;
-    });
-// --- 新增：計算進度條邏輯 ---
-let totalItems = 0;
-let checkedItems = 0;
+  const container = document.getElementById('pack-list-container');
+  if (!container) return;
 
-categorizedPack.forEach(cat => {
-    cat.items.forEach(item => {
-        totalItems++;
-        if (item.checked) checkedItems++;
-    });
-});
+  syncPackControlsUI();
 
-const progressContainer = document.getElementById('packing-progress-container');
-if (totalItems > 0) {
+  const active = getActivePackRef();
+
+  // 依 carryMode 過濾分類（只影響顯示，不改資料）
+  const visibleCats = carryMode
+    ? active.filter(c => isCarryCategory(c.category))
+    : active;
+
+  container.innerHTML = '';
+
+  visibleCats.forEach((catObj, visibleIdx) => {
+    // 因為 visibleCats 是 filter 後的陣列，操作索引要回到 active 的真實 index
+    const catIdx = active.indexOf(catObj);
+
+    let catHtml = `<div class="card-custom mb-3">
+      <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+        <span class="fw-bold text-primary"># ${catObj.category}</span>
+        <div>
+          <button class="btn btn-sm btn-outline-dark py-0" onclick="addItemToCat(${catIdx})">+ 項目</button>
+          <button class="btn btn-sm text-danger ms-2" onclick="deleteCategory(${catIdx})"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>`;
+
+    const items = catObj.items || [];
+    if (items.length === 0) {
+      catHtml += `<div class="text-center py-2 small text-muted">暫無項目</div>`;
+    } else {
+      items.forEach((item, itemIdx) => {
+        const isTemplate = (packView === 'template');
+
+        catHtml += `<div class="pack-item d-flex align-items-center justify-content-between py-1">
+          <div class="d-flex align-items-center flex-grow-1" ${isTemplate ? '' : `onclick="toggleItem(${catIdx}, ${itemIdx})"`}>
+            ${isTemplate ? '' : `<input type="checkbox" ${item.checked ? 'checked' : ''}>`}
+            <span class="pack-text ${(!isTemplate && item.checked) ? 'checked' : ''} ${isTemplate ? '' : 'ms-2'}">
+              ${item.text}
+            </span>
+          </div>
+          <button class="btn btn-sm text-muted" onclick="deleteSingleItem(${catIdx}, ${itemIdx})">×</button>
+        </div>`;
+      });
+    }
+
+    catHtml += `</div>`;
+    container.innerHTML += catHtml;
+  });
+
+  // --- 進度條：只看「目前視圖」的 active（模板也會計算，但通常你在本次清單看） ---
+  let totalItems = 0;
+  let checkedItems = 0;
+
+  active.forEach(cat => {
+    (cat.items || []).forEach(item => {
+      totalItems++;
+      if (item.checked) checkedItems++;
+    });
+  });
+
+  const progressContainer = document.getElementById('packing-progress-container');
+  if (!progressContainer) return;
+// ✅ 模板視圖不顯示進度
+  if (packView === 'template') {
+    progressContainer.style.display = 'none';
+    return;
+  }
+  if (totalItems > 0) {
     progressContainer.style.display = 'block';
     const percent = Math.round((checkedItems / totalItems) * 100);
-    document.getElementById('packing-bar').style.width = percent + '%';
-    document.getElementById('packing-percent').innerText = `${checkedItems} / ${totalItems} (${percent}%)`;
-} else {
+    const bar = document.getElementById('packing-bar');
+    const txt = document.getElementById('packing-percent');
+    if (bar) bar.style.width = percent + '%';
+    if (txt) txt.innerText = `${checkedItems} / ${totalItems} (${percent}%)`;
+  } else {
     progressContainer.style.display = 'none';
-}
-function clearCheckedItems() {
-    if(confirm("確定要清除所有已勾選項目嗎？")) {
-        categorizedPack.forEach(cat => cat.items = cat.items.filter(item => !item.checked));
-        renderPackList();
-    }
+  }
 }
 
 
-    localStorage.setItem('trip_pack_cat', JSON.stringify(categorizedPack));
-}
 // 1. 統一的初始化函數
 function initializePage() {
     console.log("頁面初始化中...");
     // 重新抓取資料
     expenses = JSON.parse(localStorage.getItem('trip_v2026')) || [];
-    categorizedPack = JSON.parse(localStorage.getItem('trip_pack_cat')) || [];
+    initPacking();
 
     // 執行渲染
     if (typeof render === "function") render();
@@ -2965,12 +3333,28 @@ function importData() {
         const newExp  = decoded.expenses || [];
 
         localStorage.setItem('trip_favorites', JSON.stringify(newFav));
-        localStorage.setItem('trip_pack_cat', JSON.stringify(newPack));
+// ✅ 行李同步（新結構優先；舊結構向下相容）
+const newPackTemplate = decoded.packingTemplate || null;
+const newPackTrip = decoded.packingTrip || null;
+const newPackLegacy = decoded.packing || []; // 舊版同步碼仍可能只有 packing
+
+if (Array.isArray(newPackTemplate) && Array.isArray(newPackTrip)) {
+  localStorage.setItem('trip_pack_template', JSON.stringify(newPackTemplate));
+  localStorage.setItem('trip_pack_trip_current', JSON.stringify(newPackTrip));
+} else {
+  // 舊版：只有 packing → 當作模板 + 本次清單
+  localStorage.setItem('trip_pack_template', JSON.stringify(newPackLegacy));
+  localStorage.setItem('trip_pack_trip_current', JSON.stringify(newPackLegacy));
+  // 同時保留舊 key（不必要但有助相容）
+  localStorage.setItem('trip_pack_cat', JSON.stringify(newPackLegacy));
+}
+
+// 重新載入行李到記憶體
+initPacking();
         localStorage.setItem('trip_v2026', JSON.stringify(newExp));
 
         // 3) 覆蓋「目前正在使用的全域變數」（畫面層）
         favorites = newFav;
-        categorizedPack = newPack;
         expenses = newExp;
 
         // 4) 重新渲染全部
