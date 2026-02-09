@@ -866,7 +866,6 @@ html[data-theme="dark"] #fav-top-list .topmark-more{
 .day-label{
   font-size:1.1rem;
   font-weight:700;
-  border-bottom:2.5px solid var(--accent);
   display:inline-block;
   margin:15px 0 10px;
   letter-spacing:1px;
@@ -1722,6 +1721,86 @@ margin-left:-40px;
   --pill-bd: rgba(255,90,110,0.26);
   --pill-tx: rgba(255,150,160,0.95);
 }
+/* • 隨身 標記 */
+.carry-badge{
+  margin-left: 8px;
+  font-size: 0.72rem;
+  color: rgba(44,62,80,0.55);
+}
+
+/* ⋯ 選單 */
+.carry-menu{
+  position: absolute;
+  z-index: 9999;
+  min-width: 150px;
+  padding: 6px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid rgba(44,62,80,0.12);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+}
+
+.carry-menu-item{
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.carry-menu-item:hover{
+  background: rgba(44,62,80,0.06);
+}
+
+[data-theme="dark"] .carry-menu{
+  background: rgba(20,24,28,0.95);
+  border-color: rgba(255,255,255,0.14);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+[data-theme="dark"] .carry-menu-item:hover{
+  background: rgba(255,255,255,0.08);
+}
+
+[data-theme="dark"] .carry-badge{
+  color: rgba(230,235,240,0.55);
+}
+/* ✅ 行李模式徽章（本次/隨身包/模板） */
+.pack-mode-badge{
+  display:inline-flex;
+  align-items:center;
+  margin-left:8px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:0.75rem;
+  line-height:1;
+  border:1px solid rgba(44,62,80,0.14);
+  background: rgba(44,62,80,0.06);
+  color: rgba(44,62,80,0.85);
+}
+
+.pack-mode-badge.is-carry{
+  border-color: rgba(212,163,115,0.35);
+  background: rgba(212,163,115,0.18);
+}
+
+.pack-mode-badge.is-template{
+  border-color: rgba(44,62,80,0.22);
+  background: rgba(44,62,80,0.10);
+}
+
+[data-theme="dark"] .pack-mode-badge{
+  border-color: rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: rgba(230,235,240,0.88);
+}
+[data-theme="dark"] .pack-mode-badge.is-carry{
+  border-color: rgba(212,163,115,0.40);
+  background: rgba(212,163,115,0.20);
+}
+[data-theme="dark"] .pack-mode-badge.is-template{
+  border-color: rgba(255,255,255,0.20);
+  background: rgba(255,255,255,0.10);
+}
 
 </style>
 </head>
@@ -2139,7 +2218,7 @@ margin-left:-40px;
 </div>
 
 <div id="packing" class="content-section">
-  <div class="day-label">🧳 行李清單</div>
+<div class="day-label"> 行李清單 <span id="pack-mode-badge" class="pack-mode-badge">本次清單</span></div>
 
   <!-- ✅ 行李：模式控制列（新版） -->
   <div class="card-custom mb-3">
@@ -2168,15 +2247,8 @@ margin-left:-40px;
 <button class="btn pack-pill pack-pill-primary" onclick="applyTemplateToTripMerge()">合併</button>
 <button class="btn pack-pill pack-pill-danger" onclick="resetTripFromTemplate()">重建</button>
       </div>
-      <div class="small text-muted mt-1">
-        合併：只補模板新增的分類/項目，不會覆蓋你本次新增與勾選。重建：會整份覆蓋本次清單。
-      </div>
     </div>
 
-    <div class="small text-muted mt-2">
-      模板：長期固定；本次清單：這趟旅行調整與打勾用。<br>
-      隨身小包模式：只顯示「隨身包/證件/藥品/電子/必需」等分類，避免把必要物品寄走。
-    </div>
   </div>
 
   <!-- 進度條（模板視圖會被 JS 隱藏） -->
@@ -2973,6 +3045,7 @@ const PACK_TEMPLATE_KEY = 'trip_pack_template';
 const PACK_TRIP_KEY = 'trip_pack_trip_current';
 const PACK_VIEW_KEY = 'trip_pack_view';        // 'trip' | 'template'
 const PACK_CARRY_KEY = 'trip_pack_carry_mode'; // '0' | '1'
+const PACK_CARRY_CHECK_KEY = 'trip_pack_carry_checked'; // ✅ 隨身檢查勾選（獨立）
 
 // ✅ 資料容器
 let packTemplate = [];
@@ -2981,6 +3054,7 @@ let packTrip = [];
 // ✅ 畫面狀態
 let packView = 'trip';     // 'trip' 或 'template'
 let carryMode = false;     // 隨身小包模式（只影響顯示）
+let carryCheckedMap = {}; // ✅ { "category||text": true/false }
 
 // ---------- 工具 ----------
 function deepCopy(obj) {
@@ -3011,15 +3085,13 @@ function initPacking() {
   packView = localStorage.getItem(PACK_VIEW_KEY) || 'trip';
   carryMode = (localStorage.getItem(PACK_CARRY_KEY) || '0') === '1';
 
-  // 3) 若新結構不存在 → 用舊資料 migration
+  // 3) migration
   if (!Array.isArray(packTemplate) || !Array.isArray(packTrip)) {
     const old = loadJSON(PACK_OLD_KEY, []);
-    // 如果舊的有資料：把它當作模板 + 本次清單
     if (Array.isArray(old) && old.length > 0) {
       packTemplate = deepCopy(old);
       packTrip = deepCopy(old);
     } else {
-      // 舊的也沒資料 → 建空結構
       packTemplate = [];
       packTrip = [];
     }
@@ -3027,9 +3099,24 @@ function initPacking() {
     saveJSON(PACK_TRIP_KEY, packTrip);
   }
 
-  // 4) 同步 UI 控制元件狀態（如果元素存在）
+  // 4) 同步 UI
   syncPackControlsUI();
+
+  // ⭐⭐⭐ 在這裡貼上 ⭐⭐⭐
+  // 舊資料相容：補上 carry 預設值（只處理本次清單）
+  if (Array.isArray(packTrip)) {
+    packTrip.forEach(cat => {
+      (cat.items || []).forEach(it => {
+        if (typeof it.carry !== 'boolean') it.carry = false;
+        if (typeof it.checked !== 'boolean') it.checked = false;
+      });
+    });
+    saveJSON(PACK_TRIP_KEY, packTrip);
+  carryCheckedMap = loadJSON(PACK_CARRY_CHECK_KEY, {}) || {};
+
+  }
 }
+
 function syncPackControlsUI() {
   const btnTrip = document.getElementById('btn-pack-trip');
   const btnTpl = document.getElementById('btn-pack-template');
@@ -3041,6 +3128,25 @@ function syncPackControlsUI() {
     btnTpl.classList.toggle('btn-dark', packView === 'template');
     btnTpl.classList.toggle('btn-outline-dark', packView !== 'template');
   }
+// ✅ 更新「目前模式」徽章（本次清單 / 隨身包 / 模板）
+function updatePackModeBadge() {
+  const badge = document.getElementById('pack-mode-badge');
+  if (!badge) return;
+
+  // 2-A：模板優先（模板視圖不允許隨身檢查）
+  let modeText = '本次清單';
+  badge.classList.remove('is-carry', 'is-template');
+
+  if (packView === 'template') {
+    modeText = '模板';
+    badge.classList.add('is-template');
+  } else if (carryMode) {
+    modeText = '隨身包';
+    badge.classList.add('is-carry');
+  }
+
+  badge.textContent = modeText;
+}
 
   const sw = document.getElementById('carryModeSwitch');
   if (sw) sw.checked = !!carryMode;
@@ -3048,6 +3154,7 @@ function syncPackControlsUI() {
   // ✅ 模板視圖才顯示「套用模板」操作列
   const actions = document.getElementById('template-actions');
   if (actions) actions.style.display = (packView === 'template') ? 'block' : 'none';
+  updatePackModeBadge(); // ✅ 同步模式徽章
 }
 // ---------- 取得目前正在編輯的清單 ----------
 function getActivePackRef() {
@@ -3066,6 +3173,15 @@ function saveActivePack() {
 function setPackView(view) {
   packView = (view === 'template') ? 'template' : 'trip';
   localStorage.setItem(PACK_VIEW_KEY, packView);
+
+  // ✅ 2-A：切到模板時，自動關掉隨身檢查模式（避免狀態矛盾）
+  if (packView === 'template' && carryMode) {
+    carryMode = false;
+    localStorage.setItem(PACK_CARRY_KEY, '0');
+    const sw = document.getElementById('carryModeSwitch');
+    if (sw) sw.checked = false;
+  }
+
   syncPackControlsUI();
   renderPackList();
 }
@@ -3074,6 +3190,15 @@ function toggleCarryMode(on) {
   carryMode = !!on;
   localStorage.setItem(PACK_CARRY_KEY, carryMode ? '1' : '0');
   renderPackList();
+}
+function carryKey(catName, itemText) {
+  return `${catName}||${itemText}`;
+}
+
+function toggleCarryChecked(catName, itemText) {
+  const key = carryKey(catName, itemText);
+  carryCheckedMap[key] = !carryCheckedMap[key];
+  saveJSON(PACK_CARRY_CHECK_KEY, carryCheckedMap);
 }
 
 // 從模板重建本次清單（會清掉本次的勾選與新增/刪除的調整）
@@ -3155,7 +3280,7 @@ function addItemToCat(catIdx) {
   if (!itemName || itemName.trim() === "") return;
 
   cat.items = cat.items || [];
-  cat.items.push({ text: itemName.trim(), checked: false });
+cat.items.push({ text: itemName.trim(), checked: false, carry: false });
 
   saveActivePack();
   renderPackList();
@@ -3210,17 +3335,71 @@ function clearCheckedItems() {
   saveActivePack();
   renderPackList();
 }
+// ================================
+// ✅ 隨身小包：項目級標記（A2）
+// - 只作用在「本次清單」
+// - carryMode ON 時只顯示 carry=true 的項目
+// ================================
+let activeCarryMenu = null;
 
-// ---------- 隨身小包模式：分類顯示規則 ----------
-function isCarryCategory(name) {
-  // 你可以依自己習慣加字詞
-  const s = (name || '').toLowerCase();
-  const keywords = [
-    '隨身', '隨身包', '證件', '護照', '錢包', '信用卡',
-    '藥', '藥品', '電子', '充電', '手機', '相機',
-    '必帶', 'must', '重要', '急用', '盥洗', '保養'
-  ];
-  return keywords.some(k => s.includes(String(k).toLowerCase()));
+function closeCarryMenu() {
+  if (activeCarryMenu) activeCarryMenu.remove();
+  activeCarryMenu = null;
+}
+
+document.addEventListener('click', (e) => {
+  // 點到選單內不要關
+  if (activeCarryMenu && activeCarryMenu.contains(e.target)) return;
+  // 點到觸發按鈕也不要立刻關（避免點一下開又關）
+  if (e.target && e.target.closest && e.target.closest('.carry-more-btn')) return;
+  closeCarryMenu();
+});
+
+function toggleCarryFlag(catIdx, itemIdx) {
+  // 只允許在本次清單操作
+  if (packView !== 'trip') return;
+
+  const cat = packTrip[catIdx];
+  if (!cat || !cat.items || !cat.items[itemIdx]) return;
+
+  const item = cat.items[itemIdx];
+  item.carry = !item.carry;
+
+  saveJSON(PACK_TRIP_KEY, packTrip);
+  closeCarryMenu();
+  renderPackList();
+}
+
+function openCarryMenu(catIdx, itemIdx, anchorBtn) {
+  closeCarryMenu();
+
+  // 只允許在本次清單操作
+  if (packView !== 'trip') return;
+
+  const cat = packTrip[catIdx];
+  if (!cat || !cat.items || !cat.items[itemIdx]) return;
+
+  const item = cat.items[itemIdx];
+  const isOn = !!item.carry;
+
+  const menu = document.createElement('div');
+  menu.className = 'carry-menu';
+  menu.innerHTML = `
+    <div class="carry-menu-item" onclick="toggleCarryFlag(${catIdx}, ${itemIdx})">
+      ${isOn ? '從隨身包移除' : '加入隨身包'}
+    </div>
+  `;
+
+  document.body.appendChild(menu);
+  activeCarryMenu = menu;
+
+  // 定位到按鈕下方（偏右）
+  const rect = anchorBtn.getBoundingClientRect();
+  const top = rect.bottom + window.scrollY + 6;
+  const left = rect.right + window.scrollX - menu.offsetWidth;
+
+  menu.style.top = `${top}px`;
+  menu.style.left = `${Math.max(8, left)}px`;
 }
 
 // ---------- Render ----------
@@ -3230,12 +3409,21 @@ function renderPackList() {
 
   syncPackControlsUI();
 
-  const active = getActivePackRef();
+const active = getActivePackRef();
 
-  // 依 carryMode 過濾分類（只影響顯示，不改資料）
-  const visibleCats = carryMode
-    ? active.filter(c => isCarryCategory(c.category))
-    : active;
+// ✅ 隨身小包模式只作用在「本次清單」
+const effectiveCarryMode = (packView === 'trip') && carryMode;
+// ✅ 隨身檢查模式：隱藏本次打包工具（新增分類 / 清除已勾選）
+const newCatCard = document.getElementById('new-cat-input')?.closest('.card-custom');
+if (newCatCard) newCatCard.style.display = effectiveCarryMode ? 'none' : 'block';
+
+const clearBtn = document.querySelector('#packing button[onclick="clearCheckedItems()"]');
+if (clearBtn) clearBtn.style.display = effectiveCarryMode ? 'none' : 'block';
+
+// ✅ 依 item.carry 來決定顯示哪些分類
+const visibleCats = effectiveCarryMode
+  ? active.filter(cat => (cat.items || []).some(it => !!it.carry))
+  : active;
 
   container.innerHTML = '';
 
@@ -3252,24 +3440,68 @@ function renderPackList() {
         </div>
       </div>`;
 
-    const items = catObj.items || [];
-    if (items.length === 0) {
-      catHtml += `<div class="text-center py-2 small text-muted">暫無項目</div>`;
-    } else {
-      items.forEach((item, itemIdx) => {
-        const isTemplate = (packView === 'template');
+const items = catObj.items || [];
+const isTemplate = (packView === 'template');
 
-        catHtml += `<div class="pack-item d-flex align-items-center justify-content-between py-1">
-          <div class="d-flex align-items-center flex-grow-1" ${isTemplate ? '' : `onclick="toggleItem(${catIdx}, ${itemIdx})"`}>
-            ${isTemplate ? '' : `<input type="checkbox" ${item.checked ? 'checked' : ''}>`}
-            <span class="pack-text ${(!isTemplate && item.checked) ? 'checked' : ''} ${isTemplate ? '' : 'ms-2'}">
-              ${item.text}
-            </span>
-          </div>
+// ✅ 隨身小包模式：只顯示 carry=true 的項目（只在本次）
+const itemsToShow = (effectiveCarryMode && !isTemplate)
+  ? items.filter(it => !!it.carry)
+  : items;
+
+if (itemsToShow.length === 0) {
+  catHtml += `<div class="text-center py-2 small text-muted">暫無項目</div>`;
+} else {
+itemsToShow.forEach((item) => {
+  const itemIdx = items.indexOf(item);
+  const carryBadge = (!isTemplate && item.carry)
+    ? `<span class="carry-badge">• 隨身</span>`
+    : '';
+
+  const isCarryChecklist = effectiveCarryMode && !isTemplate;
+
+  // ✅ 隨身模式的 checkbox 狀態（獨立，不動本次 checked）
+  const ck = carryKey(catObj.category, item.text);
+  const carryChecked = !!carryCheckedMap[ck];
+
+  const checkboxHtml = isTemplate
+    ? ''
+    : (isCarryChecklist
+        ? `<input type="checkbox" ${carryChecked ? 'checked' : ''} onclick="event.stopPropagation();" onchange="toggleCarryChecked('${catObj.category.replace(/'/g,"\\'")}', '${item.text.replace(/'/g,"\\'")}')">`
+        : `<input type="checkbox" ${item.checked ? 'checked' : ''}>`
+      );
+
+  // ✅ 隨身模式不要點整列去 toggleItem（避免動到本次 checked）
+  const rowOnclick = (isTemplate || isCarryChecklist)
+    ? ''
+    : `onclick="toggleItem(${catIdx}, ${itemIdx})"`;
+
+  // ✅ 隨身模式是「檢查」：不顯示 ⋯、不顯示 ×（避免改 carry / 刪項目）
+  const rightBtns = isTemplate
+    ? `<button class="btn btn-sm text-muted" onclick="deleteSingleItem(${catIdx}, ${itemIdx})">×</button>`
+    : (isCarryChecklist
+        ? ``
+        : `
+          <button class="btn btn-sm text-muted carry-more-btn" onclick="event.stopPropagation(); openCarryMenu(${catIdx}, ${itemIdx}, this)">⋯</button>
           <button class="btn btn-sm text-muted" onclick="deleteSingleItem(${catIdx}, ${itemIdx})">×</button>
-        </div>`;
-      });
-    }
+        `
+      );
+
+  catHtml += `
+    <div class="pack-item d-flex align-items-center justify-content-between py-1">
+      <div class="d-flex align-items-center flex-grow-1" ${rowOnclick}>
+        ${checkboxHtml}
+        <span class="pack-text ${(!isTemplate && !isCarryChecklist && item.checked) ? 'checked' : ''} ${isTemplate ? '' : 'ms-2'}">
+          ${item.text}
+        </span>
+        ${carryBadge}
+      </div>
+      <div class="d-flex align-items-center gap-1">
+        ${rightBtns}
+      </div>
+    </div>
+  `;
+});
+}
 
     catHtml += `</div>`;
     container.innerHTML += catHtml;
@@ -3289,10 +3521,10 @@ function renderPackList() {
   const progressContainer = document.getElementById('packing-progress-container');
   if (!progressContainer) return;
 // ✅ 模板視圖不顯示進度
-  if (packView === 'template') {
-    progressContainer.style.display = 'none';
-    return;
-  }
+if (packView === 'template' || effectiveCarryMode) {
+  progressContainer.style.display = 'none';
+  return;
+}
   if (totalItems > 0) {
     progressContainer.style.display = 'block';
     const percent = Math.round((checkedItems / totalItems) * 100);
