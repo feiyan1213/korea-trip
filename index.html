@@ -10,31 +10,114 @@
 
 <style>
 /* =========================
-   0) Theme variables + Base
+   0) Theme tokens (Color System)
+   - Step 1: 只建立色卡，不改元件
 ========================= */
 :root{
-  --jp-wash:#F8F9F7;
-  --accent:#2C3E50;
-  --highlight:#D4A373;
+  /* Day */
+  --bg:#F6F7F5;         /* 淡紙色 */
+  --surface:#FFFFFF;    /* 純白紙卡 */
+  --surface-2:#EEF1F3;  /* 極淡霧灰 */
+  --border:#E4E7EB;     /* 淡冷灰邊線 */
+
+  --text-1:#1F2933;     /* 深石墨 */
+  --text-2:#52606D;     /* 霧灰藍 */
+  --text-3:#9AA5B1;     /* 淡霧灰 */
+
+  --brand:#6B8A9A;      /* 霧藍石（互動主色） */
+  --sand:#C9A46A;       /* 沙金（少量點綴） */
+
+  /* Legacy mapping（先讓舊 code 不中斷） */
+  --jp-wash: var(--bg);
+  --accent:  var(--text-1);
+  --highlight: var(--sand);
+
+  /* Bootstrap primary → brand */
+  --bs-primary: var(--brand);
+  /* Bootstrap 需要 rgb 數字，先手動填，之後若改 brand 再一起改這行即可 */
+  --bs-primary-rgb: 107,138,154;
+  /* ===== Component tokens (Day) ===== */
+  --ink-rgb: 31,41,51;            /* 近似 text-1，用於做透明灰藍的底 */
+  --pill-bg: rgba(var(--ink-rgb), .06);
+  --pill-bg-hover: rgba(var(--ink-rgb), .10);
+  --pill-bd: rgba(var(--ink-rgb), .14);
+  --pill-bd-strong: rgba(var(--ink-rgb), .22);
+  --pill-fg: var(--text-2);
+  --pill-fg-strong: var(--text-1);
+
+  --focus-ring: rgba(var(--bs-primary-rgb), .25);
+  /* Danger system (Day) */
+  --danger: #B42318;
+  --danger-rgb: 180,35,24;
+  --danger-fg: rgba(var(--danger-rgb), .80);
+  --danger-bg: rgba(var(--danger-rgb), .12);
+  --danger-bg-strong: rgba(var(--danger-rgb), .18);
+  --shadow-rgb: 0,0,0;
+  --shadow-1: 0 2px 6px rgba(var(--shadow-rgb), .10);
+  --shadow-2: 0 2px 8px rgba(var(--shadow-rgb), .12);
+  --shadow-3: 0 4px 15px rgba(var(--shadow-rgb), .10);
+  --shadow-3-top: 0 -4px 15px rgba(var(--shadow-rgb), .10);
+
   --timeline-x:16px;
 }
 
 html[data-theme="dark"]{
-  --jp-wash:#121212;
-  --accent:#EAEAEA;
-  --highlight:#D4A373;
-}
+  /* Night */
+  --bg:#121416;         /* 深墨夜 */
+  --surface:#1C1F23;    /* 深石板卡 */
+  --surface-2:#252A2F;  /* 略亮石板層 */
+  --border:#2F363D;     /* 深灰邊線 */
 
+  --text-1:#E6E8EA;     /* 柔白 */
+  --text-2:#A7B0B8;     /* 霧灰 */
+  --text-3:#6B7680;     /* 深霧灰 */
+
+  /* brand/sand 在暗色不變：保持品牌一致 */
+  --brand:#6B8A9A;
+  --sand:#C9A46A;
+
+  /* Legacy mapping */
+  --jp-wash: var(--bg);
+  --accent:  var(--text-1);
+  --highlight: var(--sand);
+
+  --bs-primary: var(--brand);
+  --bs-primary-rgb: 107,138,154;
+  /* ===== Component tokens (Night) ===== */
+  --ink-rgb: 230,235,240;          /* 用亮字去做透明白感 */
+  --pill-bg: rgba(255,255,255,.06);
+  --pill-bg-hover: rgba(255,255,255,.10);
+  --pill-bd: rgba(255,255,255,.14);
+  --pill-bd-strong: rgba(255,255,255,.22);
+  --pill-fg: var(--text-2);
+  --pill-fg-strong: var(--text-1);
+
+  --focus-ring: rgba(var(--bs-primary-rgb), .35); 
+
+  /* Danger system (Night) */
+  --danger-fg: rgba(255,150,160,.95);
+  --danger-bg: rgba(255,90,110,.12);
+  --danger-bg-strong: rgba(255,90,110,.22);
+  /* Shadow tokens */
+  --shadow-rgb: 0,0,0;
+  --shadow-1: 0 2px 6px rgba(var(--shadow-rgb), .50);
+  --shadow-2: 0 2px 8px rgba(var(--shadow-rgb), .45);
+  --shadow-3: 0 4px 15px rgba(var(--shadow-rgb), .50);
+  --shadow-3-top: 0 -4px 15px rgba(var(--shadow-rgb), .50);
+}
 body{
-  background:var(--jp-wash);
+  background:var(--bg);
   font-family:"Noto Sans TC",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang TC","Microsoft JhengHei",sans-serif;
   padding-bottom:80px;
-  color:#333;
+  color:var(--text-1);
   letter-spacing:.02em;
   font-weight:400;
   transition:background-color .5s ease,color .5s ease;
 }
-html[data-theme="dark"] body{ color:#ddd; }
+
+html[data-theme="dark"] body{
+  color:var(--text-1);
+}
 
 h1,h2,h3{ font-weight:600; }
 small,.text-muted{ font-weight:500; }
@@ -46,44 +129,33 @@ small,.text-muted{ font-weight:500; }
 
 /* =========================
    1) Header / Sticky / Clock area (smooth day<->night)
-   - 你已完成時鐘漸變，這裡保留「唯一版」避免互打
 ========================= */
 .sticky-top,
 .sticky-top .p-3,
 header{
-  background-color:var(--jp-wash) !important;
-  transition:background-color .5s ease,border-color .5s ease,box-shadow .5s ease !important;
-}
-html[data-theme="dark"] .sticky-top,
-html[data-theme="dark"] .sticky-top .p-3,
-html[data-theme="dark"] header{
-  background-color:#121212 !important;
-  border-bottom-color:#2a2a2a !important;
+  background-color:var(--bg) !important; /* 原本 var(--jp-wash) 也等於 bg，這裡直接收斂 */
+  border-bottom-color:var(--border) !important;
   transition:background-color .5s ease,border-color .5s ease,box-shadow .5s ease !important;
 }
 
 .sticky-top{ min-height:105px; }
 
-/* Clock block (你用 .sticky-top .d-flex 當時鐘區塊) */
+/* Clock block (你用 .sticky-top .d-flex 當時鐘區塊)*/
 .sticky-top .d-flex{
-  background-color:rgba(255,255,255,.85) !important;
-  border:1px solid rgba(0,0,0,.10) !important;
+  background-color:var(--surface-2) !important;
+  border:1px solid var(--border) !important;
   box-shadow:none !important;
   transition:background-color .5s ease,border-color .5s ease,box-shadow .5s ease !important;
   will-change:background-color,border-color;
 }
-html[data-theme="dark"] .sticky-top .d-flex{
-  background-color:#1e1e1e !important;
-  border-color:rgba(255,255,255,.12) !important;
-  box-shadow:none !important;
-}
 
-/* Clock text in dark */
-html[data-theme="dark"] #tw-time{ color:#999 !important; }
-html[data-theme="dark"] #eu-time{ color:#f1f3f5 !important; }
-html[data-theme="dark"] #tw-date-label,
-html[data-theme="dark"] #eu-date-label,
-html[data-theme="dark"] .sticky-top small{ color:#adb5bd !important; }
+
+/* Clock text：全部只吃既有 text tokens（dark 會自動換成夜間 token） */
+#tw-time{ color:var(--text-2) !important; }
+#eu-time{ color:var(--text-1) !important; }
+#tw-date-label,
+#eu-date-label,
+.sticky-top small{ color:var(--text-3) !important; }
 
 /* =========================
    2) Theme button (唯一最終版)
@@ -95,95 +167,100 @@ html[data-theme="dark"] .sticky-top small{ color:#adb5bd !important; }
   z-index:10;
   line-height:1;
 }
+
 #themeBtn{
   width:40px; height:40px; padding:0;
   display:inline-flex; align-items:center; justify-content:center;
   font-size:1.15rem; line-height:1;
+
   border:none !important;
   background:transparent !important;
+
+  /* ✅ Day：用既有文字色系（不再寫死 rgba(44,62,80,...)） */
+  color: var(--text-2);
+
   opacity:.62;
   outline:none !important;
   box-shadow:none !important;
   transition:transform .16s ease,opacity .2s ease,color .2s ease;
 }
-html[data-theme="dark"] #themeBtn{
-  color:#CFA56F !important;
-  opacity:.72;
-}
-html:not([data-theme="dark"]) #themeBtn{ color:rgba(44,62,80,.70); }
+
 #themeBtn:focus,
 #themeBtn:focus-visible,
-#themeBtn:active{ outline:none !important; box-shadow:none !important; }
-#themeBtn:active{ transform:scale(.9); opacity:.95; }
+#themeBtn:active{
+  outline:none !important;
+  box-shadow:none !important;
+}
 
+#themeBtn:active{
+  transform:scale(.9);
+  opacity:.95;
+}
 /* =========================
-   3) Today pill (日玻璃 / 夜實心防閃)
+   3) Today pill
+   - 路線 B：不新增 token，不做玻璃特例
+   - 顏色收斂到既有：pill / text / border / shadow
 ========================= */
 #todayBtn{
   width:auto; height:20px; padding:0 10px;
   display:inline-flex; align-items:center; justify-content:center;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   font-size:.6rem; font-weight:500; letter-spacing:.4px;
+
   border-radius:999px;
-  border:1px solid rgba(0,0,0,.08);
-  background-color:rgba(255,255,255,.6);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
-  color:#666;
+
+  /* ✅ token 化：不用寫死 rgba/#666 */
+  border:1px solid var(--pill-bd);
+  background-color:var(--pill-bg);
+  color:var(--pill-fg);
+
+  /* ✅ 路線 B：不做玻璃感（避免 blur / rgba 白底） */
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+
   white-space:nowrap;
-  box-shadow:0 1px 3px rgba(0,0,0,.08);
+
+  /* ✅ 用既有 shadow token（避免 rgba(0,0,0,...)） */
+  box-shadow:var(--shadow-1);
+
   transition:background-color .5s ease,color .5s ease,border-color .5s ease,box-shadow .5s ease,transform .15s ease;
   cursor:pointer;
   line-height:1.1;
 }
+
 #todayBtn:active{ transform:scale(.9); }
-
-html[data-theme="dark"] #todayBtn{
-  background-color:#1e1e1e !important;
-  border-color:rgba(255,255,255,.15) !important;
-  color:#ddd !important;
-  box-shadow:0 1px 4px rgba(0,0,0,.4) !important;
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-}
-
-/* 只關收藏 top list blur，避免你之前全站關 blur */
-#fav-top-list,
-#fav-top-list *{
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-}
 
 /* =========================
    4) Cards / Lists common
 ========================= */
 .card-custom{
-  background:#fff;
+  background:var(--surface);
   border-radius:12px;
   padding:18px;
   margin-bottom:12px;
-  border:1px solid transparent; /* 防切換跳動 */
-  box-shadow:0 2px 8px rgba(0,0,0,.05);
-}
-html[data-theme="dark"] .card-custom,
-html[data-theme="dark"] .accommodation-bar,
-html[data-theme="dark"] .sync-card,
-html[data-theme="dark"] .list-group-item{
-  background-color:#1e1e1e !important;
-  border:1px solid #2a2a2a !important;
-  box-shadow:0 2px 8px rgba(0,0,0,.4) !important;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-2);
 }
 
 .pack-item{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  border-bottom:1px solid #f0f0f0;
+  border-bottom:1px solid var(--border);
   padding:8px 0;
 }
-.pack-text{ flex-grow:1; margin-left:10px; cursor:pointer; font-size:.95rem; }
-.pack-text.checked{ text-decoration:line-through; color:#aaa; }
-html[data-theme="dark"] .pack-item{ border-bottom:1px solid #2a2a2a !important; }
+
+.pack-text{
+  flex-grow:1;
+  margin-left:10px;
+  cursor:pointer;
+  font-size:.95rem;
+}
+
+.pack-text.checked{
+  text-decoration:line-through;
+  color:var(--text-3);
+}
 
 /* =========================
    5) Bottom nav + Day nav
@@ -192,15 +269,17 @@ html[data-theme="dark"] .pack-item{ border-bottom:1px solid #2a2a2a !important; 
   position:fixed;
   bottom:0;
   width:100%;
-  background:#fff;
-  border-top:1px solid #EEE;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  box-shadow:var(--shadow-3-top);
   display:flex;
   justify-content:space-around;
   padding:10px 0;
   z-index:1000;
 }
+
 .nav-item{
-  color:#BBB;
+  color:var(--text-3);
   text-decoration:none;
   text-align:center;
   font-size:.7rem;
@@ -208,19 +287,28 @@ html[data-theme="dark"] .pack-item{ border-bottom:1px solid #2a2a2a !important; 
   flex:1;
   font-weight:500 !important;
 }
-.nav-item.active{ color:var(--accent); font-weight:700; }
-.nav-item i{ font-size:1.3rem; display:block; margin-bottom:3px; }
+
+.nav-item.active{
+  color:var(--text-1);
+  font-weight:700;
+}
+
+.nav-item i{
+  font-size:1.3rem;
+  display:block;
+  margin-bottom:3px;
+}
 
 .day-nav-container{
   display:flex;
   overflow-x:auto;
-  background:#fff;
+  background:var(--surface);
   padding:15px 10px;
   gap:15px;
   position:sticky;
   top:105px;
   z-index:999;
-  border-bottom:1px solid #f0f0f0;
+  border-bottom:1px solid var(--border);
   -webkit-overflow-scrolling:touch;
 }
 .day-nav-container::-webkit-scrollbar{ display:none; }
@@ -234,115 +322,79 @@ html[data-theme="dark"] .pack-item{ border-bottom:1px solid #2a2a2a !important; 
   cursor:pointer;
   transition:all .2s ease;
 }
+
 .day-tab .day-week{
   font-size:.65rem;
   text-transform:uppercase;
-  color:#ccc;
+  color:var(--text-3);
+  opacity:.85;
   margin-bottom:4px;
   letter-spacing:.5px;
   font-weight:500 !important;
 }
+
 .day-tab .day-num{
   font-size:1.2rem;
   font-weight:400;
-  color:#ddd;
+  color:var(--text-3);
+  opacity:.85;
   position:relative;
   padding-bottom:8px;
   font-weight:500 !important;
 }
-.day-tab.active .day-week{ color:#333; font-weight:700; }
-.day-tab.active .day-num{ color:#000; font-weight:700; }
+
+.day-tab.active .day-week{
+  color:var(--text-2);
+  font-weight:700;
+}
+
+.day-tab.active .day-num{
+  color:var(--text-1);
+  font-weight:700;
+}
+
 .day-tab.active .day-num::after{
   content:'';
   position:absolute;
   bottom:0; left:50%;
   transform:translateX(-50%);
   width:4px; height:4px;
-  background-color:#8B0000;
+  background-color: var(--brand);
   border-radius:50%;
 }
-
-html[data-theme="dark"] .bottom-nav{
-  background:#1a1a1a !important;
-  border-top:1px solid #2a2a2a !important;
-  box-shadow:0 -1px 10px rgba(0,0,0,.5) !important;
-}
-html[data-theme="dark"] .day-nav-container{
-  background:#1a1a1a !important;
-  border-bottom:1px solid #2a2a2a !important;
-  box-shadow:none !important;
-}
-html[data-theme="dark"] .day-tab .day-week,
-html[data-theme="dark"] .day-tab .day-num{ color:#777; }
-html[data-theme="dark"] .day-tab.active .day-week,
-html[data-theme="dark"] .day-tab.active .day-num{ color:#fff; }
 
 /* =========================
    6) Budget + buttons + forms (dark unify)
 ========================= */
 .budget-sum{
-  background:var(--accent);
-  color:#fff;
+  background: var(--surface);
+  color: var(--text-1);
+
+  border: 1px solid var(--border);
   border-radius:15px;
   padding:25px;
   text-align:center;
   margin-bottom:20px;
-  box-shadow:0 4px 15px rgba(0,0,0,.1);
-}
-html[data-theme="dark"] .budget-sum{
-  background:#1a252f !important;
-  box-shadow:0 4px 15px rgba(0,0,0,.5);
+
+  border-left: 4px solid var(--brand);
+  box-shadow: var(--shadow-3);
 }
 
-/* Dark buttons unify */
-html[data-theme="dark"] .btn-dark,
-html[data-theme="dark"] .btn-primary,
-html[data-theme="dark"] .btn-outline-dark,
-html[data-theme="dark"] .btn-outline-secondary,
-html[data-theme="dark"] .btn-outline-primary,
-html[data-theme="dark"] .btn-info,
-html[data-theme="dark"] .btn-export,
-html[data-theme="dark"] .btn-import,
-html[data-theme="dark"] .btn-sync{
-  background-color:#2C3E50 !important;
-  color:#fff !important;
-  border:1px solid #455a64 !important;
-  transition:background-color .2s ease,transform .12s ease !important;
-}
-html[data-theme="dark"] .btn-dark:hover,
-html[data-theme="dark"] .btn-primary:hover,
-html[data-theme="dark"] .btn-outline-dark:hover,
-html[data-theme="dark"] .btn-outline-secondary:hover,
-html[data-theme="dark"] .btn-outline-primary:hover,
-html[data-theme="dark"] .btn-info:hover,
-html[data-theme="dark"] .btn-export:hover,
-html[data-theme="dark"] .btn-import:hover,
-html[data-theme="dark"] .btn-sync:hover{
-  background-color:#1a252f !important;
-}
-html[data-theme="dark"] .btn-dark:active,
-html[data-theme="dark"] .btn-primary:active,
-html[data-theme="dark"] .btn-outline-dark:active,
-html[data-theme="dark"] .btn-outline-secondary:active,
-html[data-theme="dark"] .btn-outline-primary:active,
-html[data-theme="dark"] .btn-info:active,
-html[data-theme="dark"] .btn-export:active,
-html[data-theme="dark"] .btn-import:active,
-html[data-theme="dark"] .btn-sync:active{
-  background-color:#1a252f !important;
-  transform:scale(.98);
+.form-control,
+.form-select,
+.input-group-text{
+  background-color: var(--surface-2) !important;
+  border-color: var(--border) !important;
+  color: var(--text-1) !important;
 }
 
-/* forms in dark */
-html[data-theme="dark"] .form-control,
-html[data-theme="dark"] .form-select,
-html[data-theme="dark"] .input-group-text{
-  background-color:#252525 !important;
-  border-color:#444 !important;
-  color:#eee !important;
+.form-control::placeholder{
+  color: var(--text-3) !important;
 }
-html[data-theme="dark"] .form-control::placeholder{ color:#777 !important; }
-html[data-theme="dark"] .input-group .btn-dark{ border:1px solid #444; }
+
+.input-group .btn-dark{
+  border: 1px solid var(--border);
+}
 
 /* =========================
    7) Day content + timeline
@@ -350,8 +402,8 @@ html[data-theme="dark"] .input-group .btn-dark{ border:1px solid #444; }
 .day-content{ display:none; animation:fadeIn .4s ease; }
 .day-content.active{ display:block; }
 
-.day-content .text-primary{ color:#2C3E50 !important; }
-html[data-theme="dark"] .day-content .text-primary{ color:#D4A373 !important; }
+.day-content .text-primary{ color:var(--text-1) !important; }
+html[data-theme="dark"] .day-content .text-primary{ color:var(--text-1) !important; }
 
 /* Timeline items */
 .time-item{
@@ -370,7 +422,7 @@ html[data-theme="dark"] .day-content .text-primary{ color:#D4A373 !important; }
   top:12px;
   bottom:-24px;
   width:2px;
-  background-color:#ddd;
+  background-color:var(--border);
 }
 .time-item:last-child::before{ display:none; }
 
@@ -384,9 +436,13 @@ html[data-theme="dark"] .day-content .text-primary{ color:#D4A373 !important; }
   left:calc(var(--timeline-x) - 6px);
   top:12px;
   width:12px; height:12px;
-  background-color:var(--accent);
+
+  background-color:var(--brand);
   border-radius:50%;
-  border:2px solid var(--jp-wash);
+
+  /* 這圈是「切開線」用的，建議跟卡片表面一致 */
+  border:2px solid var(--surface);
+
   transform:scale(.6);
   opacity:0;
   animation:nodePop .4s ease forwards;
@@ -395,12 +451,6 @@ html[data-theme="dark"] .day-content .text-primary{ color:#D4A373 !important; }
 
 @keyframes timelineFade{ to{ opacity:1; transform:translateY(0) } }
 @keyframes nodePop{ to{ opacity:1; transform:scale(1) } }
-
-html[data-theme="dark"] .time-item::before{ background-color:#444; }
-html[data-theme="dark"] .time-node{
-  background-color:var(--highlight) !important;
-  border-color:#1e1e1e;
-}
 
 /* Time detail collapse/expand */
 .time-header{
@@ -412,7 +462,7 @@ html[data-theme="dark"] .time-node{
 }
 .toggle-icon{
   font-size:.9rem;
-  color:#999;
+  color:var(--text-3);
   transition:transform .3s ease;
 }
 .time-detail{
@@ -430,6 +480,15 @@ html[data-theme="dark"] .time-node{
 }
 .time-item.open .toggle-icon{ transform:rotate(180deg); }
 
+/* Header time bar（原本 inline style 搬出來） */
+.timebar{
+  background: var(--surface-2);
+  border-radius: 20px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
 /* =========================
    8) Accommodation bar
 ========================= */
@@ -438,48 +497,52 @@ html[data-theme="dark"] .time-node{
   bottom:65px;
   left:15px;
   right:15px;
-  background:#fff;
+  background: var(--surface);
   padding:12px 18px;
   border-radius:12px;
-  box-shadow:0 -4px 15px rgba(0,0,0,.1);
+  box-shadow: var(--shadow-3-top);
   z-index:998;
   display:none;
   justify-content:space-between;
   align-items:center;
-  border:1px solid #eee;
+  border:1px solid var(--border);
 }
-html[data-theme="dark"] .accommodation-bar{
-  background:#1e1e1e;
-  border-color:#333;
-}
+
 .accommodation-bar .btn-map{
-  background-color:#2C3E50 !important;
-  color:#fff !important;
-  border-radius:20px;
-  font-size:.75rem;
-  padding:6px 15px;
-  text-decoration:none !important;
-  border:1px solid #3d5166 !important;
-  transition:all .2s ease;
+  width:40px;
+  height:25px;
+  padding:0 !important;
+  border-radius:14px;
+
   display:inline-flex;
   align-items:center;
+  justify-content:center;
+
+  background: var(--pill-bg) !important;
+  border:1px solid var(--pill-bd) !important;
+
+  color: var(--brand) !important;
+
+  text-decoration:none !important;
+  transition:transform .12s ease, opacity .15s ease, background-color .15s ease, border-color .15s ease;
 }
+
+.accommodation-bar .btn-map i{
+  font-size:0.8rem;
+  line-height:1;
+}
+
 .accommodation-bar .btn-map:active{
-  transform:translateY(1px) scale(.95);
-  background-color:#1a252f !important;
-  opacity:.9;
-}
-html[data-theme="dark"] .accommodation-bar .btn-map{
-  background-color:#2C3E50 !important;
-  border-color:#455a64 !important;
+  transform:translateY(1px) scale(.96);
+  opacity:.92;
 }
 
 /* =========================
    9) Sync card
 ========================= */
 .sync-card{
-  background:linear-gradient(135deg,#fff 0%,#f8f9fa 100%);
-  border:1px dashed #D4A373;
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+  border: 1px dashed var(--border);
   border-radius:15px;
   padding:20px;
   margin-top:20px;
@@ -497,20 +560,7 @@ html[data-theme="dark"] .accommodation-bar .btn-map{
   width:100%;
   border:none;
 }
-.btn-export{ background-color:#2C3E50; color:#fff; margin-bottom:10px; }
-.btn-import{ background-color:#fff; color:#2C3E50; border:1px solid #2C3E50; }
-.btn-sync:active{ transform:scale(.98); opacity:.9; }
-
-html[data-theme="dark"] .sync-card{
-  background:#1e1e1e !important;
-  border:1px dashed #444 !important;
-  color:#ddd;
-}
-html[data-theme="dark"] .btn-import{
-  background-color:#2c2c2c;
-  color:#EAEAEA;
-  border-color:#555;
-}
+.btn-sync:active{ transform:scale(.98); opacity:.88; }
 
 /* =========================
    10) Favorites: collapse + title badge + items + link pills
@@ -536,57 +586,41 @@ html[data-theme="dark"] .btn-import{
 
 /* fav title */
 .fav-title-text{ font-weight:700; font-size:1.05rem; line-height:1.3; }
+
 .fav-title-badge{
   font-size:.75rem;
   font-weight:500;
   padding:2px 8px;
   margin-left:6px;
   border-radius:999px;
-  background-color:#f8f9fa;
-  color:#868e96;
-  border:1px solid #e9ecef;
+  background: var(--pill-bg);
+  border: 1px solid var(--pill-bd);
+  color: var(--pill-fg);
+
   line-height:1.4;
-}
-html[data-theme="dark"] .fav-title-text{ color:#e9ecef; }
-html[data-theme="dark"] .fav-title-badge{
-  background-color:#2a3440;
-  color:#ced4da;
-  border:1px solid #3a4653;
 }
 
 /* item card */
 .item-list .item-div{
   border-radius:8px;
-  border:1px solid #e0e0e0;
+  border:1px solid var(--border);
   padding:8px 12px;
   margin-bottom:6px;
-  background-color:#fff;
-  transition:background .3s,box-shadow .3s;
+  background: var(--surface);
+  transition:background .3s, box-shadow .3s;
 }
-.item-list .item-div:hover{
-  box-shadow:0 2px 6px rgba(0,0,0,.1);
-  background-color:#f9f9f9;
-}
-.item-list .item-div .item-link{
-  color:#0d6efd;
-  text-decoration:none;
-}
-.item-list .item-div .item-link:hover{ text-decoration:underline; }
 
-html[data-theme="dark"] .item-list .item-div{
-  border:1px solid #3a4a56;
-  background-color:#1f2a35;
-}
-html[data-theme="dark"] .item-list .item-div:hover{
-  box-shadow:0 2px 6px rgba(0,0,0,.5);
-  background-color:#242f3a;
+.item-list .item-div:hover{
+  box-shadow: var(--shadow-1);
+  background: var(--surface-2);
+  border-color: var(--border);
 }
 
 /* 收藏頁連結膠囊 */
 #fav-list-container a.item-link{
   display:inline-block !important;
-  color:var(--highlight) !important;
-  background:rgba(212,163,115,.10) !important;
+  color:var(--pill-fg-strong) !important;
+  background:var(--pill-bg) !important;
   text-decoration:none !important;
   font-weight:500 !important;
   font-size:.75rem !important;
@@ -595,13 +629,17 @@ html[data-theme="dark"] .item-list .item-div:hover{
   margin-top:2px !important;
   margin-right:5px !important;
   margin-bottom:8px !important;
-  border:1px solid rgba(212,163,115,.20) !important;
+  border:1px solid var(--pill-bd) !important;
   transition:all .2s ease;
 }
 #fav-list-container a.item-link:hover{
-  background:var(--highlight) !important;
-  color:#fff !important;
-  transform:scale(1.05);
+  background: var(--pill-bg-hover) !important;
+  border-color: var(--pill-bd-strong) !important;
+  opacity: .95;
+  transform:scale(1.03);
+}
+#fav-list-container a.item-link:active{
+  transform:scale(.98);
 }
 
 /* 收藏頁 header icons hit area */
@@ -616,43 +654,40 @@ html[data-theme="dark"] .item-list .item-div:hover{
   justify-content:center;
   transition:transform .12s ease,background .15s ease,opacity .15s ease;
 }
+
+/* 收藏頁 header icon 顏色（token 化） */
 #fav-list-container .fav-btn-group .fav-icon i{
   font-size:.95rem;
-  color:rgba(44,62,80,.65);
+  color: var(--text-2);
 }
+
 #fav-list-container .fav-btn-group .fav-icon:active{
   transform:scale(.90);
-  background:rgba(44,62,80,.10) !important;
+  background: var(--pill-bg-hover) !important;
 }
+
 #fav-list-container .fav-btn-group .fav-icon:focus-visible{
-  outline:2px solid rgba(44,62,80,.25);
+  outline:2px solid var(--focus-ring);
   outline-offset:2px;
 }
-#fav-list-container .fav-btn-group .fav-add-icon i{ color:rgba(44,62,80,.80); }
 
-html[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon i{ color:rgba(230,235,240,.75); }
-html[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon:active{ background:rgba(255,255,255,.10) !important; }
+#fav-list-container .fav-btn-group .fav-add-icon i{
+  color: var(--pill-fg-strong);
+}
 
 /* 刪除 icon（收藏頁） */
-#fav-list-container .fav-btn-group .fav-icon.text-danger i{ color:rgba(200,70,70,.75); }
+#fav-list-container .fav-btn-group .fav-icon.text-danger i{ color:var(--danger-fg) !important; }
 #fav-list-container .fav-btn-group .fav-icon.text-danger:active{
-  background:rgba(200,70,70,.18) !important;
   transform:scale(.9);
 }
-html[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon.text-danger i{ color:rgba(240,120,120,.85); }
-html[data-theme="dark"] #fav-list-container .fav-btn-group .fav-icon.text-danger:active{ background:rgba(240,120,120,.22) !important; }
 
 /* 行李頁刪除 icon */
-#pack-list-container .text-danger,
-#pack-list-container .text-danger i{ color:rgba(200,70,70,.75) !important; }
+#pack-list-container .text-danger i{ color: var(--danger-fg) !important; }
+
 #pack-list-container .text-danger:active{
-  background:rgba(200,70,70,.18) !important;
   transform:scale(.9);
   border-radius:10px;
 }
-html[data-theme="dark"] #pack-list-container .text-danger,
-html[data-theme="dark"] #pack-list-container .text-danger i{ color:rgba(240,120,120,.85) !important; }
-html[data-theme="dark"] #pack-list-container .text-danger:active{ background:rgba(240,120,120,.22) !important; }
 
 /* 收藏頁 bookmark 小一點+上移 */
 #fav-list-container i.fa-bookmark,
@@ -662,23 +697,45 @@ html[data-theme="dark"] #pack-list-container .text-danger:active{ background:rgb
   top:-2px;
   opacity:.65;
 }
+
 #fav-list-container button.mark-icon,
 #fav-list-container .mark-icon{
   background:transparent !important;
   border:none !important;
   box-shadow:none !important;
   padding:0 !important;
-  color:#c7cdd6 !important;
+  color:var(--text-3) !important;
 }
 
-/* jump highlight outline */
+/* ✅ 收藏頁：地點細項的「編輯/刪除」兩顆 icon 永遠淺灰（token 化，不寫死 #999） */
+#fav-list-container .item-list .item-div button{
+  opacity: 1 !important;
+  background: transparent !important;
+}
+
+#fav-list-container .item-list .item-div button i{
+  color: var(--text-3) !important;
+}
+
+#fav-list-container .item-list .item-div button:hover,
+#fav-list-container .item-list .item-div button:active{
+  opacity: 1 !important;
+  background: transparent !important;
+}
+
+#fav-list-container .item-list .item-div button:hover i,
+#fav-list-container .item-list .item-div button:active i{
+  color: var(--text-3) !important;
+}
+
+/* jump highlight outline（移除 rgba 寫死色） */
 @keyframes favBreathOutline{
-  0%{ outline-color:rgba(0,0,0,0) }
-  40%,60%{ outline-color:rgba(212,163,115,.6) }
-  100%{ outline-color:rgba(0,0,0,0) }
+  0%{ outline-color:transparent; }
+  40%,60%{ outline-color:var(--highlight); }
+  100%{ outline-color:transparent; }
 }
 #fav-list-container .item-list .item-div.jump-highlight{
-  outline:1px solid rgba(0,0,0,0);
+  outline:1px solid transparent;
   outline-offset:2px;
   animation:favBreathOutline 1.5s ease-in-out 1;
 }
@@ -689,42 +746,20 @@ html[data-theme="dark"] #pack-list-container .text-danger:active{ background:rgb
   border-radius:8px;
   font-size:1.1rem;
   background:transparent;
-  border:1px dashed rgba(44,62,80,.25);
-  color:rgba(44,62,80,.85);
-}
-html[data-theme="dark"] #fav-list-container .item-list .btn-outline-primary{
-  border-color:rgba(255,255,255,.25);
-  color:rgba(255,255,255,.85);
-}
 
-/* 收藏頁：新增收藏主按鈕 */
-#fav-add-btn,
-#fav-list-container ~ .btn-primary,
-#fav-list-container + .btn-primary{
-  background:rgba(44,62,80,.95) !important;
-  color:#fff !important;
-  border:1px solid rgba(44,62,80,.10) !important;
-  border-radius:6px !important;
-  box-shadow:0 10px 22px rgba(0,0,0,.12) !important;
-  font-weight:500 !important;
+  border:1px dashed var(--pill-bd);
+  color: var(--pill-fg-strong);
 }
-#fav-add-btn:active,
-#fav-list-container ~ .btn-primary:active,
-#fav-list-container + .btn-primary:active{
-  transform:scale(.98);
-  background:rgba(26,37,47,.95) !important;
-}
-html[data-theme="dark"] #fav-add-btn,
-html[data-theme="dark"] #fav-list-container ~ .btn-primary,
-html[data-theme="dark"] #fav-list-container + .btn-primary{
-  background:rgba(44,62,80,.92) !important;
-  border-color:rgba(255,255,255,.12) !important;
+/* ✅ 收藏頁：把 Bootstrap .border 收斂到 token（避免出現偏白框線） */
+#fav-list-container .border{
+  border-color: var(--border) !important;
 }
 
 /* =========================
-   11) fav-top-list (你目前的最終視覺)
+   11) fav-top-list
 ========================= */
 #fav-top-container{ padding:6px 0; }
+
 #fav-top-list{
   padding:6px 0;
   border:none;
@@ -733,20 +768,22 @@ html[data-theme="dark"] #fav-list-container + .btn-primary{
   flex-direction:column;
   gap:10px;
 }
+
 #fav-top-list .topmark-row{
   padding:12px;
   border-radius:16px;
-  background:#fff;
-  border:1px solid rgba(44,62,80,.08);
-  box-shadow:0 8px 18px rgba(0,0,0,.05);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-2);
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:12px;
 }
+
 #fav-top-list .topmark-row:active{
   transform:scale(.99);
-  background:rgba(44,62,80,.02);
+  background: var(--surface-2);
 }
 
 /* 內容排版 */
@@ -757,12 +794,14 @@ html[data-theme="dark"] #fav-list-container + .btn-primary{
   min-width:0;
   flex:1;
 }
+
 #fav-top-list .topmark-title{
   font-size:.78rem;
   font-weight:600;
   opacity:.75;
   white-space:nowrap;
 }
+
 #fav-top-list .topmark-place{
   font-size:.86rem;
   font-weight:500;
@@ -772,6 +811,7 @@ html[data-theme="dark"] #fav-list-container + .btn-primary{
   text-overflow:ellipsis;
   margin:0;
 }
+
 #fav-top-list .topmark-links{
   display:flex;
   align-items:center;
@@ -781,6 +821,7 @@ html[data-theme="dark"] #fav-list-container + .btn-primary{
 }
 #fav-top-list .topmark-links > a{ order:1; }
 
+/* fav-top-list：自訂連結膠囊（token 化） */
 #fav-top-list .topmark-links a{
   display:inline-flex;
   align-items:center;
@@ -788,18 +829,26 @@ html[data-theme="dark"] #fav-list-container + .btn-primary{
   font-weight:500;
   padding:2px 10px;
   border-radius:999px;
-  color:rgba(44,62,80,.85) !important;
-  background:rgba(44,62,80,.08) !important;
-  border:1px solid rgba(44,62,80,.18);
-  text-decoration:none !important;
-  transition:all .18s ease;
-}
-#fav-top-list .topmark-links a:hover{
-  background:rgba(44,62,80,.16);
-  color:rgba(44,62,80,1) !important;
-}
-#fav-top-list .topmark-links a:active{ transform:scale(.96); }
 
+  color: var(--pill-fg) !important;
+  background: var(--pill-bg) !important;
+  border:1px solid var(--pill-bd);
+
+  text-decoration:none !important;
+  transition:background .18s ease, border-color .18s ease, color .18s ease, transform .12s ease;
+}
+
+#fav-top-list .topmark-links a:hover{
+  background: var(--pill-bg-hover) !important;
+  border-color: var(--pill-bd-strong);
+  color: var(--pill-fg-strong) !important;
+}
+
+#fav-top-list .topmark-links a:active{
+  transform:scale(.96);
+}
+
+/* fav-top-list：刪除 X（token 化：一般用 pill 字色） */
 #fav-top-list .topmark-x{
   width:24px; height:28px;
   border:none;
@@ -808,12 +857,19 @@ html[data-theme="dark"] #fav-list-container + .btn-primary{
   font-size:18px;
   line-height:1;
   cursor:pointer;
-  color:rgba(44,62,80,.65);
-  opacity:.6;
-}
-#fav-top-list .topmark-x:active{ background:rgba(200,70,70,.18); opacity:1; }
 
-/* +N / 展開 */
+  color: var(--pill-fg);
+  opacity:.65;
+
+  transition:background .15s ease, color .15s ease, opacity .15s ease, transform .12s ease;
+}
+
+#fav-top-list .topmark-x:active{
+  opacity:1;
+  transform:scale(.98);
+}
+
+/* fav-top-list：+N / 展開（token 化，跟連結膠囊同系統） */
 #fav-top-list .topmark-more{
   order:3;
   display:inline-flex;
@@ -825,10 +881,22 @@ html[data-theme="dark"] #fav-list-container + .btn-primary{
   border-radius:999px;
   cursor:pointer;
   user-select:none;
-  color:rgba(44,62,80,.85);
-  background:rgba(44,62,80,.08);
-  border:1px solid rgba(44,62,80,.18);
+
+  color: var(--pill-fg);
+  background: var(--pill-bg);
+  border:1px solid var(--pill-bd);
+
+  transition:background .18s ease, border-color .18s ease, color .18s ease, transform .12s ease;
 }
+
+#fav-top-list .topmark-more:hover{
+  background: var(--pill-bg-hover);
+  border-color: var(--pill-bd-strong);
+  color: var(--pill-fg-strong);
+}
+
+#fav-top-list .topmark-more:active{ transform:scale(.96); }
+
 #fav-top-list .topmark-links-extra{
   order:2;
   display:none;
@@ -837,28 +905,8 @@ html[data-theme="dark"] #fav-list-container + .btn-primary{
   gap:6px;
   margin-left:0;
 }
-#fav-top-list .topmark-links.links-expanded .topmark-links-extra{ display:inline-flex; }
 
-/* Dark version */
-html[data-theme="dark"] #fav-top-list .topmark-row{
-  background:#1f2a35;
-  border-color:rgba(255,255,255,.10);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.05),
-    0 12px 24px rgba(0,0,0,.45) !important;
-}
-html[data-theme="dark"] #fav-top-list .topmark-links a{
-  color:rgba(230,235,240,.85) !important;
-  background:rgba(255,255,255,.10) !important;
-  border-color:rgba(255,255,255,.20);
-}
-html[data-theme="dark"] #fav-top-list .topmark-links a:hover{ background:rgba(255,255,255,.18); }
-html[data-theme="dark"] #fav-top-list .topmark-x{ color:rgba(230,235,240,.75); }
-html[data-theme="dark"] #fav-top-list .topmark-more{
-  color:rgba(230,235,240,.85);
-  background:rgba(255,255,255,.10);
-  border-color:rgba(255,255,255,.20);
-}
+#fav-top-list .topmark-links.links-expanded .topmark-links-extra{ display:inline-flex; }
 
 /* =========================
    12) Small helpers you had
@@ -870,9 +918,12 @@ html[data-theme="dark"] #fav-top-list .topmark-more{
   margin:15px 0 10px;
   letter-spacing:1px;
 }
+
+/* ✅ 導航小按鈕：收斂到既有 pill 系統（不寫死黑底白字） */
 .btn-nav{
-  background:#333;
-  color:#fff;
+  background: var(--pill-bg);
+  color: var(--pill-fg-strong);
+  border: 1px solid var(--pill-bd);
   border-radius:50px;
   font-size:.75rem;
   padding:6px 15px;
@@ -880,6 +931,7 @@ html[data-theme="dark"] #fav-top-list .topmark-more{
   display:inline-flex;
   align-items:center;
 }
+.btn-nav:active{ transform:scale(.98); }
 
 /* icon-btn (你之前 hover 會 opacity:0，保留原樣) */
 .icon-btn{
@@ -890,44 +942,46 @@ html[data-theme="dark"] #fav-top-list .topmark-more{
 }
 .icon-btn:hover{ opacity:1; background-color:transparent; }
 
-/* 行李清單標題色跟主題色 */
-#pack-list-container .text-primary{ color:var(--accent) !important; }
-html[data-theme="dark"] #pack-list-container .text-primary{ color:var(--highlight) !important; }
+/* 行李清單標題色跟主題色
+*/
+#pack-list-container .text-primary{ color:var(--text-1) !important; }
 
-/* Trip title/subtitle in dark (你原本有) */
-html[data-theme="dark"] .trip-title{ color:#f1f3f5; }
-html[data-theme="dark"] .trip-subtitle{ color:#adb5bd; }
+/* Trip title/subtitle：不再用寫死 hex，直接收斂到 text tokens */
+.trip-title{ color: var(--text-1); }
+.trip-subtitle{ color: var(--text-2); }
 
 /* Global transition helper (保留你想要的平滑切換) */
 body,.sticky-top,.card,.bg-white{
   transition:background-color .5s ease,color .5s ease,border-color .5s ease;
 }
-/* 深色模式：提示/次文字統一提亮，避免融入背景 */
-html[data-theme="dark"] small,
-html[data-theme="dark"] .text-muted{
-  color:#c7cdd6 !important;
+
+/* =========================
+   Step 4) Primary / Links unify
+========================= */
+
+/* Bootstrap primary 文字（避免被舊規則改回去） */
+.text-primary{ color: var(--brand) !important; }
+
+/* 主要按鈕 */
+.btn-primary{
+  background-color: var(--brand) !important;
+  border-color: var(--brand) !important;
 }
-/* ✅ 收藏頁：地點細項的「編輯/刪除」兩顆 icon 永遠淺灰，不用 hover 才看得到 */
-#fav-list-container .item-list .item-div button{
-  opacity: 1 !important;              /* 壓掉任何讓它變淡的設定 */
-  background: transparent !important; /* 不要 hover 才有底色 */
+.btn-primary:hover{ filter: brightness(0.96); }
+.btn-primary:active{ transform: scale(.98); }
+
+/* 一般連結（先只做最保守版本：不動你已經客製的 item-link） */
+a:not(.item-link){
+  color: var(--brand);
+}
+a:not(.item-link):hover{
+  color: var(--brand);
+  opacity: .9;
 }
 
-#fav-list-container .item-list .item-div button i{
-  color: #999 !important;             /* 你要的淺灰（需要更亮就改 #aaa） */
-}
-
-/* ✅ 把 hover 也鎖死：滑過去不要再改色/改透明 */
-#fav-list-container .item-list .item-div button:hover,
-#fav-list-container .item-list .item-div button:active{
-  opacity: 1 !important;
-  background: transparent !important;
-}
-
-#fav-list-container .item-list .item-div button:hover i,
-#fav-list-container .item-list .item-div button:active i{
-  color: #999 !important;
-}
+/* ✅ 移除：收藏頁 item-div 的按鈕「永遠淺灰 #999」規則
+   這套已在 10) Favorites 區塊用 var(--text-3) token 化完成，這裡不再重複。
+*/
 /* 右下角「顯示更多/收合」控制列 */
 #fav-top-list .topmark-toggle-row{
   display:flex;
@@ -941,24 +995,23 @@ html[data-theme="dark"] .text-muted{
   padding: 4px 8px;
   border-radius: 999px;
   font-size: 0.75rem;
-  color: rgba(44,62,80,0.70);
   cursor: pointer;
+
+  color: var(--pill-fg);
+  transition:transform .12s ease, background-color .18s ease, opacity .18s ease;
+}
+
+#fav-top-list .topmark-toggle-btn:hover{
+  opacity: .9;
 }
 
 #fav-top-list .topmark-toggle-btn:active{
   transform: scale(0.98);
-  background: rgba(44,62,80,0.06);
+  background: var(--pill-bg);
 }
 
-[data-theme="dark"] #fav-top-list .topmark-toggle-btn{
-  color: rgba(230,235,240,0.75);
-}
-[data-theme="dark"] #fav-top-list .topmark-toggle-btn:active{
-  background: rgba(255,255,255,0.06);
-}
 /* =========================================================
    ✅ 行程詳情 Sheet（1a：底部彈出）
-   ★ 你要改樣式也都在這裡
 ========================================================= */
 
 .detail-backdrop{
@@ -984,10 +1037,10 @@ html[data-theme="dark"] .text-muted{
 .detail-sheet .detail-card{
   max-width:640px;
   margin:0 auto;
-  background:#fff;
+  background:var(--surface);
   border-radius:18px;
-  border:1px solid rgba(44,62,80,.10);
-  box-shadow:0 16px 40px rgba(0,0,0,.18);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-3);
   overflow:hidden;
 }
 
@@ -1007,33 +1060,36 @@ html[data-theme="dark"] .text-muted{
   justify-content:space-between;
   gap:12px;
   padding:14px 16px 10px;
-  border-bottom:1px solid rgba(0,0,0,.06);
-  touch-action: none; /* ✅ 只在 header 禁止系統捲動，避免拖曳時背景跟著滑 */
-  cursor: grab;       /* （桌機手感） */
+  border-bottom:1px solid var(--border);
+  touch-action: none;
+  cursor: grab;
 }
+
 .detail-meta{
   display:flex;
   align-items:center;
   gap:10px;
   flex-wrap:wrap;
 }
+
 .detail-tag{
   font-size:.72rem;
   font-weight:700;
   letter-spacing:.8px;
   padding:2px 10px;
   border-radius:999px;
-  border:1px solid rgba(44,62,80,.18);
-  background:rgba(44,62,80,.06);
-  color:rgba(44,62,80,.85);
+  border:1px solid var(--pill-bd);
+  background:var(--pill-bg);
+  color:var(--pill-fg-strong);
 }
+
 .detail-time{
   display:inline-flex;
   align-items:center;
   gap:6px;
   font-size:.85rem;
   font-weight:700;
-  color:rgba(44,62,80,.85);
+  color:var(--text-2);
   opacity:.85;
 }
 
@@ -1042,11 +1098,13 @@ html[data-theme="dark"] .text-muted{
   font-weight:800;
   margin:6px 0 0;
   line-height:1.25;
+  color:var(--text-1);
 }
+
 .detail-sub{
   margin:6px 0 0;
   font-size:.82rem;
-  color:#6c757d;
+  color:var(--text-2);
 }
 
 .detail-close{
@@ -1057,10 +1115,11 @@ html[data-theme="dark"] .text-muted{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  color:rgba(44,62,80,.65);
+  color:var(--text-2);
 }
+
 .detail-close:active{
-  background:rgba(44,62,80,.08);
+  background:var(--pill-bg);
   transform:scale(.98);
 }
 
@@ -1073,8 +1132,8 @@ html[data-theme="dark"] .text-muted{
 }
 
 .detail-block{
-  border:1px solid rgba(44,62,80,.08);
-  background:rgba(44,62,80,.03);
+  border:1px solid var(--border);
+  background:var(--surface-2);
   border-radius:14px;
   padding:12px;
   margin:10px 0;
@@ -1086,6 +1145,7 @@ html[data-theme="dark"] .text-muted{
   font-weight:800;
   opacity:.75;
   margin:0 0 8px;
+  color:var(--text-2);
 }
 
 .detail-row{
@@ -1094,18 +1154,33 @@ html[data-theme="dark"] .text-muted{
   justify-content:space-between;
   gap:10px;
   padding:8px 0;
-  border-top:1px dashed rgba(44,62,80,.10);
+  border-top:1px dashed var(--border);
 }
 .detail-row:first-of-type{ border-top:none; padding-top:0; }
-.detail-row .k{ font-size:.78rem; color:#6c757d; min-width:78px; }
-.detail-row .v{ flex:1; font-size:.86rem; font-weight:600; color:#2C3E50; }
-.detail-row .v a{ color:var(--highlight); text-decoration:none; }
+
+.detail-row .k{
+  font-size:.78rem;
+  color:var(--text-2);
+  min-width:78px;
+}
+
+.detail-row .v{
+  flex:1;
+  font-size:.86rem;
+  font-weight:600;
+  color:var(--text-1);
+}
+
+.detail-row .v a{
+  color:var(--highlight);
+  text-decoration:none;
+}
 .detail-row .v a:hover{ text-decoration:underline; }
 
 .detail-note{
   font-size:.86rem;
   line-height:1.55;
-  color:#2C3E50;
+  color:var(--text-1);
 }
 .detail-note ul{ margin:0; padding-left:18px; }
 .detail-note li{ margin:4px 0; }
@@ -1116,6 +1191,8 @@ html[data-theme="dark"] .text-muted{
   flex-wrap:wrap;
   margin-top:8px;
 }
+
+/* ✅ LINK 膠囊：完全收斂到既有 pill 系統（day/night 同一套） */
 .detail-pill{
   display:inline-flex;
   align-items:center;
@@ -1124,71 +1201,26 @@ html[data-theme="dark"] .text-muted{
   font-weight:700;
   padding:6px 10px;
   border-radius:999px;
-  border:1px solid rgba(212,163,115,.25);
-  background:rgba(212,163,115,.12);
-  color:rgba(44,62,80,.9);
+
+  border:1px solid var(--pill-bd);
+  background:var(--pill-bg);
+  color:var(--pill-fg-strong);
+
   text-decoration:none;
-}
-.detail-pill:active{ transform:scale(.98); }
-
-/* Dark mode */
-html[data-theme="dark"] .detail-sheet .detail-card{
-  background:#1e1e1e;
-  border-color:#2a2a2a;
-  box-shadow:0 16px 45px rgba(0,0,0,.55);
-}
-html[data-theme="dark"] .detail-head{
-  border-bottom-color:rgba(255,255,255,.08);
-}
-html[data-theme="dark"] .detail-tag{
-  border-color:rgba(255,255,255,.18);
-  background:rgba(255,255,255,.08);
-  color:rgba(230,235,240,.85);
-}
-html[data-theme="dark"] .detail-time{
-  color:rgba(230,235,240,.88);
-}
-html[data-theme="dark"] .detail-sub{ color:#adb5bd; }
-html[data-theme="dark"] .detail-close{ color:rgba(230,235,240,.75); }
-html[data-theme="dark"] .detail-close:active{ background:rgba(255,255,255,.08); }
-
-html[data-theme="dark"] .detail-block{
-  border-color:rgba(255,255,255,.10);
-  background:rgba(255,255,255,.06);
-}
-html[data-theme="dark"] .detail-row{
-  border-top-color:rgba(255,255,255,.10);
-}
-html[data-theme="dark"] .detail-row .k{ color:#adb5bd; }
-html[data-theme="dark"] .detail-row .v{ color:#e9ecef; }
-html[data-theme="dark"] .detail-note{ color:#e9ecef; }
-
-/* =========================================================
-   🌙 詳情頁（detail-sheet）夜間模式：低調旅行手帳感 LINK 膠囊
-========================================================= */
-html[data-theme="dark"] .detail-sheet .detail-pill{
-  color: #d6d9de; /* 柔灰白，不是亮白 */
-  background: rgba(255,255,255,0.06); /* 很淡的紙感底 */
-  border: 1px solid rgba(255,255,255,0.14); /* 細邊框 */
-  box-shadow: none; /* 不要立體感 */
+  box-shadow:none;
+  transition:background .18s ease, border-color .18s ease, transform .12s ease, opacity .15s ease;
 }
 
-html[data-theme="dark"] .detail-sheet .detail-pill i{
-  color: #cfd3d8; /* icon 跟文字接近 */
-  opacity: 0.85;
+.detail-pill:hover{
+  background:var(--pill-bg-hover);
+  border-color:var(--pill-bd-strong);
 }
 
-/* hover：不是變亮，只是「更實」 */
-html[data-theme="dark"] .detail-sheet .detail-pill:hover{
-  background: rgba(255,255,255,0.10);
-  border-color: rgba(255,255,255,0.22);
+.detail-pill:active{
+  transform:scale(.97);
+  opacity:.95;
 }
 
-/* active：像紙被按一下 */
-html[data-theme="dark"] .detail-sheet .detail-pill:active{
-  transform: scale(0.97);
-  border-color: rgba(255,255,255,0.22);
-}
 /* =========================
    Budget UI: pay pills + day groups
 ========================= */
@@ -1200,10 +1232,12 @@ html[data-theme="dark"] .detail-sheet .detail-pill:active{
   justify-content:flex-start;
   align-items:center;
 }
+
 .pay-pill{
-  border:1px solid rgba(44,62,80,.18);
-  background:rgba(44,62,80,.06);
-  color:rgba(44,62,80,.85);
+  border:1px solid var(--pill-bd);
+  background:var(--pill-bg);
+  color:var(--pill-fg-strong);
+
   border-radius:999px;
   padding:6px 10px;
   font-size:.72rem;
@@ -1211,23 +1245,15 @@ html[data-theme="dark"] .detail-sheet .detail-pill:active{
   line-height:1;
   cursor:pointer;
   user-select:none;
-  transition:transform .12s ease, background .15s ease, opacity .15s ease;
+  transition:transform .12s ease, background .15s ease, border-color .15s ease, opacity .15s ease;
   white-space:nowrap;
 }
-.pay-pill:active{ transform:scale(.98); }
-.pay-pill.active{
-  background:rgba(44,62,80,.16);
-  border-color:rgba(44,62,80,.28);
-}
 
-html[data-theme="dark"] .pay-pill{
-  border-color:rgba(255,255,255,.18);
-  background:rgba(255,255,255,.08);
-  color:rgba(230,235,240,.85);
-}
-html[data-theme="dark"] .pay-pill.active{
-  background:rgba(255,255,255,.16);
-  border-color:rgba(255,255,255,.26);
+.pay-pill:active{ transform:scale(.98); }
+
+.pay-pill.active{
+  background:var(--pill-bg-hover);
+  border-color:var(--pill-bd-strong);
 }
 
 /* 今日卡頭（日期＋今日總額） */
@@ -1237,20 +1263,26 @@ html[data-theme="dark"] .pay-pill.active{
   justify-content:space-between;
   gap:10px;
 }
+
 .budget-today-date{
   font-size:.85rem;
   font-weight:800;
   letter-spacing:.4px;
+  color:var(--text-1);
 }
+
 .budget-today-sub{
   font-size:.72rem;
   font-weight:600;
   opacity:.65;
+  color:var(--text-2);
 }
+
 .budget-today-total{
   font-size:1.25rem;
   font-weight:900;
   white-space:nowrap;
+  color:var(--text-1);
 }
 
 /* 清單每筆：左右對齊（左資訊 / 右金額） */
@@ -1260,24 +1292,27 @@ html[data-theme="dark"] .pay-pill.active{
   justify-content:space-between;
   gap:12px;
 }
+
 .exp-left{
   min-width:0;
   flex:1;
 }
+
 .exp-cat{
   font-weight:800;
   font-size:.92rem;
   line-height:1.2;
+  color:var(--text-1);
 }
+
 .exp-meta{
   margin-top:4px;
   font-size:.75rem;
-  color:#6c757d;
+  color:var(--text-2);
   display:flex;
   gap:8px;
   flex-wrap:wrap;
 }
-html[data-theme="dark"] .exp-meta{ color:#adb5bd; }
 
 /* 右側：三欄（icon / 金額兩行 / …） */
 .exp-right{
@@ -1295,13 +1330,16 @@ html[data-theme="dark"] .exp-meta{ color:#adb5bd; }
 /* ① icon 欄：只在第一行出現 */
 .exp-pay-ic{
   line-height:1;
-  margin-top:5px; /* 需要可微調 0~2px */
+  margin-top:5px;
+  color:var(--text-3);
+  opacity:.9;
 }
 
 /* ② 金額欄：兩行靠左貼齊 */
 .exp-money{
   text-align:left;
   min-width:0;
+  color:var(--text-1);
 }
 
 .exp-money .exp-amt{
@@ -1318,12 +1356,13 @@ html[data-theme="dark"] .exp-meta{ color:#adb5bd; }
   font-weight:700;
   opacity:.8;
   text-align:left;
+  color:var(--text-2);
 }
 
 .exp-left-top{
   display:flex;
   align-items:flex-start;
-  justify-content:flex-start; /* 項目在左，…在右 */
+  justify-content:flex-start;
   gap:10px;
 }
 
@@ -1338,9 +1377,6 @@ html[data-theme="dark"] .exp-meta{ color:#adb5bd; }
   font-size:1rem;
   line-height:1;
 }
-html[data-theme="dark"] .more-btn.exp-more-left{
-  opacity:.55;
-}
 
 .exp-actions{
   display:flex;
@@ -1352,17 +1388,12 @@ html[data-theme="dark"] .more-btn.exp-more-left{
 
 /* 其他日期：收合列 */
 .day-group{
-  border:1px solid rgba(44,62,80,.08);
+  border:1px solid var(--border);
   border-radius:14px;
   overflow:hidden;
-  background:#fff;
-  box-shadow:0 2px 8px rgba(0,0,0,.04);
+  background:var(--surface);
+  box-shadow:var(--shadow-1);
   margin-bottom:10px;
-}
-html[data-theme="dark"] .day-group{
-  background:#1e1e1e;
-  border-color:#2a2a2a;
-  box-shadow:0 2px 8px rgba(0,0,0,.35);
 }
 
 .day-group-head{
@@ -1373,16 +1404,22 @@ html[data-theme="dark"] .day-group{
   cursor:pointer;
   user-select:none;
 }
+
 .day-group-head:active{ transform:scale(.99); }
+
 .day-group-title{
   font-weight:900;
   font-size:.9rem;
+  color:var(--text-1);
 }
+
 .day-group-sum{
   font-weight:900;
   font-size:.9rem;
   white-space:nowrap;
+  color:var(--text-1);
 }
+
 .day-group-body{
   max-height:0;
   overflow:hidden;
@@ -1390,8 +1427,8 @@ html[data-theme="dark"] .day-group{
   transform-origin:top;
   opacity:0;
   transition:max-height .35s ease, transform .35s ease, opacity .35s ease;
-      padding: 0 14px;   /* ✅ 讓內容左右留白，對齊 head 的 14px */
-      box-sizing: border-box;
+  padding: 0 14px;
+  box-sizing: border-box;
 }
 
 .day-group.open .day-group-body{
@@ -1399,11 +1436,14 @@ html[data-theme="dark"] .day-group{
   transform: scaleY(1);
   opacity: 1;
 }
+
 .day-group-toggle{
   margin-left:8px;
   opacity:.7;
   transition: transform .25s ease;
+  color:var(--text-3);
 }
+
 .day-group.open .day-group-toggle{
   transform: rotate(180deg);
 }
@@ -1415,10 +1455,10 @@ html[data-theme="dark"] .day-group{
   z-index:1800;
   min-width: 240px;
   max-width: 280px;
-  background:#fff;
-  border:1px solid rgba(44,62,80,.14);
+  background:var(--surface);
+  border:1px solid var(--border);
   border-radius:14px;
-  box-shadow:0 14px 28px rgba(0,0,0,.16);
+  box-shadow:var(--shadow-3);
   padding:10px;
 }
 
@@ -1428,6 +1468,7 @@ html[data-theme="dark"] .day-group{
   letter-spacing:.4px;
   opacity:.82;
   margin-bottom:6px;
+  color:var(--text-1);
 }
 
 .budget-popover .pop-pills{
@@ -1438,9 +1479,10 @@ html[data-theme="dark"] .day-group{
 }
 
 .budget-popover .pop-pill{
-  border:1px solid rgba(44,62,80,.18);
-  background:rgba(44,62,80,.06);
-  color:rgba(44,62,80,.88);
+  border:1px solid var(--pill-bd);
+  background:var(--pill-bg);
+  color:var(--pill-fg-strong);
+
   border-radius:999px;
   padding:5px 9px;
   font-size:.72rem;
@@ -1448,7 +1490,9 @@ html[data-theme="dark"] .day-group{
   line-height:1;
   cursor:pointer;
   user-select:none;
+  transition:transform .12s ease, background .15s ease, border-color .15s ease, opacity .15s ease;
 }
+
 .budget-popover .pop-pill:active{ transform:scale(.98); }
 
 .budget-popover .pop-row{
@@ -1460,10 +1504,17 @@ html[data-theme="dark"] .day-group{
 .budget-popover input{
   width:100%;
   border-radius:10px;
-  border:1px solid rgba(44,62,80,.16);
+  border:1px solid var(--border);
   padding:6px 10px;
   font-size:.85rem;
   outline:none;
+
+  background:var(--surface);
+  color:var(--text-1);
+}
+
+.budget-popover input::placeholder{
+  color:var(--text-3);
 }
 
 .budget-popover .pop-actions{
@@ -1481,37 +1532,16 @@ html[data-theme="dark"] .day-group{
   font-size:.78rem;
   font-weight:900;
   cursor:pointer;
-  color:rgba(44,62,80,.78);
+  color:var(--text-2);
 }
+
 .budget-popover .pop-btn.primary{
-  background:rgba(44,62,80,.92);
-  color:#fff;
+  background:var(--text-1);
+  color:var(--surface);
   padding:6px 10px;
 }
-.budget-popover .pop-btn:active{ transform:scale(.98); }
 
-html[data-theme="dark"] .budget-popover{
-  background:#1e1e1e;
-  border-color:#2a2a2a;
-  box-shadow:0 16px 45px rgba(0,0,0,.55);
-}
-html[data-theme="dark"] .budget-popover .pop-pill{
-  border-color:rgba(255,255,255,.18);
-  background:rgba(255,255,255,.08);
-  color:rgba(230,235,240,.88);
-}
-html[data-theme="dark"] .budget-popover input{
-  background:#252525;
-  border-color:#444;
-  color:#eee;
-}
-html[data-theme="dark"] .budget-popover .pop-btn{
-  color:rgba(230,235,240,.75);
-}
-html[data-theme="dark"] .budget-popover .pop-btn.primary{
-  background:rgba(44,62,80,.92);
-  color:#fff;
-}
+.budget-popover .pop-btn:active{ transform:scale(.98); }
 /* =========================
    Budget: More actions (⋯)
 ========================= */
@@ -1522,25 +1552,21 @@ html[data-theme="dark"] .budget-popover .pop-btn.primary{
   border-radius:8px;
   font-size:1.1rem;
   line-height:1;
-  color:rgba(44,62,80,.55);
+  color:var(--text-3);
   cursor:pointer;
 }
 .more-btn:active{
   transform: scale(.95);
 }
 
-html[data-theme="dark"] .more-btn{
-  color:rgba(230,235,240,.55);
-}
-
 /* 小選單（編輯 / 刪除） */
 .more-menu{
   position:absolute;
   z-index:1700;
-  background:#fff;
-  border:1px solid rgba(44,62,80,.14);
+  background:var(--surface);
+  border:1px solid var(--border);
   border-radius:12px;
-  box-shadow:0 12px 30px rgba(0,0,0,.18);
+  box-shadow:var(--shadow-3);
   padding:6px;
   min-width:140px;
 }
@@ -1554,35 +1580,27 @@ html[data-theme="dark"] .more-btn{
   font-size:.85rem;
   font-weight:700;
   cursor:pointer;
-  color:#2c3e50;
-}
-.more-menu .menu-item:hover{
-  background:rgba(44,62,80,.08);
-}
-.more-menu .menu-item.danger{
-  color:#b42318;
-}
-.more-menu .menu-item.danger:hover{
-  background:rgba(220,53,69,.12);
+  color:var(--text-1);
 }
 
-html[data-theme="dark"] .more-menu{
-  background:#1e1e1e;
-  border-color:#2a2a2a;
-  box-shadow:0 14px 45px rgba(0,0,0,.55);
+.more-menu .menu-item:hover{
+  background:var(--pill-bg);
 }
-html[data-theme="dark"] .more-menu .menu-item{
-  color:#e6ebf0;
+
+.more-menu .menu-item.danger{
+  color:var(--danger-fg);
 }
-html[data-theme="dark"] .more-menu .menu-item:hover{
-  background:rgba(255,255,255,.08);
+
+.more-menu .menu-item.danger:hover{
+  background:var(--danger-bg);
 }
+
 /* 記帳頁：項目寬度與幣值一致 */
 #budget #exp-cat{
   max-width: 92px;   /* 跟 exp-curr 一樣 */
   width: 92px;
 }
-.exp-meta{
+#budget .exp-meta{
   margin-top:6px;
   font-size:0.85rem;
   opacity:.9;
@@ -1639,13 +1657,10 @@ margin-left:-40px;
 }
 /* ================================
    🧳 行李模板操作：淡色膠囊按鈕（方案 B）
-   不影響其他 .btn，只作用在 .pack-pill
 ================================ */
-.pack-pill{
-  --pill-bg: rgba(44,62,80,0.06);
-  --pill-bd: rgba(44,62,80,0.14);
-  --pill-tx: rgba(44,62,80,0.85);
 
+/* 基礎：跟全站 pill 系統一致 */
+.pack-pill{
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1659,73 +1674,50 @@ margin-left:-40px;
 
   background: var(--pill-bg);
   border: 1px solid var(--pill-bd);
-  color: var(--pill-tx);
+  color: var(--pill-fg-strong);
 
   box-shadow: none;
   transition: transform .08s ease, background .15s ease, border-color .15s ease, opacity .15s ease;
 }
 
 .pack-pill:hover{
-  background: rgba(44,62,80,0.10);
-  border-color: rgba(44,62,80,0.22);
+  background: var(--pill-bg-hover);
+  border-color: var(--pill-bd-strong);
 }
 
 .pack-pill:active{
   transform: scale(0.98);
 }
 
-/* 主按鈕（合併）：低調但略強一點 */
+/* 主按鈕（合併）：用既有 token，維持辨識但不破壞整體 */
 .pack-pill-primary{
-  --pill-bg: rgba(212,163,115,0.18);   /* 你的 highlight 淡化 */
-  --pill-bd: rgba(212,163,115,0.35);
-  --pill-tx: rgba(44,62,80,0.92);
+  background: var(--surface-2);
+  border-color: var(--pill-bd-strong);
+  color: var(--text-1);
 }
 
 .pack-pill-primary:hover{
-  background: rgba(212,163,115,0.26);
-  border-color: rgba(212,163,115,0.45);
+  background: var(--pill-bg-hover);
+  border-color: var(--pill-bd-strong);
 }
 
-/* 危險操作（重建）：淡紅描邊，不要刺眼 */
+/* 危險操作：用 danger token */
 .pack-pill-danger{
-  --pill-bg: rgba(220,53,69,0.06);
-  --pill-bd: rgba(220,53,69,0.22);
-  --pill-tx: rgba(220,53,69,0.85);
+  background: var(--danger-bg);
+  border-color: var(--danger-bg-strong);
+  color: var(--danger-fg);
 }
 
 .pack-pill-danger:hover{
-  background: rgba(220,53,69,0.10);
-  border-color: rgba(220,53,69,0.30);
+  background: var(--danger-bg-strong);
+  border-color: var(--danger-bg-strong);
 }
 
-/* Dark mode（你網站的 data-theme="dark" 風格相容） */
-[data-theme="dark"] .pack-pill{
-  --pill-bg: rgba(255,255,255,0.06);
-  --pill-bd: rgba(255,255,255,0.14);
-  --pill-tx: rgba(230,235,240,0.88);
-}
-
-[data-theme="dark"] .pack-pill:hover{
-  background: rgba(255,255,255,0.10);
-  border-color: rgba(255,255,255,0.22);
-}
-
-[data-theme="dark"] .pack-pill-primary{
-  --pill-bg: rgba(212,163,115,0.20);
-  --pill-bd: rgba(212,163,115,0.40);
-  --pill-tx: rgba(245,245,245,0.92);
-}
-
-[data-theme="dark"] .pack-pill-danger{
-  --pill-bg: rgba(255,90,110,0.10);
-  --pill-bd: rgba(255,90,110,0.26);
-  --pill-tx: rgba(255,150,160,0.95);
-}
 /* • 隨身 標記 */
 .carry-badge{
   margin-left: 8px;
   font-size: 0.72rem;
-  color: rgba(44,62,80,0.55);
+  color: var(--text-3);
 }
 
 /* ⋯ 選單 */
@@ -1735,9 +1727,9 @@ margin-left:-40px;
   min-width: 150px;
   padding: 6px;
   border-radius: 12px;
-  background: #fff;
-  border: 1px solid rgba(44,62,80,0.12);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-3);
 }
 
 .carry-menu-item{
@@ -1745,25 +1737,13 @@ margin-left:-40px;
   border-radius: 10px;
   font-size: 0.85rem;
   cursor: pointer;
+  color: var(--text-1);
 }
 
 .carry-menu-item:hover{
-  background: rgba(44,62,80,0.06);
+  background: var(--pill-bg);
 }
 
-[data-theme="dark"] .carry-menu{
-  background: rgba(20,24,28,0.95);
-  border-color: rgba(255,255,255,0.14);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-}
-
-[data-theme="dark"] .carry-menu-item:hover{
-  background: rgba(255,255,255,0.08);
-}
-
-[data-theme="dark"] .carry-badge{
-  color: rgba(230,235,240,0.55);
-}
 /* ✅ 行李模式徽章（本次/隨身包/模板） */
 .pack-mode-badge{
   display:inline-flex;
@@ -1773,34 +1753,43 @@ margin-left:-40px;
   border-radius:999px;
   font-size:0.75rem;
   line-height:1;
-  border:1px solid rgba(44,62,80,0.14);
-  background: rgba(44,62,80,0.06);
-  color: rgba(44,62,80,0.85);
+
+  border:1px solid var(--pill-bd);
+  background: var(--pill-bg);
+  color: var(--pill-fg-strong);
 }
 
+/* 隨身包：用 highlight token（不寫死 rgba） */
 .pack-mode-badge.is-carry{
-  border-color: rgba(212,163,115,0.35);
-  background: rgba(212,163,115,0.18);
+  border-color: var(--pill-bd-strong);
+  background: var(--surface-2);
+  color: var(--text-1);
 }
 
+/* 模板：仍然屬於一般狀態，不需要另一套色 */
 .pack-mode-badge.is-template{
-  border-color: rgba(44,62,80,0.22);
-  background: rgba(44,62,80,0.10);
+  border-color: var(--pill-bd-strong);
+  background: var(--pill-bg);
+  color: var(--pill-fg-strong);
 }
 
-[data-theme="dark"] .pack-mode-badge{
-  border-color: rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.06);
-  color: rgba(230,235,240,0.88);
+/* 隨身小包 switch：checked 收斂到 brand */
+#carryModeSwitch.form-check-input:checked{
+  background-color: rgba(var(--bs-primary-rgb), .55);
+  border-color: rgba(var(--bs-primary-rgb), .65);
 }
-[data-theme="dark"] .pack-mode-badge.is-carry{
-  border-color: rgba(212,163,115,0.40);
-  background: rgba(212,163,115,0.20);
+
+/* focus 時不要出現藍光 */
+#carryModeSwitch.form-check-input:focus{
+  box-shadow: none;
 }
-[data-theme="dark"] .pack-mode-badge.is-template{
-  border-color: rgba(255,255,255,0.20);
-  background: rgba(255,255,255,0.10);
+
+/* switch 未選取狀態：收斂到 surface-2/border */
+#carryModeSwitch.form-check-input{
+  background-color: var(--surface-2);
+  border-color: var(--border);
 }
+
 
 </style>
 </head>
@@ -1817,8 +1806,7 @@ margin-left:-40px;
     Germany • Norway Cruise • Switzerland • Italy
 </small>
         
-<div class="d-flex justify-content-center align-items-center gap-3 py-1 position-relative" 
-     style="background: #f8f9fa; border-radius: 20px; font-family: monospace; max-width: 280px; margin: 0 auto;">
+<div class="d-flex justify-content-center align-items-center gap-3 py-1 position-relative timebar">
     
     <!-- 台灣時間 -->
     <div class="text-end" style="min-width: 100px;">
@@ -2294,10 +2282,10 @@ margin-left:-40px;
             <h6 class="fw-bold mb-1"> 隊友同步中心</h6>
             <small class="text-muted">同步記帳紀錄與行李清單</small>
         </div>
-        <button class="btn-sync btn-export" onclick="exportData()">
+        <button class="btn btn-primary btn-sync" onclick="exportData()">
             <i class="fas fa-share-square"></i> 匯出並複製數據代碼
         </button>
-        <button class="btn-sync btn-import" onclick="importData()">
+        <button class="btn btn-outline-secondary btn-sync" onclick="importData()">
             <i class="fas fa-file-import"></i> 貼上朋友的代碼同步
         </button>
         <div class="text-center mt-2">
