@@ -59,6 +59,11 @@
   --shadow-3-top: 0 -4px 15px rgba(var(--shadow-rgb), .10);
 
   --timeline-x:16px;
+  /* Bootstrap text system (Day) */
+  --bs-body-color: var(--text-1);
+  --bs-body-color-rgb: 31,41,51; /* 對應你的 --ink-rgb / text-1 */
+  --bs-secondary-color: var(--text-2); /* 讓 .text-muted / 次要字更可讀 */
+  --bs-tertiary-color: var(--text-3);  /* 更淡的提示字 */
 }
 
 html[data-theme="dark"]{
@@ -104,6 +109,11 @@ html[data-theme="dark"]{
   --shadow-2: 0 2px 8px rgba(var(--shadow-rgb), .45);
   --shadow-3: 0 4px 15px rgba(var(--shadow-rgb), .50);
   --shadow-3-top: 0 -4px 15px rgba(var(--shadow-rgb), .50);
+  /* Bootstrap text system (Night) */
+  --bs-body-color: var(--text-1);
+  --bs-body-color-rgb: 230,235,240; /* 對應你夜間 --ink-rgb */
+  --bs-secondary-color: var(--text-2); /* ⭐關鍵：夜間小字變亮一階 */
+  --bs-tertiary-color: var(--text-3);
 }
 body{
   background:var(--bg);
@@ -969,6 +979,39 @@ body,.sticky-top,.card,.bg-white{
 }
 .btn-primary:hover{ filter: brightness(0.96); }
 .btn-primary:active{ transform: scale(.98); }
+/* =========================
+   ✅ Button 統一：.btn-outline-dark（本站語義＝中性次要按鈕）
+   - Day/Night 顏色走 token：pill-bg / pill-bd / pill-fg-strong
+   - 手機優先：不依賴 hover；active 有回饋
+   - 範圍：只影響含 .btn-outline-dark 的按鈕/連結
+========================= */
+
+.btn.btn-outline-dark{
+  background-color: var(--pill-bg) !important;
+  border-color: var(--pill-bd) !important;
+  color: var(--pill-fg-strong) !important;
+  box-shadow: none !important;
+}
+
+.btn.btn-outline-dark:hover{
+  background-color: var(--pill-bg-hover) !important;
+  border-color: var(--pill-bd-strong) !important;
+}
+
+.btn.btn-outline-dark:active{
+  background-color: var(--pill-bg-hover) !important;
+  border-color: var(--pill-bd-strong) !important;
+  transform: scale(0.98);
+}
+
+.btn.btn-outline-dark:focus{
+  box-shadow: none !important;
+}
+
+.btn.btn-outline-dark:focus-visible{
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
 
 /* 一般連結（先只做最保守版本：不動你已經客製的 item-link） */
 a:not(.item-link){
@@ -978,7 +1021,24 @@ a:not(.item-link):hover{
   color: var(--brand);
   opacity: .9;
 }
+/* ✅ 行李頁：模式按鈕選中狀態（方案 2：日夜一致的一階加強）
+   只作用在 #packing，避免影響其他頁 btn-group/active
+*/
+#packing #btn-pack-trip.btn.btn-dark,
+#packing #btn-pack-template.btn.btn-dark{
+  background-color: rgba(var(--bs-primary-rgb), .28) !important;
+  border-color: rgba(var(--bs-primary-rgb), .55) !important;
+  color: var(--text-1) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,.18),
+    inset 0 -1px 0 rgba(255,255,255,.10);
 
+  transform: none !important;
+}
+/* 行李頁：選中按鈕按下回饋（沿用同語言） */
+#packing .btn.btn-outline-dark.active:active{
+  transform: scale(0.98);
+}
 /* ✅ 移除：收藏頁 item-div 的按鈕「永遠淺灰 #999」規則
    這套已在 10) Favorites 區塊用 var(--text-3) token 化完成，這裡不再重複。
 */
@@ -1009,7 +1069,37 @@ a:not(.item-link):hover{
   transform: scale(0.98);
   background: var(--pill-bg);
 }
+/* =========================
+   ✅ Button 統一：.btn-dark（本站語義＝主品牌按鈕 / D1）
+   - Day/Night 一致：brand 實心 + surface 文字
+   - 手機優先：active 回饋；不依賴 hover
+========================= */
 
+.btn.btn-dark{
+  background-color: var(--surface-2) !important;
+  border-color: var(--pill-bd) !important;
+  color: var(--text-1) !important;
+  box-shadow: none !important;
+}
+
+.btn.btn-dark:hover{
+  background-color: var(--pill-bg-hover) !important;
+  border-color: var(--pill-bd-strong) !important;
+}
+/* active：手機主要回饋 */
+.btn.btn-dark:active{
+  transform: scale(0.98);
+}
+
+/* focus：不要 Bootstrap 藍光 */
+.btn.btn-dark:focus{
+  box-shadow: none !important;
+}
+
+.btn.btn-dark:focus-visible{
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
 /* =========================================================
    ✅ 行程詳情 Sheet（1a：底部彈出）
 ========================================================= */
@@ -1743,7 +1833,48 @@ margin-left:-40px;
 .carry-menu-item:hover{
   background: var(--pill-bg);
 }
+/* =========================
+   ✅ Packing: icon-only buttons（對齊收藏頁 fav-icon 語言）
+   - 只影響行李頁分類 header 的「新增項目 +」
+   - 無框、固定 hit-area、active 才出淡底、focus 有 ring
+========================= */
+#packing [data-act="add-item"]{
+  width:34px;
+  height:34px;
 
+  padding:0 !important;
+  border:none !important;
+  background:transparent !important;
+  box-shadow:none !important;
+
+  border-radius:12px;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  color: var(--pill-fg-strong) !important; /* 比 text-2 再清楚一點 */
+}
+
+#packing [data-act="add-item"] i{
+  font-size:.95rem;
+  line-height:1;
+}
+
+/* 手機優先：active 回饋（不依賴 hover） */
+#packing [data-act="add-item"]:active{
+  transform:scale(.90);
+  background: var(--pill-bg-hover) !important;
+}
+
+/* 鍵盤焦點 */
+#packing [data-act="add-item"]:focus{
+  box-shadow:none !important;
+}
+#packing [data-act="add-item"]:focus-visible{
+  outline:2px solid var(--focus-ring);
+  outline-offset:2px;
+}
 /* ✅ 行李模式徽章（本次/隨身包/模板） */
 .pack-mode-badge{
   display:inline-flex;
@@ -1789,59 +1920,290 @@ margin-left:-40px;
   background-color: var(--surface-2);
   border-color: var(--border);
 }
+/* =========================
+   HTML inline → CSS（Phase: 先把 HTML 清乾淨）
+   - 不動結構
+   - 顏色全部走 token
+========================= */
 
+/* Trip title/subtitle */
+.trip-title{
+  font-size: 1.2rem;
+  letter-spacing: 4px;
+  margin: 0;
+  font-weight: 300;
+}
+.trip-subtitle{
+  font-size: 0.75rem;
+}
 
+/* Timebar columns */
+.time-col{ min-width: 100px; }
+
+.time-date{
+  font-size: 0.5rem;
+  vertical-align: middle;
+  color: var(--text-3);
+}
+.time-clock{
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-2);
+}
+.time-clock-strong{ color: var(--text-1); }
+
+.time-loc{
+  font-size: 0.5rem;
+  display: block;
+  margin-top: -4px;
+  color: var(--text-3);
+}
+.time-loc-strong{ color: var(--text-2); }
+
+.time-divider{
+  height: 15px;
+  width: 1px;
+  background: var(--pill-bd);
+}
+
+/* Today button position (inline 搬出) */
+#todayBtn.today-float{
+  position: absolute;
+  right: -10px;
+  bottom: -5px;
+}
+
+/* Day-all badge：保留 bg-dark class，但我們用 token 接管色 */
+.badge-trip{
+  /* 不碰結構，只把顏色收斂到 token */
+  background-color: var(--text-1) !important;
+  color: var(--surface) !important;
+}
+
+/* Icon-only mini buttons (原本一堆 inline font-size/padding) */
+.btn-icon-mini{
+  font-size: 0.65rem;
+  padding: 2px 6px;
+}
+
+/* Budget: refresh button */
+.btn-rate-refresh{
+  font-size: 0.7rem;
+}
+
+/* Budget: currency select width */
+select.exp-curr{
+  max-width: 92px;
+}
+
+/* Budget: rate hint margin */
+.rate-hint{
+  margin-top: -2px;
+}
+
+/* "其他日期" 標題 inline 搬出 */
+.other-days-title{
+  font-weight: 700;
+  letter-spacing: .4px;
+}
+
+/* Budget sum small text + breakdown（把 inline opacity/letter-spacing/border-top 搬出） */
+.budget-sum-sub{
+  opacity: 0.8;
+  letter-spacing: 1px;
+}
+.budget-sum-breakdown{
+  font-size: 0.75rem;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  padding-top: 10px;
+}
+
+/* Packing progress（把 inline 色搬出，讓 token 接管） */
+.progress.packing-progress{
+  height: 8px;
+  background-color: var(--surface-2);
+  border-radius: 4px;
+}
+#packing-bar.packing-bar{
+  width: 0%;
+  height: 100%;
+  transition: width 0.3s;
+  background-color: var(--brand);
+}
+
+/* Info sync note */
+.sync-note{
+  font-size: 0.65rem;
+  color: var(--text-3);
+}
+/* =====================================================
+   ✅ Packing ONLY — Apple/Notion-ish Checkbox
+   Scope: #pack-list-container 內的核取方塊
+   - 小圓框 + 延伸勾
+   - Day：深色勾 / Night：白色勾
+   - 不影響全站 / 不影響 switch
+===================================================== */
+
+/* 行李核取方塊專用變數（不改全站） */
+:root{
+  --pack-chk-size: 14px;                         /* 圓框尺寸 */
+  --pack-chk-bd: var(--pill-bd-strong);          /* 外框 */
+  --pack-chk-bg: var(--surface);                 /* 未勾底 */
+  --pack-chk-on-bg: rgba(var(--bs-primary-rgb), .14); /* ✅ 勾選底色：淡霧藍灰 */
+  --pack-chk-on-bd: rgba(var(--bs-primary-rgb), .28); /* ✅ 勾選框線：比底色深一點 */
+
+  /* ✅ Day tick：深色（比 text-1 稍柔，不死黑） */
+  --pack-chk-tick: rgba(var(--ink-rgb), .92);
+}
+
+/* ✅ Night tick：白色 */
+html[data-theme="dark"]{
+  --pack-chk-tick: rgba(255,255,255,.95);
+}
+
+/* 只抓行李區：核取方塊（排除 switch，如果它剛好也在容器內） */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input){
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: var(--pack-chk-size);
+  height: var(--pack-chk-size);
+  border-radius: 999px;
+
+  border: 1.5px solid var(--pack-chk-bd);
+  background: var(--pack-chk-bg);
+
+  position: relative;
+  display: inline-block;
+  vertical-align: -2px;
+
+  cursor: pointer;
+
+  transition:
+    border-color .18s ease,
+    background-color .18s ease,
+    transform .08s ease,
+    box-shadow .18s ease;
+}
+
+/* hover：框線微提亮（但不變品牌藍光） */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input):hover{
+  border-color: var(--pill-bd-strong);
+  box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), .08);
+}
+
+/* 勾勾（延伸） */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input)::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+
+  /* ✅ 比圈大 → 勾會延伸出來 */
+  width: 19px;
+  height: 19px;
+
+  /* ✅ 置中 + 微調：讓折點更靠近中心 */
+  transform: translate(-50%,-50%) translate(1px,-1px);
+  opacity: 0;
+
+  transition: opacity .12s ease, transform .12s ease;
+
+  /* ✅ 勾勾顏色（Day 深 / Night 白） */
+  background: var(--pack-chk-tick);
+
+  /* SVG tick：圓滑端點、圓滑轉折 */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5.2 12.0l4.4 4.6L19.2 6.9' fill='none' stroke='black' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5.2 12.0l4.4 4.6L19.2 6.9' fill='none' stroke='black' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+
+  /* ✅ Day：讓深色勾在亮底更清楚但不髒 */
+  filter:
+    drop-shadow(0 1px 0 rgba(0,0,0,.18))
+    drop-shadow(0 0 1px rgba(0,0,0,.12));
+}
+
+/* 勾選狀態：淡霧藍灰底 + 稍深框線 */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input):checked{
+  background: var(--pack-chk-on-bg);
+  border-color: var(--pack-chk-on-bd);
+}
+
+/* 勾出現 */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input):checked::after{
+  opacity: 1;
+  transform: translate(-50%,-50%) translate(1px,-2px) scale(1.06);
+}
+
+/* 點按回饋 */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input):active{
+  transform: scale(.92);
+}
+
+/* 鍵盤 focus（輕量，不要藍光爆炸） */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input):focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), .16);
+}
+
+/* Night：把陰影收乾淨，避免髒灰 */
+html[data-theme="dark"]
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input)::after{
+  filter: drop-shadow(0 0 1px rgba(0,0,0,.55));
+}
 </style>
 </head>
 <body>
 <div class="sticky-top bg-white border-bottom shadow-sm">
     <div class="p-3 text-center">
-<h1 class="trip-title"
-    style="font-size: 1.2rem; letter-spacing: 4px; margin:0; font-weight: 300;">
-    SEP 2026 EUROPE
-</h1>
+        <h1 class="trip-title">
+            SEP 2026 EUROPE
+        </h1>
 
-<small class="trip-subtitle d-block mb-2"
-       style="font-size: 0.75rem;">
-    Germany • Norway Cruise • Switzerland • Italy
-</small>
-        
-<div class="d-flex justify-content-center align-items-center gap-3 py-1 position-relative timebar">
-    
-    <!-- 台灣時間 -->
-    <div class="text-end" style="min-width: 100px;">
-        <span id="tw-date-label" style="font-size: 0.5rem; color: #dc3545; vertical-align: middle;"></span>
-        <span id="tw-time" style="font-size: 0.9rem; font-weight: bold; color: #999;">--:--</span>
-        <small style="font-size: 0.5rem; color: #999; display: block; margin-top: -4px;">TAIWAN</small>
-    </div>
+        <small class="trip-subtitle d-block mb-2">
+            Germany • Norway Cruise • Switzerland • Italy
+        </small>
 
-    <div style="height: 15px; width: 1px; background: #ddd;"></div>
+        <div class="d-flex justify-content-center align-items-center gap-3 py-1 position-relative timebar">
 
-    <!-- 歐洲時間 -->
-    <div class="text-start" style="min-width: 100px;">
-        <span id="eu-time" style="font-size: 0.9rem; font-weight: bold; color: #2C3E50;">--:--</span>
-        <span id="eu-date-label" style="font-size: 0.5rem; color: #198754; vertical-align: middle;"></span>
-        <small style="font-size: 0.5rem; color: #2C3E50; display: block; margin-top: -4px;">EUROPE</small>
-    </div>
+            <!-- 台灣時間 -->
+            <div class="text-end time-col">
+                <span id="tw-date-label" class="time-date"></span>
+                <span id="tw-time" class="time-clock">--:--</span>
+                <small class="time-loc">TAIWAN</small>
+            </div>
 
-    <!-- Today 按鈕固定在右下角 -->
-    <button id="todayBtn" onclick="jumpToToday()" title="跳轉至今日行程"
-            style="position: absolute; right: -10px; bottom: -5px;">
-        Today · <span id="todayDate">--/--</span>
-    </button>
-</div>
+            <div class="time-divider"></div>
 
-<div class="theme-toggle">
-<button id="themeBtn"
-        class="btn btn-sm"
-        onclick="toggleTheme()"
-        style="font-size: 0.9rem; line-height: 1;">
-    <i class="fa-solid fa-moon"></i>
-</button>
-</div>
-</div>
+            <!-- 歐洲時間 -->
+            <div class="text-start time-col">
+                <span id="eu-time" class="time-clock time-clock-strong">--:--</span>
+                <span id="eu-date-label" class="time-date"></span>
+                <small class="time-loc time-loc-strong">EUROPE</small>
+            </div>
+
+            <!-- Today 按鈕固定在右下角 -->
+            <button id="todayBtn" class="today-float" onclick="jumpToToday()" title="跳轉至今日行程">
+                Today · <span id="todayDate">--/--</span>
+            </button>
+        </div>
+
+        <div class="theme-toggle">
+            <button id="themeBtn"
+                    class="btn btn-sm"
+                    onclick="toggleTheme()">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+        </div>
     </div>
 </div>
+
 <div id="itinerary" class="content-section active">
     <div class="day-nav-container">
         <div class="day-tab active" onclick="switchDay('all', this)">
@@ -1872,235 +2234,247 @@ margin-left:-40px;
         <div class="card-custom">
             <h5 class="fw-bold">2026 德國、挪威、瑞士 🇪🇺</h5>
             <p class="small text-muted">高雄出發，橫跨德國、挪威郵輪與瑞士深度遊。</p>
-            <div class="badge bg-dark">Total 19 Days</div>
+            <div class="badge bg-dark badge-trip">Total 19 Days</div>
         </div>
     </div>
 
-<div id="day-910" class="day-content" data-day="910">
-    <div class="card-custom">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold text-primary m-0">啟程飛行</h6>
-        </div>
-        <div class="time-item" data-detail="kaohsiung-airport-departure">
-            <div class="time-node"></div>
-
-            <div class="time-header">
-                <div class="fw-bold">19:00 高雄小港機場</div>
-                <span class="toggle-icon">▾</span>
+    <div id="day-910" class="day-content" data-day="910">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">啟程飛行</h6>
             </div>
+            <div class="time-item" data-detail="kaohsiung-airport-departure">
+                <div class="time-node"></div>
 
-            <div class="time-detail">
-                <div class="small text-muted">
-                    出境、準備起飛、貴賓室
+                <div class="time-header">
+                    <div class="fw-bold">19:00 高雄小港機場</div>
+                    <span class="toggle-icon">▾</span>
+                </div>
+
+                <div class="time-detail">
+                    <div class="small text-muted">
+                        出境、準備起飛、貴賓室
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="time-item">
-            <div class="time-node"></div>
+            <div class="time-item">
+                <div class="time-node"></div>
 
-            <div class="time-header">
-                <div class="fw-bold">23:00 抵達香港機場</div>
-                <span class="toggle-icon">▾</span>
-            </div>
+                <div class="time-header">
+                    <div class="fw-bold">23:00 抵達香港機場</div>
+                    <span class="toggle-icon">▾</span>
+                </div>
 
-            <div class="time-detail">
-                <div class="small text-muted">
-                    等待轉機 (Kiel)
+                <div class="time-detail">
+                    <div class="small text-muted">
+                        等待轉機 (Kiel)
+                    </div>
                 </div>
             </div>
-        </div>
-    </div> <!-- ⭐ card-custom -->
-</div>     <!-- ⭐ day-910 -->
-<div id="day-911" class="day-content" data-day="911">
-    <div class="card-custom">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold text-primary m-0">🇩🇪 抵達德國</h6>
-            <div class="d-flex gap-1">
-                <a href="https://www.google.com/search?q=Kiel+Weather" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
-                    <i class="fas fa-sun"></i>
-                </a>
-                <a href="https://maps.app.goo.gl/9ZfWp6G1P8Ue2SjN8" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
-                    <i class="fas fa-map-marked-alt"></i>
-                </a>
-            </div>
-        </div>
-        <div class="time-item">
-            <div class="time-node"></div>
+        </div> <!-- ⭐ card-custom -->
+    </div>     <!-- ⭐ day-910 -->
 
-            <div class="time-header">
-                <div class="fw-bold">07:15 抵達 FRA T2</div>
-                <span class="toggle-icon">▾</span>
-            </div>
-
-            <div class="time-detail">
-                <div class="small text-muted">
-                    抵達後通關、領取行李<br>
-                    123<br>
-                    3221<br>
-                    123547<br>
+    <div id="day-911" class="day-content" data-day="911">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">🇩🇪 抵達德國</h6>
+                <div class="d-flex gap-1">
+                    <a href="https://www.google.com/search?q=Kiel+Weather" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-sun"></i>
+                    </a>
+                    <a href="https://maps.app.goo.gl/9ZfWp6G1P8Ue2SjN8" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </a>
                 </div>
             </div>
-        </div>
-        <div class="time-item">
-            <div class="time-node"></div>
+            <div class="time-item">
+                <div class="time-node"></div>
 
-            <div class="time-header">
-                <div class="fw-bold">09:41 ICE 高鐵</div>
-                <span class="toggle-icon">▾</span>
-            </div>
+                <div class="time-header">
+                    <div class="fw-bold">07:15 抵達 FRA T2</div>
+                    <span class="toggle-icon">▾</span>
+                </div>
 
-            <div class="time-detail">
-                <div class="small text-muted">
-                    法蘭克福 ➔ 15:21 抵達基爾 (Kiel)
+                <div class="time-detail">
+                    <div class="small text-muted">
+                        抵達後通關、領取行李<br>
+                        123<br>
+                        3221<br>
+                        123547<br>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div> <!-- ⭐ card-custom -->
-</div>     <!-- ⭐ day-911 -->
-<div id="day-912" class="day-content" data-day="912">
-    <div class="card-custom">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold text-primary m-0">🚢 登船：基爾 Kiel</h6>
-            <div class="d-flex gap-1">
-                <a href="https://www.yr.no/en" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
-                    <i class="fas fa-sun"></i>
-                </a>
-                <a href="https://maps.app.goo.gl/xjPNo9XXZtwXu1qR7" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
-                    <i class="fas fa-map-marked-alt"></i>
-                </a>
-            </div>
-        </div>
-        <div class="time-item">
-            <div class="time-node"></div>
+            <div class="time-item">
+                <div class="time-node"></div>
 
-            <div class="time-header">
-                <div class="fw-bold">16:00 MSC EURIBIA登船</div>
-                <span class="toggle-icon">▾</span>
-            </div>
+                <div class="time-header">
+                    <div class="fw-bold">09:41 ICE 高鐵</div>
+                    <span class="toggle-icon">▾</span>
+                </div>
 
-            <div class="time-detail">
-                <div class="small text-muted">
-                    Terminal MSC Kiel 
+                <div class="time-detail">
+                    <div class="small text-muted">
+                        法蘭克福 ➔ 15:21 抵達基爾 (Kiel)
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="time-item">
-            <div class="time-node"></div>
+        </div> <!-- ⭐ card-custom -->
+    </div>     <!-- ⭐ day-911 -->
 
-            <div class="time-header">
-                <div class="fw-bold">19:00 啟航</div>
-                <span class="toggle-icon">▾</span>
-            </div>
-
-            <div class="time-detail">
-                <div class="small text-muted">
-                    房號10103
+    <div id="day-912" class="day-content" data-day="912">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">🚢 登船：基爾 Kiel</h6>
+                <div class="d-flex gap-1">
+                    <a href="https://www.yr.no/en" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-sun"></i>
+                    </a>
+                    <a href="https://maps.app.goo.gl/xjPNo9XXZtwXu1qR7" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </a>
                 </div>
             </div>
-        </div>
-    </div> <!-- ⭐ card-custom -->
-</div>     <!-- ⭐ day-912 -->
+            <div class="time-item">
+                <div class="time-node"></div>
+
+                <div class="time-header">
+                    <div class="fw-bold">16:00 MSC EURIBIA登船</div>
+                    <span class="toggle-icon">▾</span>
+                </div>
+
+                <div class="time-detail">
+                    <div class="small text-muted">
+                        Terminal MSC Kiel 
+                    </div>
+                </div>
+            </div>
+            <div class="time-item">
+                <div class="time-node"></div>
+
+                <div class="time-header">
+                    <div class="fw-bold">19:00 啟航</div>
+                    <span class="toggle-icon">▾</span>
+                </div>
+
+                <div class="time-detail">
+                    <div class="small text-muted">
+                        房號10103
+                    </div>
+                </div>
+            </div>
+        </div> <!-- ⭐ card-custom -->
+    </div>     <!-- ⭐ day-912 -->
+
     <div id="day-913" class="day-content" data-day="913"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 哥本哈根</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
     <div id="day-914" class="day-content" data-day="914"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 海上巡航</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
     <div id="day-915" class="day-content" data-day="915"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 希雷斯利特</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
     <div id="day-916" class="day-content" data-day="916"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 奧勒松</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
     <div id="day-917" class="day-content" data-day="917"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 弗洛姆</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
     <div id="day-918" class="day-content" data-day="918"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 海上巡航</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
-<div id="day-919" class="day-content" data-day="919">
-    <div class="card-custom">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold text-primary m-0">🇨🇭 琉森 Luzern</h6>
-            <div class="d-flex gap-1">
-                <a href="https://www.meteoswiss.admin.ch/local-forecasts/lucerne/6000.html" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
-                    <i class="fas fa-sun"></i>
-                </a>
-                <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
-                    <i class="fas fa-map-marked-alt"></i>
-                </a>
-            </div>
-        </div>
-        <div class="time-item"><div class="time-node"></div><div class="fw-bold">抵達琉森</div><div class="small text-muted">市區觀光、卡貝爾橋</div></div>
-    </div>
-</div>
 
-<div id="day-920" class="day-content" data-day="920">
-    <div class="card-custom">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold text-primary m-0">🇨🇭 少女峰區：溫根 Wengen</h6>
-            <div class="d-flex gap-1">
-                <a href="https://www.meteoswiss.admin.ch/local-forecasts/wengen/3823.html" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
-                    <i class="fas fa-sun"></i>
-                </a>
-                <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
-                    <i class="fas fa-map-marked-alt"></i>
-                </a>
+    <div id="day-919" class="day-content" data-day="919">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">🇨🇭 琉森 Luzern</h6>
+                <div class="d-flex gap-1">
+                    <a href="https://www.meteoswiss.admin.ch/local-forecasts/lucerne/6000.html" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-sun"></i>
+                    </a>
+                    <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </a>
+                </div>
             </div>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">抵達琉森</div><div class="small text-muted">市區觀光、卡貝爾橋</div></div>
         </div>
-        <div class="time-item"><div class="time-node"></div><div class="fw-bold">入住 Wengen</div><div class="small text-muted">少女峰、小夏戴克</div></div>
     </div>
-</div>
+
+    <div id="day-920" class="day-content" data-day="920">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">🇨🇭 少女峰區：溫根 Wengen</h6>
+                <div class="d-flex gap-1">
+                    <a href="https://www.meteoswiss.admin.ch/local-forecasts/wengen/3823.html" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-sun"></i>
+                    </a>
+                    <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">入住 Wengen</div><div class="small text-muted">少女峰、小夏戴克</div></div>
+        </div>
+    </div>
+
     <div id="day-921" class="day-content" data-day="921">
         <div class="card-custom">
             <h6 class="fw-bold text-primary mb-3">🏔️ 健行：Männlichen ➔ 小夏戴克</h6>
             <div class="time-item"><div class="time-node"></div><div class="fw-bold">全景健行 (2h)</div><div class="small text-muted">格林德瓦 ➔ First 山</div></div>
         </div>
     </div>
+
     <div id="day-922" class="day-content" data-day="922">
         <div class="card-custom">
             <h6 class="fw-bold text-primary mb-3">🏔️ 雪朗峰 (Schilthorn)</h6>
             <div class="time-item"><div class="time-node"></div><div class="fw-bold">景點探索</div><div class="small text-muted">或前往厄西嫩湖 (Oeschinensee)。宿溫根</div></div>
         </div>
     </div>
-<div id="day-923" class="day-content" data-day="923">
-    <div class="card-custom">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold text-primary m-0">🇨🇭 策馬特 Zermatt</h6>
-            <div class="d-flex gap-1">
-                <a href="https://www.meteoswiss.admin.ch/local-forecasts/zermatt/3920.html" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
-                    <i class="fas fa-sun"></i>
-                </a>
-                <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
-                    <i class="fas fa-map-marked-alt"></i>
-                </a>
+
+    <div id="day-923" class="day-content" data-day="923">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">🇨🇭 策馬特 Zermatt</h6>
+                <div class="d-flex gap-1">
+                    <a href="https://www.meteoswiss.admin.ch/local-forecasts/zermatt/3920.html" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-sun"></i>
+                    </a>
+                    <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </a>
+                </div>
             </div>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">五湖健行 / 冰川天堂</div></div>
         </div>
-        <div class="time-item"><div class="time-node"></div><div class="fw-bold">五湖健行 / 冰川天堂</div></div>
     </div>
-</div>
+
     <div id="day-924" class="day-content" data-day="924">
         <div class="card-custom">
             <h6 class="fw-bold text-primary mb-3">🗻 冰川天堂 (Glacier Paradise)</h6>
             <div class="time-item"><div class="time-node"></div><div class="fw-bold">景點遊覽</div><div class="small text-muted">策馬特周邊景點探索</div></div>
         </div>
     </div>
+
     <div id="day-925" class="day-content" data-day="925">
         <div class="card-custom">
             <h6 class="fw-bold text-primary mb-3">🗻 策馬特周邊</h6>
             <div class="time-item"><div class="time-node"></div><div class="fw-bold">五湖健行</div><div class="small text-muted">Sunnegga 五湖健行或鎮上放鬆</div></div>
         </div>
     </div>
-<div id="day-926" class="day-content" data-day="926">
-    <div class="card-custom">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold text-primary m-0">🇮🇹 米蘭 Milan</h6>
-            <div class="d-flex gap-1">
-                <a href="https://www.google.com/search?q=Milan+Weather" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
-                    <i class="fas fa-sun"></i>
-                </a>
-                <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark" style="font-size: 0.65rem; padding: 2px 6px;">
-                    <i class="fas fa-map-marked-alt"></i>
-                </a>
+
+    <div id="day-926" class="day-content" data-day="926">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">🇮🇹 米蘭 Milan</h6>
+                <div class="d-flex gap-1">
+                    <a href="https://www.google.com/search?q=Milan+Weather" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-sun"></i>
+                    </a>
+                    <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </a>
+                </div>
             </div>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">米蘭大教堂 / 購物</div></div>
         </div>
-        <div class="time-item"><div class="time-node"></div><div class="fw-bold">米蘭大教堂 / 購物</div></div>
     </div>
-</div>
+
     <div id="day-927" class="day-content" data-day="927">
         <div class="card-custom">
             <h6 class="fw-bold text-primary mb-3">✈️ 賦歸 (MXP - HKG)</h6>
             <div class="time-item"><div class="time-node"></div><div class="fw-bold">12:45 米蘭 (MXP) 起飛</div><div class="small text-muted">前往香港 (11h 40m)</div></div>
         </div>
     </div>
+
     <div id="day-928" class="day-content" data-day="928">
         <div class="card-custom">
             <h6 class="fw-bold text-primary mb-3">🏠 抵達高雄</h6>
@@ -2108,22 +2482,22 @@ margin-left:-40px;
             <div class="time-item"><div class="time-node"></div><div class="fw-bold">08:35 香港 ➔ 10:15 高雄</div></div>
         </div>
     </div>
-</div> 
-<div id="budget" class="content-section">
+</div>
 
+<div id="budget" class="content-section">
 
   <!-- 新增記帳：輸入卡 -->
   <div class="card-custom">
     <div class="d-flex justify-content-between align-items-center mb-2">
       <h6 class="fw-bold m-0">新增支出</h6>
-      <button id="rateRefreshBtn" class="btn btn-sm btn-outline-dark" style="font-size: 0.7rem;" onclick="refreshRates(true)">
+      <button id="rateRefreshBtn" class="btn btn-sm btn-outline-dark btn-rate-refresh" onclick="refreshRates(true)">
         <i class="fas fa-sync-alt"></i>
       </button>
     </div>
 
     <!-- 幣別 + 金額 -->
     <div class="input-group input-group-sm mb-2">
-      <select id="exp-curr" class="form-select" style="max-width: 92px;" onchange="onBudgetCurrencyChange()">
+      <select id="exp-curr" class="form-select exp-curr" onchange="onBudgetCurrencyChange()">
         <option value="TWD">TWD</option>
         <option value="CHF">CHF</option>
         <option value="EUR">EUR</option>
@@ -2133,7 +2507,7 @@ margin-left:-40px;
     </div>
 
     <!-- 匯率顯示（即時/離線提示 + 手動備援只顯示目前幣別） -->
-    <div class="small text-muted" id="rateHint" style="margin-top:-2px;">
+    <div class="small text-muted rate-hint" id="rateHint">
       匯率：載入中…
     </div>
     <div id="manualRateWrap" style="display:none;" class="mt-2">
@@ -2160,12 +2534,12 @@ margin-left:-40px;
         </select>
       </div>
       <div class="col-6">
-<div class="pay-pills" id="pay-method-pills">
-  <button type="button" class="pay-pill active" data-pay="card" onclick="setPayMethod('card', this)">信用卡</button>
-  <button type="button" class="pay-pill" data-pay="cash" onclick="setPayMethod('cash', this)">現金</button>
-  <button type="button" class="pay-pill" data-pay="mobile" onclick="setPayMethod('mobile', this)">行動支付</button>
-  <button type="button" class="pay-pill" data-pay="other" onclick="setPayMethod('other', this)">其他</button>
-</div>
+        <div class="pay-pills" id="pay-method-pills">
+          <button type="button" class="pay-pill active" data-pay="card" onclick="setPayMethod('card', this)">信用卡</button>
+          <button type="button" class="pay-pill" data-pay="cash" onclick="setPayMethod('cash', this)">現金</button>
+          <button type="button" class="pay-pill" data-pay="mobile" onclick="setPayMethod('mobile', this)">行動支付</button>
+          <button type="button" class="pay-pill" data-pay="other" onclick="setPayMethod('other', this)">其他</button>
+        </div>
       </div>
     </div>
 
@@ -2190,14 +2564,15 @@ margin-left:-40px;
 
   <!-- 其他日期（預設收合，但你點開後會保留，直到整頁 reload） -->
   <div class="mt-2">
-    <div class="small text-muted mb-2" style="font-weight:700; letter-spacing:.4px;">其他日期</div>
+    <div class="small text-muted mb-2 other-days-title">其他日期</div>
     <div id="dayGroups"></div>
   </div>
+
   <!-- 旅程總覽（沿用你原本卡片概念） -->
   <div class="budget-sum">
-    <small style="opacity: 0.8; letter-spacing: 1px;">旅程總支出 (TWD)</small>
+    <small class="budget-sum-sub">旅程總支出 (TWD)</small>
     <div class="h1 my-2">NT$ <span id="total-twd">0</span></div>
-    <div class="small" style="font-size:0.75rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px;">
+    <div class="small budget-sum-breakdown">
       CHF: <span id="total-chf">0</span> | EUR: <span id="total-eur">0</span> | HKD: <span id="total-hkd">0</span>
     </div>
   </div>
@@ -2206,7 +2581,7 @@ margin-left:-40px;
 </div>
 
 <div id="packing" class="content-section">
-<div class="day-label"> 行李清單 <span id="pack-mode-badge" class="pack-mode-badge">本次清單</span></div>
+  <div class="day-label"> 行李清單 <span id="pack-mode-badge" class="pack-mode-badge">本次清單</span></div>
 
   <!-- ✅ 行李：模式控制列（新版） -->
   <div class="card-custom mb-3">
@@ -2232,8 +2607,8 @@ margin-left:-40px;
     <!-- ✅ 只在模板視圖才顯示的操作列 -->
     <div id="template-actions" class="mt-2" style="display:none;">
       <div class="d-flex flex-wrap gap-2 justify-content-end">
-<button class="btn pack-pill pack-pill-primary" onclick="applyTemplateToTripMerge()">合併</button>
-<button class="btn pack-pill pack-pill-danger" onclick="resetTripFromTemplate()">重建</button>
+        <button class="btn pack-pill pack-pill-primary" onclick="applyTemplateToTripMerge()">合併</button>
+        <button class="btn pack-pill pack-pill-danger" onclick="resetTripFromTemplate()">重建</button>
       </div>
     </div>
 
@@ -2245,8 +2620,8 @@ margin-left:-40px;
       <span class="small fw-bold">打包進度</span>
       <span class="small text-muted" id="packing-percent">0%</span>
     </div>
-    <div class="progress" style="height: 8px; background-color: #eee; border-radius: 4px;">
-      <div id="packing-bar" class="progress-bar" style="width: 0%; height: 100%; transition: width 0.3s; background-color: #5d8aa8;"></div>
+    <div class="progress packing-progress">
+      <div id="packing-bar" class="progress-bar packing-bar"></div>
     </div>
   </div>
 
@@ -2265,52 +2640,55 @@ margin-left:-40px;
 </div>
 
 <div id="info" class="content-section">
-    <div class="day-label">🔗 快速連結與電話</div>
-    <div class="card-custom">
-        <h6 class="fw-bold">緊急連絡</h6>
-        <p class="small mb-2">外交部急難救助：+886-800-085-095</p>
-        <hr>
-        <h6 class="fw-bold">常用連結</h6>
-        <div class="d-grid gap-2">
-            <a href="https://www.sbb.ch/en" target="_blank" class="btn btn-sm btn-outline-dark text-start">SBB 瑞士國鐵官網</a>
-            <a href="https://www.meteoswiss.admin.ch/" target="_blank" class="btn btn-sm btn-outline-dark text-start">MeteoSwiss 瑞士天氣</a>
-        </div>
+  <div class="day-label">🔗 快速連結與電話</div>
+  <div class="card-custom">
+    <h6 class="fw-bold">緊急連絡</h6>
+    <p class="small mb-2">外交部急難救助：+886-800-085-095</p>
+    <hr>
+    <h6 class="fw-bold">常用連結</h6>
+    <div class="d-grid gap-2">
+      <a href="https://www.sbb.ch/en" target="_blank" class="btn btn-sm btn-outline-dark text-start">SBB 瑞士國鐵官網</a>
+      <a href="https://www.meteoswiss.admin.ch/" target="_blank" class="btn btn-sm btn-outline-dark text-start">MeteoSwiss 瑞士天氣</a>
     </div>
+  </div>
 
-    <div class="sync-card">
-        <div class="text-center mb-3">
-            <h6 class="fw-bold mb-1"> 隊友同步中心</h6>
-            <small class="text-muted">同步記帳紀錄與行李清單</small>
-        </div>
-        <button class="btn btn-primary btn-sync" onclick="exportData()">
-            <i class="fas fa-share-square"></i> 匯出並複製數據代碼
-        </button>
-        <button class="btn btn-outline-secondary btn-sync" onclick="importData()">
-            <i class="fas fa-file-import"></i> 貼上朋友的代碼同步
-        </button>
-        <div class="text-center mt-2">
-            <small style="font-size: 0.65rem; color: #999;">注意：同步會覆蓋掉目前的本地數據</small>
-        </div>
+  <div class="sync-card">
+    <div class="text-center mb-3">
+      <h6 class="fw-bold mb-1"> 隊友同步中心</h6>
+      <small class="text-muted">同步記帳紀錄與行李清單</small>
     </div>
+    <button class="btn btn-primary btn-sync" onclick="exportData()">
+      <i class="fas fa-share-square"></i> 匯出並複製數據代碼
+    </button>
+    <button class="btn btn-outline-secondary btn-sync" onclick="importData()">
+      <i class="fas fa-file-import"></i> 貼上朋友的代碼同步
+    </button>
+    <div class="text-center mt-2">
+      <small class="sync-note">注意：同步會覆蓋掉目前的本地數據</small>
+    </div>
+  </div>
 </div>
+
 <nav class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('itinerary', this)"><i class="fas fa-calendar-alt"></i>行程</div>
-    <div class="nav-item" onclick="switchTab('info', this)"><i class="fas fa-info-circle"></i>資訊</div>
-    <div class="nav-item" onclick="switchTab('budget', this)"><i class="fas fa-wallet"></i>記帳</div>
-    <div class="nav-item" onclick="switchTab('packing', this)"><i class="fas fa-check-square"></i>行李</div>
-    <div class="nav-item" onclick="switchTab('favorites', this)"><i class="fas fa-heart"></i>收藏</div>
-    </nav>
+  <div class="nav-item active" onclick="switchTab('itinerary', this)"><i class="fas fa-calendar-alt"></i>行程</div>
+  <div class="nav-item" onclick="switchTab('info', this)"><i class="fas fa-info-circle"></i>資訊</div>
+  <div class="nav-item" onclick="switchTab('budget', this)"><i class="fas fa-wallet"></i>記帳</div>
+  <div class="nav-item" onclick="switchTab('packing', this)"><i class="fas fa-check-square"></i>行李</div>
+  <div class="nav-item" onclick="switchTab('favorites', this)"><i class="fas fa-heart"></i>收藏</div>
+</nav>
+
 <div id="favorites" class="content-section">
-<div id="fav-top-container" class="mb-3">
+  <div id="fav-top-container" class="mb-3">
     <div id="fav-top-list"></div>
+  </div>
+
+  <div id="fav-list-container"></div>
+
+  <button class="btn btn-sm btn-dark mt-2" onclick="addFavoritePrompt()">+ 新增收藏</button>
 </div>
 
-<div id="fav-list-container"></div>
-
-<button class="btn btn-sm btn-primary mt-2" onclick="addFavoritePrompt()">+ 新增收藏</button>
-
 </div>
-</div>
+</body>
 <script>
 function updateClocks() {
     const now = new Date();
@@ -3161,7 +3539,16 @@ function saveActivePack() {
 function setPackView(view) {
   packView = (view === 'template') ? 'template' : 'trip';
   localStorage.setItem(PACK_VIEW_KEY, packView);
-
+  // ✅ 新增：明確標記「哪顆是選中」
+  const tripBtn = document.getElementById('btn-pack-trip');
+  const tplBtn  = document.getElementById('btn-pack-template');
+  if (tripBtn && tplBtn) {
+    const isTrip = (packView === 'trip');
+    tripBtn.classList.toggle('active', isTrip);
+    tplBtn.classList.toggle('active', !isTrip);
+    tripBtn.setAttribute('aria-pressed', String(isTrip));
+    tplBtn.setAttribute('aria-pressed', String(!isTrip));
+  }
   // ✅ 2-A：切到模板時，自動關掉隨身檢查模式（避免狀態矛盾）
   if (packView === 'template' && carryMode) {
     carryMode = false;
@@ -3423,8 +3810,14 @@ const visibleCats = effectiveCarryMode
       <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
         <span class="fw-bold text-primary"># ${catObj.category}</span>
         <div>
-          <button class="btn btn-sm btn-outline-dark py-0" onclick="addItemToCat(${catIdx})">+ 項目</button>
-          <button class="btn btn-sm text-danger ms-2" onclick="deleteCategory(${catIdx})"><i class="fas fa-trash-alt"></i></button>
+<button class="btn btn-sm btn-outline-dark py-0"
+        data-act="add-item"
+        type="button"
+        aria-label="新增項目"
+        onclick="addItemToCat(${catIdx})">
+  <i class="fas fa-plus"></i>
+</button>
+          <button class="btn btn-sm text-danger ms-0" onclick="deleteCategory(${catIdx})"><i class="fas fa-trash-alt"></i></button>
         </div>
       </div>`;
 
@@ -4834,5 +5227,4 @@ function initDetailDragToClose(){
   </div>
 </div>
 
-</body>
 </html>
