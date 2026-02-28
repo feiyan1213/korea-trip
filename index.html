@@ -548,31 +548,6 @@ html[data-theme="dark"] .day-content .text-primary{ color:var(--text-1) !importa
 }
 
 /* =========================
-   9) Sync card
-========================= */
-.sync-card{
-  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
-  border: 1px dashed var(--border);
-  border-radius:15px;
-  padding:20px;
-  margin-top:20px;
-}
-.btn-sync{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  padding:12px;
-  border-radius:10px;
-  font-size:.9rem;
-  font-weight:500;
-  transition:all .2s;
-  width:100%;
-  border:none;
-}
-.btn-sync:active{ transform:scale(.98); opacity:.88; }
-
-/* =========================
    10) Favorites: collapse + title badge + items + link pills
 ========================= */
 /* 收藏頁細項收合（唯一版） */
@@ -652,51 +627,11 @@ html[data-theme="dark"] .day-content .text-primary{ color:var(--text-1) !importa
   transform:scale(.98);
 }
 
-/* 收藏頁 header icons hit area */
-#fav-list-container .fav-btn-group .fav-icon{
-  width:34px; height:34px;
-  padding:0 !important;
-  border:none !important;
-  background:transparent !important;
-  border-radius:12px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  transition:transform .12s ease,background .15s ease,opacity .15s ease;
-}
-
-/* 收藏頁 header icon 顏色（token 化） */
-#fav-list-container .fav-btn-group .fav-icon i{
-  font-size:.95rem;
-  color: var(--text-2);
-}
-
-#fav-list-container .fav-btn-group .fav-icon:active{
-  transform:scale(.90);
-  background: var(--pill-bg-hover) !important;
-}
-
-#fav-list-container .fav-btn-group .fav-icon:focus-visible{
-  outline:2px solid var(--focus-ring);
-  outline-offset:2px;
-}
-
-#fav-list-container .fav-btn-group .fav-add-icon i{
-  color: var(--pill-fg-strong);
-}
-
-/* 刪除 icon（收藏頁） */
-#fav-list-container .fav-btn-group .fav-icon.text-danger i{ color:var(--danger-fg) !important; }
-#fav-list-container .fav-btn-group .fav-icon.text-danger:active{
-  transform:scale(.9);
-}
-
 /* 行李頁刪除 icon */
-#pack-list-container .text-danger i{ color: var(--danger-fg) !important; }
-
-#pack-list-container .text-danger:active{
-  transform:scale(.9);
-  border-radius:10px;
+#pack-list-container i.fa-trash,
+#pack-list-container i.fa-trash-alt,
+#pack-list-container i.fas.fa-trash-alt{
+  color: var(--danger-fg) !important;
 }
 
 /* 收藏頁 bookmark 小一點+上移 */
@@ -943,15 +878,6 @@ html[data-theme="dark"] .day-content .text-primary{ color:var(--text-1) !importa
 }
 .btn-nav:active{ transform:scale(.98); }
 
-/* icon-btn (你之前 hover 會 opacity:0，保留原樣) */
-.icon-btn{
-  padding:2px 6px;
-  border-radius:6px;
-  line-height:0;
-  opacity:.6;
-}
-.icon-btn:hover{ opacity:1; background-color:transparent; }
-
 /* 行李清單標題色跟主題色
 */
 #pack-list-container .text-primary{ color:var(--text-1) !important; }
@@ -979,39 +905,6 @@ body,.sticky-top,.card,.bg-white{
 }
 .btn-primary:hover{ filter: brightness(0.96); }
 .btn-primary:active{ transform: scale(.98); }
-/* =========================
-   ✅ Button 統一：.btn-outline-dark（本站語義＝中性次要按鈕）
-   - Day/Night 顏色走 token：pill-bg / pill-bd / pill-fg-strong
-   - 手機優先：不依賴 hover；active 有回饋
-   - 範圍：只影響含 .btn-outline-dark 的按鈕/連結
-========================= */
-
-.btn.btn-outline-dark{
-  background-color: var(--pill-bg) !important;
-  border-color: var(--pill-bd) !important;
-  color: var(--pill-fg-strong) !important;
-  box-shadow: none !important;
-}
-
-.btn.btn-outline-dark:hover{
-  background-color: var(--pill-bg-hover) !important;
-  border-color: var(--pill-bd-strong) !important;
-}
-
-.btn.btn-outline-dark:active{
-  background-color: var(--pill-bg-hover) !important;
-  border-color: var(--pill-bd-strong) !important;
-  transform: scale(0.98);
-}
-
-.btn.btn-outline-dark:focus{
-  box-shadow: none !important;
-}
-
-.btn.btn-outline-dark:focus-visible{
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-}
 
 /* 一般連結（先只做最保守版本：不動你已經客製的 item-link） */
 a:not(.item-link){
@@ -1034,6 +927,118 @@ a:not(.item-link):hover{
     inset 0 -1px 0 rgba(255,255,255,.10);
 
   transform: none !important;
+}
+/* ✅ 同步中心：Tab 選中樣式（與行李頁一致） */
+#sync-center #sync-tab-share.btn.btn-dark,
+#sync-center #sync-tab-receive.btn.btn-dark{
+  background-color: rgba(var(--bs-primary-rgb), .28) !important;
+  border-color: rgba(var(--bs-primary-rgb), .55) !important;
+  color: var(--text-1) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,.18),
+    inset 0 -1px 0 rgba(255,255,255,.10);
+
+  transform: none !important;
+}
+/* ===== 同步按鈕平滑狀態切換 ===== */
+
+.sync-generate-btn {
+  position: relative;
+  min-height: 32px;
+
+  transition:
+    background-color .45s cubic-bezier(.4,0,.2,1),
+    border-color .45s cubic-bezier(.4,0,.2,1),
+    box-shadow .45s cubic-bezier(.4,0,.2,1),
+    transform .2s ease;
+}
+
+.sync-generate-btn .btn-label-success {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .45s cubic-bezier(.4,0,.2,1);
+}
+
+.sync-generate-btn .btn-label-default {
+  transition: opacity .45s cubic-bezier(.4,0,.2,1);
+}
+
+.sync-generate-btn.is-success .btn-label-default {
+  opacity: 0;
+}
+
+.sync-generate-btn.is-success .btn-label-success {
+  opacity: 1;
+}
+/* Receive 使用同樣動畫系統 */
+.sync-confirm-btn {
+  position: relative;
+  min-height: 32px;
+
+  transition:
+    background-color .45s cubic-bezier(.4,0,.2,1),
+    border-color .45s cubic-bezier(.4,0,.2,1),
+    box-shadow .45s cubic-bezier(.4,0,.2,1);
+}
+
+.sync-confirm-btn .btn-label-success {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .45s cubic-bezier(.4,0,.2,1);
+}
+
+.sync-confirm-btn .btn-label-default {
+  transition: opacity .45s cubic-bezier(.4,0,.2,1);
+}
+
+.sync-confirm-btn.is-success .btn-label-default {
+  opacity: 0;
+}
+
+.sync-confirm-btn.is-success .btn-label-success {
+  opacity: 1;
+}
+/* =========================
+   ✅ Button 系統：次要按鈕（本站語義）
+   class: .btn-secondary-soft
+   - Day/Night 走 token：pill-bg / pill-bd / pill-fg-strong
+   - 手機優先：active 有回饋；不依賴 hover
+   - 不接管 Bootstrap：不改 .btn-outline-dark
+========================= */
+
+.btn.btn-secondary-soft{
+  background-color: var(--pill-bg) !important;
+  border: 1px solid var(--pill-bd) !important;
+  color: var(--pill-fg-strong) !important;
+  box-shadow: none !important;
+}
+
+.btn.btn-secondary-soft:hover{
+  background-color: var(--pill-bg-hover) !important;
+  border-color: var(--pill-bd-strong) !important;
+}
+
+.btn.btn-secondary-soft:active{
+  background-color: var(--pill-bg-hover) !important;
+  border-color: var(--pill-bd-strong) !important;
+  transform: scale(0.98);
+}
+
+.btn.btn-secondary-soft:focus{
+  box-shadow: none !important;
+}
+
+.btn.btn-secondary-soft:focus-visible{
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 /* 行李頁：選中按鈕按下回饋（沿用同語言） */
 #packing .btn.btn-outline-dark.active:active{
@@ -1982,13 +1987,64 @@ margin-left:-40px;
 
 /* Icon-only mini buttons (原本一堆 inline font-size/padding) */
 .btn-icon-mini{
-  font-size: 0.65rem;
-  padding: 2px 6px;
+  width:28px;
+  height:28px;
+
+  padding:0 !important;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  /* Apple style：平常無框 */
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+
+  border-radius:12px;
+
+  /* 你選 1：icon 低調色 */
+  color: var(--text-2) !important;
+
+  transition:transform .12s ease, background-color .15s ease, opacity .15s ease;
 }
 
+/* icon 本體大小（避免受 btn-sm 影響） */
+.btn-icon-mini i{
+  font-size:.95rem;
+  line-height:1;
+}
+
+/* 手機優先：按下回饋 */
+.btn-icon-mini:active{
+  transform:scale(.90);
+  background: var(--pill-bg-hover) !important;
+}
+
+/* focus：跟收藏頁一致 */
+.btn-icon-mini:focus{
+  box-shadow:none !important;
+}
+.btn-icon-mini:focus-visible{
+  outline:2px solid var(--focus-ring);
+  outline-offset:2px;
+}
+/* ✅ Favorites：在 btn-icon-mini 系統下的少量特例（不再使用 fav-icon 系統） */
+
+/* +：比一般 icon 更清楚一階（只限收藏頁 header 的新增） */
+#fav-list-container .fav-btn-group .fav-add-icon{
+  color: var(--pill-fg-strong) !important;
+}
+
+/* 🗑️：只讓垃圾桶紅（不影響 X） */
+#fav-list-container .fav-btn-group .text-danger i.fa-trash,
+#fav-list-container .fav-btn-group .text-danger i.fa-trash-alt,
+#fav-list-container .fav-btn-group .text-danger i.fas.fa-trash-alt{
+  color: var(--danger-fg) !important;
+}
 /* Budget: refresh button */
 .btn-rate-refresh{
-  font-size: 0.7rem;
+  font-size: inherit;
 }
 
 /* Budget: currency select width */
@@ -2157,6 +2213,7 @@ html[data-theme="dark"]
 #pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input)::after{
   filter: drop-shadow(0 0 1px rgba(0,0,0,.55));
 }
+
 </style>
 </head>
 <body>
@@ -2490,7 +2547,7 @@ html[data-theme="dark"]
   <div class="card-custom">
     <div class="d-flex justify-content-between align-items-center mb-2">
       <h6 class="fw-bold m-0">新增支出</h6>
-      <button id="rateRefreshBtn" class="btn btn-sm btn-outline-dark btn-rate-refresh" onclick="refreshRates(true)">
+      <button id="rateRefreshBtn" class="btn btn-sm btn-icon-mini btn-rate-refresh" onclick="refreshRates(true)">
         <i class="fas fa-sync-alt"></i>
       </button>
     </div>
@@ -2589,7 +2646,7 @@ html[data-theme="dark"]
       <!-- 左側：本次 + 隨身小包 -->
       <div class="d-flex align-items-center gap-3">
         <div class="btn-group btn-group-sm" role="group" aria-label="packing mode">
-          <button class="btn btn-outline-dark" id="btn-pack-trip" onclick="setPackView('trip')">本次清單</button>
+          <button class="btn btn-secondary-soft" id="btn-pack-trip" onclick="setPackView('trip')">本次清單</button>
         </div>
 
         <div class="form-check form-switch m-0">
@@ -2600,7 +2657,7 @@ html[data-theme="dark"]
 
       <!-- 右側：模板 -->
       <div class="btn-group btn-group-sm" role="group" aria-label="packing mode">
-        <button class="btn btn-outline-dark" id="btn-pack-template" onclick="setPackView('template')">模板</button>
+        <button class="btn btn-secondary-soft" id="btn-pack-template" onclick="setPackView('template')">模板</button>
       </div>
     </div>
 
@@ -2647,24 +2704,175 @@ html[data-theme="dark"]
     <hr>
     <h6 class="fw-bold">常用連結</h6>
     <div class="d-grid gap-2">
-      <a href="https://www.sbb.ch/en" target="_blank" class="btn btn-sm btn-outline-dark text-start">SBB 瑞士國鐵官網</a>
-      <a href="https://www.meteoswiss.admin.ch/" target="_blank" class="btn btn-sm btn-outline-dark text-start">MeteoSwiss 瑞士天氣</a>
+<a href="https://www.sbb.ch/en" target="_blank" class="btn btn-sm btn-secondary-soft text-start">SBB 瑞士國鐵官網</a>
+<a href="https://www.meteoswiss.admin.ch/" target="_blank" class="btn btn-sm btn-secondary-soft text-start">MeteoSwiss 瑞士天氣</a>
     </div>
   </div>
 
-  <div class="sync-card">
+  <div class="card-custom" id="sync-center">
+    <!-- 標題 -->
     <div class="text-center mb-3">
-      <h6 class="fw-bold mb-1"> 隊友同步中心</h6>
+      <h6 class="fw-bold mb-1">隊友同步中心</h6>
       <small class="text-muted">同步記帳紀錄與行李清單</small>
     </div>
-    <button class="btn btn-primary btn-sync" onclick="exportData()">
-      <i class="fas fa-share-square"></i> 匯出並複製數據代碼
+
+    <!-- 狀態 + 本機摘要（之後由 JS 填入） -->
+    <div class="mb-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="fw-bold">上次同步</div>
+        <div class="small text-muted" id="sync-last-time">尚無紀錄</div>
+      </div>
+      <div class="small mt-1" id="sync-last-status">—</div>
+
+      <hr class="my-2">
+
+      <div class="small text-muted" id="sync-local-summary">
+        本機資料：記帳 —｜行李模板 —｜本次行李 —｜收藏 —
+      </div>
+    </div>
+
+    <!-- Tab（外觀先到位；切換行為下一步接 JS） -->
+    <div class="d-flex gap-2 mb-3">
+      <button type="button" class="btn btn-sm btn-secondary-soft flex-fill" id="sync-tab-share">
+        我要分享
+      </button>
+      <button type="button" class="btn btn-sm btn-secondary-soft flex-fill" id="sync-tab-receive">
+        我要同步
+      </button>
+    </div>
+
+    <!-- 我要分享 -->
+    <div class="mb-3" id="sync-pane-share">
+<hr class="my-3">
+      <div class="fw-bold mb-2">我要分享給隊友</div>
+
+      <!-- 分享內容勾選（先做出來；下一步才真的影響匯出內容） -->
+      <div class="small mb-2">
+<div class="pay-pills">
+  <input type="checkbox" id="sync-share-exp" class="d-none" checked>
+  <button type="button" class="pay-pill active"
+          onclick="toggleSyncPill(this, 'sync-share-exp')">
+    記帳
+  </button>
+
+  <input type="checkbox" id="sync-share-pack" class="d-none" checked>
+  <button type="button" class="pay-pill active"
+          onclick="toggleSyncPill(this, 'sync-share-pack')">
+    行李
+  </button>
+
+  <input type="checkbox" id="sync-share-fav" class="d-none" checked>
+  <button type="button" class="pay-pill active"
+          onclick="toggleSyncPill(this, 'sync-share-fav')">
+    收藏
+  </button>
+</div>
+      </div>
+
+<button class="btn btn-sm btn-secondary-soft w-100 mb-2" onclick="analyzeShareContent()">
+  <i class="fas fa-search"></i> 分析將分享內容
+</button>
+
+<div class="small text-muted mb-2" id="sync-share-preview">
+  （分析後會顯示將分享內容）
+</div>
+
+<div id="sync-share-actions" class="d-none mb-2">
+  <div class="d-flex gap-2">
+    <button type="button" class="btn btn-sm btn-secondary-soft flex-fill" onclick="cancelSharePreview()">
+      取消
     </button>
-    <button class="btn btn-outline-secondary btn-sync" onclick="importData()">
-      <i class="fas fa-file-import"></i> 貼上朋友的代碼同步
+<button type="button"
+        class="btn btn-sm btn-primary flex-fill sync-generate-btn"
+        id="btn-generate-code"
+        onclick="confirmShareGenerate(this)">
+
+  <span class="btn-label-default">產生同步碼</span>
+  <span class="btn-label-success">✓ 已複製</span>
+
+</button>
+  </div>
+</div>
+    </div>
+
+    <!-- 我要同步 -->
+    <div class="mb-2" id="sync-pane-receive">
+<hr class="my-3">
+      <div class="fw-bold mb-2">我要同步朋友資料</div>
+
+      <!-- 同步內容勾選（下一步才真的影響「分類覆蓋」） -->
+      <div class="small mb-2">
+<div class="pay-pills">
+  <input type="checkbox" id="sync-recv-exp" class="d-none" checked>
+  <button type="button" class="pay-pill active"
+          onclick="toggleSyncPill(this, 'sync-recv-exp')">
+    記帳
+  </button>
+
+  <input type="checkbox" id="sync-recv-pack" class="d-none" checked>
+  <button type="button" class="pay-pill active"
+          onclick="toggleSyncPill(this, 'sync-recv-pack')">
+    行李
+  </button>
+
+  <input type="checkbox" id="sync-recv-fav" class="d-none" checked>
+  <button type="button" class="pay-pill active"
+          onclick="toggleSyncPill(this, 'sync-recv-fav')">
+    收藏
+  </button>
+</div>
+      </div>
+
+      <!-- 貼上代碼（先用 textarea 取代 prompt 的體驗；下一步才接分析/預覽/確認） -->
+      <div class="mb-2">
+        <div class="small fw-bold mb-1">貼上同步碼</div>
+        <textarea id="sync-code-input" class="form-control" rows="3" placeholder="貼上朋友傳給你的同步碼"></textarea>
+      </div>
+
+      <!-- 先保留你原本可用的匯入按鈕（避免現在點了沒反應）
+           下一步我們會改成：分析 → 預覽 → 確認才套用 -->
+<button class="btn btn-sm btn-secondary-soft w-100 mb-2" onclick="analyzeSyncContent()">
+  <i class="fas fa-search"></i> 分析同步內容
+</button>
+
+      <!-- 預覽/警示區（下一步接：將更新哪些 + 自動備份提示 + 確認同步） -->
+<div class="small text-muted mb-2" id="sync-recv-preview">
+  （下一步會在這裡顯示：將更新內容摘要、是否覆蓋、同步前自動備份）
+</div>
+
+<div id="sync-recv-actions" class="d-none mb-2">
+  <div class="small text-warning mb-2">
+    ⚠ 同步前將自動備份（可復原）
+  </div>
+  <div class="d-flex gap-2">
+    <button type="button" class="btn btn-sm btn-secondary-soft flex-fill" onclick="cancelSyncPreview()">
+      取消
     </button>
-    <div class="text-center mt-2">
-      <small class="sync-note">注意：同步會覆蓋掉目前的本地數據</small>
+    <button type="button"
+        class="btn btn-sm btn-primary flex-fill sync-confirm-btn"
+        onclick="confirmSync(this)">
+
+  <span class="btn-label-default">確認同步</span>
+  <span class="btn-label-success">✓ 已同步</span>
+
+</button>
+  </div>
+</div>
+
+      <!-- 你選的 1A：復原上一版（先放位置；下一步接功能）
+           先 disabled，避免現在按了沒作用 -->
+      <button type="button" class="btn btn-sm btn-secondary-soft w-100" id="sync-undo-btn" onclick="undoSync()" disabled>
+  復原上一版（同步前備份）
+</button>
+    </div>
+
+    <!-- 最近同步紀錄（你選 A：顯示少量即可；下一步接資料） -->
+    <hr class="my-3">
+    <div class="small">
+      <div class="fw-bold mb-2">最近同步</div>
+      <div id="sync-log-list" class="text-muted">
+        （下一步會在這裡顯示最近 3～5 筆：匯出/匯入、成功/失敗、時間）
+      </div>
     </div>
   </div>
 </div>
@@ -2971,12 +3179,14 @@ function addExp(){
   document.getElementById('exp-note').value = '';
 
   render(); // 重新渲染（但會保留你打開的日期狀態）
+updateLocalSummary();
 }
 
 function deleteExp(id){
   expenses = expenses.filter(e => e.id !== id);
   localStorage.setItem('trip_v2026', JSON.stringify(expenses));
   render();
+updateLocalSummary();
 }
 
 function clearAll(){
@@ -2984,6 +3194,7 @@ function clearAll(){
     expenses = [];
     localStorage.setItem('trip_v2026', JSON.stringify(expenses));
     render();
+updateLocalSummary();
   }
 }
 
@@ -3487,13 +3698,13 @@ function syncPackControlsUI() {
   const btnTrip = document.getElementById('btn-pack-trip');
   const btnTpl = document.getElementById('btn-pack-template');
 
-  if (btnTrip && btnTpl) {
-    btnTrip.classList.toggle('btn-dark', packView === 'trip');
-    btnTrip.classList.toggle('btn-outline-dark', packView !== 'trip');
+if (btnTrip && btnTpl) {
+  btnTrip.classList.toggle('btn-dark', packView === 'trip');
+  btnTrip.classList.toggle('btn-secondary-soft', packView !== 'trip');
 
-    btnTpl.classList.toggle('btn-dark', packView === 'template');
-    btnTpl.classList.toggle('btn-outline-dark', packView !== 'template');
-  }
+  btnTpl.classList.toggle('btn-dark', packView === 'template');
+  btnTpl.classList.toggle('btn-secondary-soft', packView !== 'template');
+}
 // ✅ 更新「目前模式」徽章（本次清單 / 隨身包 / 模板）
 function updatePackModeBadge() {
   const badge = document.getElementById('pack-mode-badge');
@@ -3581,6 +3792,7 @@ function resetTripFromTemplate() {
   if (!confirm("確定要用「模板」重建「本次清單」嗎？\n這會覆蓋本次清單目前的調整與勾選狀態。")) return;
   packTrip = deepCopy(packTemplate);
   saveJSON(PACK_TRIP_KEY, packTrip);
+updateLocalSummary();
   // 回到本次清單視圖
   setPackView('trip');
   alert("已從模板重建本次清單。");
@@ -3621,7 +3833,7 @@ function applyTemplateToTripMerge() {
   });
 
   saveJSON(PACK_TRIP_KEY, packTrip);
-
+updateLocalSummary();
   // ✅ 套用後跳回本次清單（你指定要這樣）
   setPackView('trip');
   alert("已合併套用模板到本次清單（不覆蓋本次新增與勾選）。");
@@ -3644,6 +3856,7 @@ function addNewCategory() {
 
   saveActivePack();
   renderPackList();
+updateLocalSummary();
 }
 
 function addItemToCat(catIdx) {
@@ -3659,6 +3872,7 @@ cat.items.push({ text: itemName.trim(), checked: false, carry: false });
 
   saveActivePack();
   renderPackList();
+updateLocalSummary();
 }
 
 function toggleItem(catIdx, itemIdx) {
@@ -3681,6 +3895,7 @@ function deleteCategory(catIdx) {
     active.splice(catIdx, 1);
     saveActivePack();
     renderPackList();
+updateLocalSummary();
   }
 }
 
@@ -3693,6 +3908,7 @@ function deleteSingleItem(catIdx, itemIdx) {
 
   saveActivePack();
   renderPackList();
+updateLocalSummary();
 }
 
 // 清除已勾選：只對「本次清單」有意義（模板通常不需要 checked）
@@ -3709,6 +3925,7 @@ function clearCheckedItems() {
 
   saveActivePack();
   renderPackList();
+updateLocalSummary();
 }
 // ================================
 // ✅ 隨身小包：項目級標記（A2）
@@ -3817,7 +4034,7 @@ const visibleCats = effectiveCarryMode
         onclick="addItemToCat(${catIdx})">
   <i class="fas fa-plus"></i>
 </button>
-          <button class="btn btn-sm text-danger ms-0" onclick="deleteCategory(${catIdx})"><i class="fas fa-trash-alt"></i></button>
+          <button class="btn btn-sm btn-icon-mini ms-0" onclick="deleteCategory(${catIdx})"><i class="fas fa-trash-alt"></i></button>
         </div>
       </div>`;
 
@@ -3929,90 +4146,409 @@ function initializePage() {
     // 執行渲染
     if (typeof render === "function") render();
     if (typeof renderPackList === "function") renderPackList();
+renderSyncLogs();
+updateLastSyncStatus();
+updateLocalSummary();
+const undoBtn = document.getElementById('sync-undo-btn');
+if (undoBtn) {
+    const backup = localStorage.getItem('trip_sync_backup');
+    undoBtn.disabled = !backup;
+}
 }
 
 // 🔄 匯入同步代碼（修正版：收藏/行李/記帳都同步 + 立刻刷新畫面）
-function importData() {
-    const code = prompt("請貼上朋友傳給你的同步代碼：");
-    if (!code) return;
+let pendingSyncData = null;
+function analyzeSyncContent() {
+
+    const input = document.getElementById('sync-code-input');
+    if (!input || !input.value.trim()) {
+        alert("請先貼上同步碼");
+        return;
+    }
 
     try {
-        // 1) 解碼
-        const decoded = JSON.parse(decodeURIComponent(atob(code)));
+        const decoded = JSON.parse(decodeURIComponent(atob(input.value.trim())));
 
-        // 2) 覆蓋 localStorage（資料層）
-        const newFav = decoded.favorites || [];
-        const newPack = decoded.packing || [];
-        const newExp  = decoded.expenses || [];
+        const recvExp  = decoded.expenses || [];
+        const recvFav  = decoded.favorites || [];
+        const recvPackTemplate = decoded.packingTemplate || [];
+        const recvPackTrip = decoded.packingTrip || [];
 
-        localStorage.setItem('trip_favorites', JSON.stringify(newFav));
-// ✅ 行李同步（新結構優先；舊結構向下相容）
-const newPackTemplate = decoded.packingTemplate || null;
-const newPackTrip = decoded.packingTrip || null;
-const newPackLegacy = decoded.packing || []; // 舊版同步碼仍可能只有 packing
+        // 本機資料
+        const localExp = expenses || [];
+        const localFav = favorites || [];
 
-if (Array.isArray(newPackTemplate) && Array.isArray(newPackTrip)) {
-  localStorage.setItem('trip_pack_template', JSON.stringify(newPackTemplate));
-  localStorage.setItem('trip_pack_trip_current', JSON.stringify(newPackTrip));
-} else {
-  // 舊版：只有 packing → 當作模板 + 本次清單
-  localStorage.setItem('trip_pack_template', JSON.stringify(newPackLegacy));
-  localStorage.setItem('trip_pack_trip_current', JSON.stringify(newPackLegacy));
-  // 同時保留舊 key（不必要但有助相容）
-  localStorage.setItem('trip_pack_cat', JSON.stringify(newPackLegacy));
-}
+        const localPackTemplate = JSON.parse(localStorage.getItem('trip_pack_template') || "[]");
+        const localPackTrip = JSON.parse(localStorage.getItem('trip_pack_trip_current') || "[]");
 
-// 重新載入行李到記憶體
-initPacking();
-        localStorage.setItem('trip_v2026', JSON.stringify(newExp));
+        // 勾選狀態
+        const useExp  = document.getElementById('sync-recv-exp').checked;
+        const usePack = document.getElementById('sync-recv-pack').checked;
+        const useFav  = document.getElementById('sync-recv-fav').checked;
 
-        // 3) 覆蓋「目前正在使用的全域變數」（畫面層）
-        favorites = newFav;
-        expenses = newExp;
+        let previewHtml = "<div class='fw-bold mb-2'>將更新：</div>";
 
-        // 4) 重新渲染全部
-        if (typeof renderFavorites === "function") renderFavorites();
-        if (typeof renderTopMarked === "function") renderTopMarked(); // 保險：高亮列
-        if (typeof renderPackList === "function") renderPackList();
-        if (typeof render === "function") render();
+        if (useExp) {
+            previewHtml += `✓ 記帳 ${localExp.length} → ${recvExp.length} 筆<br>`;
+        }
 
-        // 5) 住宿框可能跟頁籤狀態有關，也順便刷新
-        if (typeof refreshHotelBar === "function") refreshHotelBar();
+        if (usePack) {
+            previewHtml += `✓ 行李模板 ${localPackTemplate.length} → ${recvPackTemplate.length} 項<br>`;
+            previewHtml += `✓ 本次行李 ${localPackTrip.length} → ${recvPackTrip.length} 項<br>`;
+        }
 
-        alert('🚀 同步成功！收藏 / 行李 / 記帳 已更新。');
+        if (useFav) {
+            previewHtml += `✓ 收藏 ${localFav.length} → ${recvFav.length} 項<br>`;
+        }
+
+        document.getElementById('sync-recv-preview').innerHTML = previewHtml;
+
+        document.getElementById('sync-recv-actions').classList.remove('d-none');
+
+        pendingSyncData = decoded;
 
     } catch (e) {
         console.error(e);
-        alert('❌ 代碼無效，請確保完整複製（不要多空格或換行）。');
+saveSyncLog("import", "fail", "代碼無效");
+alert("❌ 代碼無效，請確認完整貼上");
     }
 }
 
-// 🔄 匯出同步代碼
-function exportData() {
-    try {
-        const data = {
-            favorites: JSON.parse(localStorage.getItem('trip_favorites')) || [],
-            packing: JSON.parse(localStorage.getItem('trip_pack_cat')) || [],
-            expenses: JSON.parse(localStorage.getItem('trip_v2026')) || []
-        };
 
-        if (!data.favorites.length && !data.packing.length && !data.expenses.length) {
-            alert('目前沒有資料可匯出喔！');
-            return;
-        }
+function cancelSyncPreview() {
 
-        const code = btoa(encodeURIComponent(JSON.stringify(data)));
+    pendingSyncData = null;
 
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(code).then(() => {
-                alert('✅ 同步代碼已複製，請傳送給朋友貼上。');
-            }).catch(() => fallbackCopy(code));
-        } else {
-            fallbackCopy(code);
-        }
-    } catch (err) {
-        alert("匯出失敗：" + err);
+    // 清空預覽
+    document.getElementById('sync-recv-preview').innerHTML =
+        "（已取消預覽）";
+
+    // 收起 actions
+    document.getElementById('sync-recv-actions').classList.add('d-none');
+
+    // 清空貼上內容
+    const input = document.getElementById('sync-code-input');
+    if (input) input.value = "";
+
+}
+
+
+function confirmSync() {
+
+    if (!pendingSyncData) return;
+
+    // 同步前備份（只備份一次）
+    const backup = {
+        expenses: expenses,
+        favorites: favorites,
+        packingTemplate: JSON.parse(localStorage.getItem('trip_pack_template') || "[]"),
+        packingTrip: JSON.parse(localStorage.getItem('trip_pack_trip_current') || "[]")
+    };
+
+    localStorage.setItem('trip_sync_backup', JSON.stringify(backup));
+
+    // 勾選狀態
+    const useExp  = document.getElementById('sync-recv-exp').checked;
+    const usePack = document.getElementById('sync-recv-pack').checked;
+    const useFav  = document.getElementById('sync-recv-fav').checked;
+
+    // ===== 覆蓋資料層 =====
+
+    if (useExp) {
+        const newExp = pendingSyncData.expenses || [];
+        localStorage.setItem('trip_v2026', JSON.stringify(newExp));
+        expenses = newExp;
     }
+
+    if (useFav) {
+        const newFav = pendingSyncData.favorites || [];
+        localStorage.setItem('trip_favorites', JSON.stringify(newFav));
+        favorites = newFav;
+    }
+
+if (usePack) {
+
+    const newPackTemplate = pendingSyncData.packingTemplate;
+    const newPackTrip = pendingSyncData.packingTrip;
+    const newPackLegacy = pendingSyncData.packing;
+
+    // 新結構
+    if (Array.isArray(newPackTemplate) && Array.isArray(newPackTrip)) {
+
+        localStorage.setItem('trip_pack_template', JSON.stringify(newPackTemplate));
+        localStorage.setItem('trip_pack_trip_current', JSON.stringify(newPackTrip));
+
+    }
+    // 舊結構向下相容
+    else if (Array.isArray(newPackLegacy)) {
+
+        localStorage.setItem('trip_pack_template', JSON.stringify(newPackLegacy));
+        localStorage.setItem('trip_pack_trip_current', JSON.stringify(newPackLegacy));
+        localStorage.setItem('trip_pack_cat', JSON.stringify(newPackLegacy));
+
+    }
+
+    initPacking();
+}
+
+    // ===== 重新渲染 =====
+    if (typeof renderFavorites === "function") renderFavorites();
+    if (typeof renderTopMarked === "function") renderTopMarked();
+    if (typeof renderPackList === "function") renderPackList();
+    if (typeof render === "function") render();
+    if (typeof refreshHotelBar === "function") refreshHotelBar();
+
+// 組合 summary
+let summaryText = "";
+
+if (useExp) {
+    summaryText += `記帳 ${expenses.length} 筆 `;
+}
+if (usePack) {
+    const packTrip = JSON.parse(localStorage.getItem('trip_pack_trip_current') || "[]");
+    summaryText += `行李 ${packTrip.length} 項 `;
+}
+if (useFav) {
+    summaryText += `收藏 ${favorites.length} 項 `;
+}
+
+saveSyncLog("import", "success", summaryText.trim());
+updateLocalSummary();
+// 啟用復原按鈕
+const undoBtn = document.getElementById('sync-undo-btn');
+if (undoBtn) undoBtn.disabled = false;
+
+if (arguments[0]) {
+  const btn = arguments[0];
+
+  btn.classList.add("is-success");
+  btn.disabled = true;
+
+setTimeout(() => {
+  btn.classList.remove("is-success");
+  btn.disabled = false;
+}, 1500);
+}
+}
+// ===== 同步紀錄系統 =====
+
+function getSyncLogs() {
+    return JSON.parse(localStorage.getItem('trip_sync_logs') || "[]");
+}
+
+function saveSyncLog(type, status, summary) {
+
+    let logs = getSyncLogs();
+
+    logs.unshift({
+        type: type,              // import / export
+        status: status,          // success / fail
+        summary: summary || "",
+        time: new Date().toISOString()
+    });
+
+    // 只保留 3 筆
+    logs = logs.slice(0, 3);
+
+    localStorage.setItem('trip_sync_logs', JSON.stringify(logs));
+
+    renderSyncLogs();
+    updateLastSyncStatus();
+}
+function updateLocalSummary() {
+
+    const exp = JSON.parse(localStorage.getItem('trip_v2026') || "[]");
+    const fav = JSON.parse(localStorage.getItem('trip_favorites') || "[]");
+    const packTemplate = JSON.parse(localStorage.getItem('trip_pack_template') || "[]");
+    const packTrip = JSON.parse(localStorage.getItem('trip_pack_trip_current') || "[]");
+
+    const el = document.getElementById('sync-local-summary');
+    if (!el) return;
+
+    el.innerText =
+        `本機資料：記帳 ${exp.length}｜行李模板 ${packTemplate.length}｜本次行李 ${packTrip.length}｜收藏 ${fav.length}`;
+}
+function renderSyncLogs() {
+
+    const logs = getSyncLogs();
+    const container = document.getElementById('sync-log-list');
+
+    if (!container) return;
+
+    if (!logs.length) {
+        container.innerHTML = "尚無同步紀錄";
+        return;
+    }
+
+    let html = "";
+
+    logs.forEach(log => {
+
+        const time = new Date(log.time);
+        const timeStr = time.toLocaleString();
+
+        const icon = log.status === "success" ? "✔" : "✖";
+        const typeText = log.type === "import" ? "匯入" : "匯出";
+
+        html += `${icon} ${timeStr} ${typeText} ${log.summary}<br>`;
+    });
+
+    container.innerHTML = html;
+}
+
+function updateLastSyncStatus() {
+
+    const logs = getSyncLogs();
+    if (!logs.length) return;
+
+    const latest = logs[0];
+    const time = new Date(latest.time);
+
+    const timeEl = document.getElementById('sync-last-time');
+    const statusEl = document.getElementById('sync-last-status');
+
+    if (!timeEl || !statusEl) return;
+
+    timeEl.innerText = time.toLocaleString();
+
+    statusEl.innerText =
+        latest.status === "success"
+            ? `✔ ${latest.type === "import" ? "匯入成功" : "匯出成功"}`
+            : "✖ 同步失敗";
+}
+function undoSync() {
+
+    const backupRaw = localStorage.getItem('trip_sync_backup');
+    if (!backupRaw) return;
+
+    if (!confirm("確定要復原到同步前的版本嗎？")) return;
+
+    const backup = JSON.parse(backupRaw);
+
+    // 還原資料
+    expenses = backup.expenses || [];
+    favorites = backup.favorites || [];
+
+    localStorage.setItem('trip_v2026', JSON.stringify(expenses));
+    localStorage.setItem('trip_favorites', JSON.stringify(favorites));
+
+    localStorage.setItem('trip_pack_template', JSON.stringify(backup.packingTemplate || []));
+    localStorage.setItem('trip_pack_trip_current', JSON.stringify(backup.packingTrip || []));
+
+    initPacking();
+
+    // 重新渲染
+    if (typeof renderFavorites === "function") renderFavorites();
+    if (typeof renderTopMarked === "function") renderTopMarked();
+    if (typeof renderPackList === "function") renderPackList();
+    if (typeof render === "function") render();
+    if (typeof refreshHotelBar === "function") refreshHotelBar();
+
+    saveSyncLog("import", "success", "復原上一版");
+    updateLocalSummary();
+    alert("已復原到同步前版本");
+
+    // 復原後關閉按鈕（避免重複復原）
+    const undoBtn = document.getElementById('sync-undo-btn');
+    if (undoBtn) undoBtn.disabled = true;
+
+    localStorage.removeItem('trip_sync_backup');
+}
+// 🔄 匯出同步代碼
+function toggleSyncPill(btn, checkboxId) {
+  const cb = document.getElementById(checkboxId);
+  if (!cb) return;
+
+  cb.checked = !cb.checked;
+  btn.classList.toggle('active', cb.checked);
+}
+function analyzeShareContent() {
+
+  const useExp  = document.getElementById('sync-share-exp')?.checked;
+  const usePack = document.getElementById('sync-share-pack')?.checked;
+  const useFav  = document.getElementById('sync-share-fav')?.checked;
+
+  const expenses = JSON.parse(localStorage.getItem('trip_v2026')) || [];
+  const favorites = JSON.parse(localStorage.getItem('trip_favorites')) || [];
+  const packingTemplate = JSON.parse(localStorage.getItem('trip_pack_template')) || [];
+  const packingTrip = JSON.parse(localStorage.getItem('trip_pack_trip_current')) || [];
+
+  let html = "<div class='fw-bold mb-2'>將分享：</div>";
+
+  if (useExp) html += `✓ 記帳 ${expenses.length} 筆<br>`;
+  if (usePack) {
+    html += `✓ 行李模板 ${packingTemplate.length} 項<br>`;
+    html += `✓ 本次行李 ${packingTrip.length} 項<br>`;
+  }
+  if (useFav) html += `✓ 收藏 ${favorites.length} 項<br>`;
+
+  if (!useExp && !usePack && !useFav) {
+    html += "（未選擇任何內容）";
+  }
+
+  document.getElementById('sync-share-preview').innerHTML = html;
+  document.getElementById('sync-share-actions').classList.remove('d-none');
+}
+
+function cancelSharePreview() {
+  document.getElementById('sync-share-preview').innerHTML =
+    "（已取消）";
+  document.getElementById('sync-share-actions').classList.add('d-none');
+}
+function confirmShareGenerate(btn) {
+
+  const useExp  = document.getElementById('sync-share-exp')?.checked;
+  const usePack = document.getElementById('sync-share-pack')?.checked;
+  const useFav  = document.getElementById('sync-share-fav')?.checked;
+
+  const favorites = useFav
+      ? (JSON.parse(localStorage.getItem('trip_favorites')) || [])
+      : [];
+
+  const expenses = useExp
+      ? (JSON.parse(localStorage.getItem('trip_v2026')) || [])
+      : [];
+
+  const packingTemplate = usePack
+      ? (JSON.parse(localStorage.getItem('trip_pack_template')) || [])
+      : [];
+
+  const packingTrip = usePack
+      ? (JSON.parse(localStorage.getItem('trip_pack_trip_current')) || [])
+      : [];
+
+  const data = {
+    favorites,
+    expenses,
+    packingTemplate,
+    packingTrip,
+    packing: packingTrip
+  };
+
+  const code = btoa(encodeURIComponent(JSON.stringify(data)));
+
+  navigator.clipboard.writeText(code).then(() => {
+
+    // 同步紀錄
+    let summaryText = "";
+    if (useExp) summaryText += `記帳 ${expenses.length} 筆 `;
+    if (usePack) summaryText += `行李 ${packingTrip.length} 項 `;
+    if (useFav) summaryText += `收藏 ${favorites.length} 項`;
+
+    saveSyncLog("export", "success", summaryText.trim());
+
+// 按鈕狀態切換（平滑版本）
+btn.classList.add("is-success");
+btn.disabled = true;
+
+setTimeout(() => {
+  btn.classList.remove("is-success");
+  btn.disabled = false;
+}, 1500);
+
+  }).catch(() => {
+    alert("複製失敗，請手動複製");
+  });
 }
 // --- 收藏清單 ---
 let favorites = JSON.parse(localStorage.getItem('trip_favorites')) || [];
@@ -4303,7 +4839,7 @@ function renderFavorites() {
 
 // ➕ 新增地點（icon 版，放在右上角跟編輯刪除同一排）
 const addItemIconBtn = document.createElement('button');
-addItemIconBtn.className = "btn btn-sm fav-icon fav-add-icon";
+addItemIconBtn.className = "btn btn-sm btn-icon-mini fav-add-icon";
 addItemIconBtn.innerHTML = `<i class="fas fa-plus"></i>`;
 addItemIconBtn.title = "新增地點";
 addItemIconBtn.onclick = (e) => {
@@ -4313,7 +4849,7 @@ addItemIconBtn.onclick = (e) => {
 btnGroup.appendChild(addItemIconBtn);
 
         const editBtn = document.createElement('button');
-        editBtn.className = "btn btn-sm fav-icon";
+        editBtn.className = "btn btn-sm btn-icon-mini";
         editBtn.innerHTML = `<i class="fas fa-pen"></i>`;
         editBtn.onclick = (e) => {
             e.stopPropagation(); // 防止觸發標題點擊
@@ -4327,7 +4863,7 @@ btnGroup.appendChild(addItemIconBtn);
         btnGroup.appendChild(editBtn);
 
         const delBtn = document.createElement('button');
-        delBtn.className = "btn btn-sm text-danger p-0 fav-icon";
+        delBtn.className = "btn btn-sm btn-icon-mini text-danger";
         delBtn.innerHTML = `<i class="fas fa-trash-alt"></i>`;
         delBtn.onclick = (e) => { 
             e.stopPropagation(); 
@@ -4350,7 +4886,7 @@ itemDiv.id = `fav-${fav.id}-item-${item.id}`; // ⭐ 給 jumpToFavoriteItem 用
 
             // 標記按鈕
             const markBtn = document.createElement('button');
-            markBtn.className = "btn btn-sm fav-icon mark-icon";
+            markBtn.className = "btn btn-sm btn-icon-mini mark-icon";
             markBtn.innerHTML = `<i class="${item.tempMark ? "fas" : "far"} fa-bookmark"></i>`;
             markBtn.onclick = () => {
                 item.tempMark = !item.tempMark;
@@ -4365,7 +4901,7 @@ itemDiv.id = `fav-${fav.id}-item-${item.id}`; // ⭐ 給 jumpToFavoriteItem 用
 
             // 編輯細項
             const editItemBtn = document.createElement('button');
-            editItemBtn.className = "btn btn-sm fav-icon";
+            editItemBtn.className = "btn btn-sm btn-icon-mini";
             editItemBtn.innerHTML = `<i class="fas fa-pen"></i>`;
 editItemBtn.onclick = () => {
     const newName = prompt("編輯地點名稱", item.name);
@@ -4398,7 +4934,7 @@ editItemBtn.onclick = () => {
 };
             // 刪除細項
             const removeItemBtn = document.createElement('button');
-            removeItemBtn.className = "btn btn-sm text-muted p-0 fav-icon";
+            removeItemBtn.className = "btn btn-sm btn-icon-mini text-muted";
             removeItemBtn.innerText = "×";
             removeItemBtn.onclick = () => {
                 fav.items = fav.items.filter(i => i.id !== item.id);
@@ -4513,17 +5049,60 @@ function removeFavorite(id) {
 
 // --- 初始渲染 ---
 renderFavorites();
+
 // 4. 只有一個 onload，確保所有事情都在這裡發生
 window.onload = function() {
     const savedTheme = localStorage.getItem('trip_theme');
     if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
+        updateThemeIcon(savedTheme);
     }
+
     initializePage();
     updateClocks(); // 確保頁面一打開就顯示時間
+
+    // ✅ 新增：同步中心 Tab 初始化（預設顯示「我要分享」）
+    initSyncCenterUI();
 };
+
 initScrollSpy();
+
+function initSyncCenterUI() {
+  // 如果這頁沒有同步中心，就直接不做事（避免其他頁報錯）
+  const tabShare = document.getElementById('sync-tab-share');
+  const tabRecv  = document.getElementById('sync-tab-receive');
+  const paneShare = document.getElementById('sync-pane-share');
+  const paneRecv  = document.getElementById('sync-pane-receive');
+
+  if (!tabShare || !tabRecv || !paneShare || !paneRecv) return;
+
+  function setActive(which) {
+    const isShare = (which === 'share');
+
+    // 顯示/隱藏 pane（不靠 CSS，先用 display 控制）
+    paneShare.style.display = isShare ? 'block' : 'none';
+    paneRecv.style.display  = isShare ? 'none' : 'block';
+
+    // 按鈕樣式：沿用你行李頁的語義（btn-dark = 選中）
+    tabShare.classList.toggle('btn-dark', isShare);
+    tabShare.classList.toggle('btn-secondary-soft', !isShare);
+
+    tabRecv.classList.toggle('btn-dark', !isShare);
+    tabRecv.classList.toggle('btn-secondary-soft', isShare);
+
+    // 無障礙（不用懂）：讓瀏覽器知道哪個被按下
+    tabShare.setAttribute('aria-pressed', String(isShare));
+    tabRecv.setAttribute('aria-pressed', String(!isShare));
+  }
+
+  // 點 tab 切換
+  tabShare.addEventListener('click', () => setActive('share'));
+  tabRecv.addEventListener('click',  () => setActive('receive'));
+
+  // 預設先顯示「我要分享」
+  setActive('share');
+}
+
 function fallbackCopy(text) {
     const textarea = document.createElement("textarea");
     textarea.value = text;
