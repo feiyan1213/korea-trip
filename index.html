@@ -69,13 +69,13 @@
 html[data-theme="dark"]{
   /* Night */
   --bg:#121416;         /* 深墨夜 */
-  --surface:#1C1F23;    /* 深石板卡 */
-  --surface-2:#252A2F;  /* 略亮石板層 */
-  --border:#2F363D;     /* 深灰邊線 */
+  --surface:#1A1A1A;    /* 深石板卡 */
+  --surface-2:#222222;  /* 略亮石板層 */
+  --border:#2C2C2C;     /* 深灰邊線 */
 
   --text-1:#E6E8EA;     /* 柔白 */
-  --text-2:#A7B0B8;     /* 霧灰 */
-  --text-3:#6B7680;     /* 深霧灰 */
+  --text-2:#B8B8B8;     /* 霧灰 */
+  --text-3:#8C8C8C;     /* 深霧灰 */
 
   /* brand/sand 在暗色不變：保持品牌一致 */
   --brand:#6B8A9A;
@@ -89,7 +89,7 @@ html[data-theme="dark"]{
   --bs-primary: var(--brand);
   --bs-primary-rgb: 107,138,154;
   /* ===== Component tokens (Night) ===== */
-  --ink-rgb: 230,235,240;          /* 用亮字去做透明白感 */
+  --ink-rgb: 235,235,235;          /* 用亮字去做透明白感 */
   --pill-bg: rgba(255,255,255,.06);
   --pill-bg-hover: rgba(255,255,255,.10);
   --pill-bd: rgba(255,255,255,.14);
@@ -208,8 +208,6 @@ header{
 }
 /* =========================
    3) Today pill
-   - 路線 B：不新增 token，不做玻璃特例
-   - 顏色收斂到既有：pill / text / border / shadow
 ========================= */
 #todayBtn{
   width:auto; height:20px; padding:0 10px;
@@ -219,18 +217,16 @@ header{
 
   border-radius:999px;
 
-  /* ✅ token 化：不用寫死 rgba/#666 */
   border:1px solid var(--pill-bd);
-  background-color:var(--pill-bg);
+  background-color:var(--surface);
   color:var(--pill-fg);
-
-  /* ✅ 路線 B：不做玻璃感（避免 blur / rgba 白底） */
+backdrop-filter: blur(4px);
+-webkit-backdrop-filter: blur(4px);
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
 
   white-space:nowrap;
 
-  /* ✅ 用既有 shadow token（避免 rgba(0,0,0,...)） */
   box-shadow:var(--shadow-1);
 
   transition:background-color .5s ease,color .5s ease,border-color .5s ease,box-shadow .5s ease,transform .15s ease;
