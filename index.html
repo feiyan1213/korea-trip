@@ -1040,6 +1040,7 @@ color: var(--bs-primary);
   transform: scale(1);
 color: var(--bs-primary);
 }
+
 /* =========================
    ✅ Button 系統：次要按鈕（本站語義）
    class: .btn-secondary-soft
@@ -1381,7 +1382,7 @@ color: var(--bs-primary);
 .pay-pill:active{ transform:scale(.98); }
 
 .pay-pill.active{
-  background:var(--pill-bg-hover);
+  background:rgba(var(--bs-primary-rgb), .35);
   border-color:var(--pill-bd-strong);
 }
 
@@ -2909,8 +2910,15 @@ html[data-theme="dark"]
 
       <!-- 你選的 1A：復原上一版（先放位置；下一步接功能）
            先 disabled，避免現在按了沒作用 -->
-      <button type="button" class="btn btn-sm btn-secondary-soft w-100" id="sync-undo-btn" onclick="undoSync()" disabled>
-  復原上一版（同步前備份）
+<button type="button"
+        class="btn btn-sm btn-secondary-soft w-100 sync-confirm-btn"
+        id="sync-undo-btn"
+        onclick="undoSync()"
+        disabled>
+
+  <span class="btn-label-default">復原上一版（同步前備份）</span>
+  <span class="btn-label-success">✓ 已復原</span>
+
 </button>
     </div>
 
@@ -4209,11 +4217,13 @@ let pendingSyncData = null;
 function analyzeSyncContent() {
 
     const input = document.getElementById('sync-code-input');
-    if (!input || !input.value.trim()) {
-        alert("請先貼上同步碼");
-        return;
+if (!input || !input.value.trim()) {
+    const preview = document.getElementById('sync-recv-preview');
+    if (preview) {
+        preview.innerHTML = "<span class='small' style='color: var(--danger-fg);'>請先貼上同步碼</span>";
     }
-
+    return;
+}
     try {
         const decoded = JSON.parse(decodeURIComponent(atob(input.value.trim())));
 
@@ -4274,11 +4284,18 @@ if (!hasChange) {
 
         pendingSyncData = decoded;
 
-    } catch (e) {
-        console.error(e);
-saveSyncLog("import", "fail", "代碼無效");
-alert("❌ 代碼無效，請確認完整貼上");
+    } 
+catch (e) {
+    console.error(e);
+    saveSyncLog("import", "fail", "代碼無效");
+
+    const preview = document.getElementById('sync-recv-preview');
+    if (preview) {
+        preview.innerHTML = "<span class='small' style='color: var(--danger-fg);'>❌ 代碼無效，請確認完整貼上</span>";
     }
+
+    document.getElementById('sync-recv-actions')?.classList.add('d-none');
+}
 }
 
 
@@ -4457,7 +4474,14 @@ function renderSyncLogs() {
         const icon = log.status === "success" ? "✔" : "✖";
         const typeText = log.type === "import" ? "匯入" : "匯出";
 
-        html += `${icon} ${timeStr} ${typeText} ${log.summary}<br>`;
+html += `
+  <div class="mb-2">
+    <div>${icon} ${timeStr}</div>
+    <div class="small text-muted ms-3">
+      ${typeText} ${log.summary}
+    </div>
+  </div>
+`;
     });
 
     container.innerHTML = html;
@@ -4513,12 +4537,17 @@ function undoSync() {
 
     saveSyncLog("import", "success", "復原上一版");
     updateLocalSummary();
-    alert("已復原到同步前版本");
+const undoBtn = document.getElementById('sync-undo-btn');
 
-    // 復原後關閉按鈕（避免重複復原）
-    const undoBtn = document.getElementById('sync-undo-btn');
-    if (undoBtn) undoBtn.disabled = true;
+if (undoBtn) {
+  undoBtn.classList.add("is-success");
+  undoBtn.disabled = true;
 
+  setTimeout(() => {
+    undoBtn.classList.remove("is-success");
+    undoBtn.disabled = false;
+  }, 1500);
+}
     localStorage.removeItem('trip_sync_backup');
 }
 // 🔄 匯出同步代碼
