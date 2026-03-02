@@ -4225,7 +4225,7 @@ function analyzeSyncContent() {
         const recvFav  = decoded.favorites || [];
         const recvPackTemplate = decoded.packingTemplate || [];
         const recvPackTrip = decoded.packingTrip || [];
-
+const generatedAt = decoded.generatedAt || null;
         // 本機資料
         const localExp = expenses || [];
         const localFav = favorites || [];
@@ -4263,7 +4263,10 @@ if (usePack && (
 if (useFav && localFav.length !== recvFav.length) hasChange = true;
 
 previewHtml += "<hr class='my-2'>";
-
+if (generatedAt) {
+    const dateStr = new Date(generatedAt).toLocaleString();
+    previewHtml += `<div class='small text-muted mt-1'>此同步碼產生時間：${dateStr}</div>`;
+}
 if (!hasChange) {
     previewHtml += "<div class='text-success'>✓ 與目前資料相同</div>";
 } else {
@@ -4590,7 +4593,8 @@ function confirmShareGenerate(btn) {
     expenses,
     packingTemplate,
     packingTrip,
-    packing: packingTrip
+    packing: packingTrip,
+generatedAt: new Date().toISOString()
   };
 
   const code = btoa(encodeURIComponent(JSON.stringify(data)));
