@@ -1385,7 +1385,41 @@ color: var(--bs-primary);
   background:rgba(var(--bs-primary-rgb), .35);
   border-color:var(--pill-bd-strong);
 }
+/* 匯率修改 Ghost Mini Button */
+#budget .btn-rate-edit{
+  background: transparent;
+  border: 1px solid var(--pill-bd);
+  color: var(--pill-fg);
 
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: .7rem;
+  font-weight: 600;
+  line-height: 1.2;
+
+  cursor: pointer;
+  transition:
+    background-color .2s ease,
+    border-color .2s ease,
+    color .2s ease,
+    transform .12s ease;
+}
+
+#budget .btn-rate-edit:hover{
+  background: var(--pill-bg);
+  border-color: var(--pill-bd-strong);
+  color: var(--pill-fg-strong);
+}
+
+#budget .btn-rate-edit:active{
+  transform: scale(.95);
+}
+
+#budget .btn-rate-edit.active{
+  background: rgba(var(--bs-primary-rgb), .12);
+  border-color: rgba(var(--bs-primary-rgb), .35);
+  color: var(--text-1);
+}
 /* 今日卡頭（日期＋今日總額） */
 .budget-today-head{
   display:flex;
@@ -2599,9 +2633,21 @@ html[data-theme="dark"]
     </div>
 
     <!-- 匯率顯示（即時/離線提示 + 手動備援只顯示目前幣別） -->
-    <div class="small text-muted rate-hint" id="rateHint">
-      匯率：載入中…
-    </div>
+<div id="rateHint"
+     class="small text-muted rate-hint d-flex justify-content-between align-items-center">
+
+  <span id="rateHintText">
+    匯率：載入中…
+  </span>
+
+<button id="rateEditBtn"
+        type="button"
+        class="btn-rate-edit"
+        onclick="toggleManualRate(event)">
+  修改
+</button>
+  </span>
+</div>
     <div id="manualRateWrap" style="display:none;" class="mt-2">
       <div class="input-group input-group-sm">
         <span class="input-group-text" id="manualRateLabel">CHF→TWD</span>
@@ -3087,13 +3133,31 @@ function setPayMethod(pay, btnEl){
     if (t) t.classList.add('active');
   }
 }
+function toggleManualRate(ev){
+  if (ev) ev.stopPropagation();
 
+  const wrap = document.getElementById('manualRateWrap');
+  const btn  = document.getElementById('rateEditBtn');
+  if (!wrap || !btn) return;
+
+  const isOpen = (wrap.style.display === 'block');
+
+  if (isOpen){
+    wrap.style.display = 'none';
+    btn.innerText = "修改";
+    btn.classList.remove('active');
+  } else {
+    wrap.style.display = 'block';
+    btn.innerText = "收起";
+    btn.classList.add('active');
+  }
+}
 // 匯率提示 UI
 function updateRateHintUI(){
+
   const curr = document.getElementById('exp-curr')?.value || 'TWD';
-  const hint = document.getElementById('rateHint');
+  const hint = document.getElementById('rateHintText');
   const manualWrap = document.getElementById('manualRateWrap');
-  const manualLabel = document.getElementById('manualRateLabel');
   const manualInput = document.getElementById('manualRateInput');
 
   if (!hint) return;
@@ -3105,33 +3169,35 @@ function updateRateHintUI(){
   }
 
   const r = rates[curr];
-const t = fmtHHMM(lastRateFetchedAt);
-const tLabel = t ? `（最後更新 ${t}）` : "";
+  const manual = parseFloat(manualInput?.value);
+  const t = fmtHHMM(lastRateFetchedAt);
+  const tLabel = t ? `（最後更新 ${t}）` : "";
 
-if (ratesStatus === 'loading') {
-
-  hint.innerText = "匯率：更新中…";
-  if (manualWrap) manualWrap.style.display = 'none';
-
-} else if (ratesStatus === 'ok' && r) {
-
-  hint.innerText = `匯率：${curr} → TWD ${r.toFixed(2)}${tLabel}`;
-  if (manualWrap) manualWrap.style.display = 'none';
-
-} else {
-
-  hint.innerText = `匯率：目前無法取得（離線/失敗）— 可用手動備援${tLabel}`;
-  if (manualWrap) {
-    manualWrap.style.display = 'block';
-    if (manualLabel) manualLabel.innerText = `${curr}→TWD`;
-    if (manualInput){
-      const saved = localStorage.getItem(`trip_budget_manual_rate_${curr}`);
-      if (saved && manualInput.value === '') manualInput.value = saved;
-    }
+  // ① 有手動值 → 永遠顯示手動
+  if (Number.isFinite(manual) && manual > 0){
+    hint.innerText = `匯率：${curr} → TWD ${manual.toFixed(2)}（手動）`;
+    if (manualWrap) manualWrap.style.display = 'block';
+    return;
   }
 
+  // ② 有匯率數值（即時或快取）
+  if (Number.isFinite(r)){
+    if (ratesStatus === "ok"){
+      hint.innerText = `匯率：${curr} → TWD ${r.toFixed(2)}${tLabel}`;
+    } else {
+      hint.innerText = `匯率：${curr} → TWD ${r.toFixed(2)}${tLabel}｜離線`;
+    }
+
+    // 不強制顯示手動
+    if (manualWrap) manualWrap.style.display = 'none';
+    return;
+  }
+
+  // ③ 無匯率（唯一強制情況）
+  hint.innerText = `匯率：目前無法取得（離線）`;
+  if (manualWrap) manualWrap.style.display = 'block';
 }
-}
+
 
 // 抓匯率（進入頁面抓一次；想更新才按按鈕）
 async function refreshRates(showToast = false){
@@ -3202,7 +3268,7 @@ if (showToast) {
   updateRateHintUI();
 
   if (showToast) {
-    const hint = document.getElementById('rateHint');
+    const hint = document.getElementById('rateHintText');
     if (hint) {
       const original = hint.innerText;
 
@@ -3231,36 +3297,57 @@ function addExp(){
 
   const amt = parseFloat(amtRaw);
 
-  if (!Number.isFinite(amt) || amt <= 0){
-    alert("請輸入正確金額");
-    return;
+if (!Number.isFinite(amt) || amt <= 0){
+
+  const input = document.getElementById('exp-amt');
+  if (input){
+    input.classList.add('is-invalid');
+
+    setTimeout(() => {
+      input.classList.remove('is-invalid');
+    }, 1500);
   }
 
-  // 決定這筆使用的匯率
-  let rateAtSave = 1; // TWD
-  let rateSource = "auto";
+  return;
+}
+// 決定這筆使用的匯率
+let rateAtSave = 1; // TWD
+let rateSource = "auto";
 
-  if (curr !== 'TWD'){
-    const r = ratesStatus === "ok" ? rates[curr] : null;
+if (curr !== 'TWD'){
 
-    if (r && Number.isFinite(r)){
-      rateAtSave = r;
-      rateSource = "auto";
-    } else {
-      // 離線備援：只顯示目前幣別那一格
-      const manualInput = document.getElementById('manualRateInput');
-      const manual = parseFloat(manualInput?.value);
+  const manualInput = document.getElementById('manualRateInput');
+  const manual = parseFloat(manualInput?.value);
 
-      if (!Number.isFinite(manual) || manual <= 0){
-        alert(`目前無法取得即時匯率，請先輸入 ${curr}→TWD 的手動匯率`);
-        return;
-      }
-      rateAtSave = manual;
-      rateSource = "manual";
-      localStorage.setItem(`trip_budget_manual_rate_${curr}`, String(manual));
-    }
+  // ① 若有手動輸入 → 永遠優先使用
+  if (Number.isFinite(manual) && manual > 0){
+    rateAtSave = manual;
+    rateSource = "manual";
+    localStorage.setItem(`trip_budget_manual_rate_${curr}`, String(manual));
+  } 
+  // ② 否則只要有匯率數值（即時或快取）就用
+  else if (Number.isFinite(rates[curr])){
+    rateAtSave = rates[curr];
+    rateSource = (ratesStatus === "ok") ? "auto" : "cache";
+  } 
+  // ③ 真的沒有匯率才強制手動
+  else {
+const hintText = document.getElementById('rateHintText');
+if (hintText){
+  const original = hintText.innerText;
+
+  hintText.innerText = `請輸入 ${curr}→TWD 手動匯率`;
+  hintText.style.color = "var(--danger-fg)";
+
+  setTimeout(() => {
+    hintText.innerText = original;
+    hintText.style.color = "";
+  }, 2000);
+}
+
+return;
   }
-
+}
   const twdAtSave = (curr === 'TWD') ? amt : (amt * rateAtSave);
 
   const now = new Date();
@@ -3460,8 +3547,26 @@ function setPopoverDateInput(popEl, ymd){
 
 function saveEditedDay(expId, newDay){
   if (!isValidYMD(newDay)){
-    alert("日期格式請用 YYYY-MM-DD（例如 2026-09-10）");
-    return;
+const pop = document.querySelector('.budget-popover');
+if (pop){
+
+  let msg = pop.querySelector('.pop-error');
+
+  if (!msg){
+    msg = document.createElement('div');
+    msg.className = 'pop-error small mt-1';
+    msg.style.color = 'var(--danger-fg)';
+    pop.appendChild(msg);
+  }
+
+  msg.innerText = "日期格式請用 YYYY-MM-DD";
+
+  setTimeout(() => {
+    if (msg) msg.innerText = "";
+  }, 2000);
+}
+
+return;
   }
   const idx = expenses.findIndex(e => e.id === expId);
   if (idx < 0) return;
