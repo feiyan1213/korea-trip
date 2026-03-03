@@ -2590,10 +2590,10 @@ html[data-theme="dark"]
     <!-- 幣別 + 金額 -->
     <div class="input-group input-group-sm mb-2">
       <select id="exp-curr" class="form-select exp-curr" onchange="onBudgetCurrencyChange()">
-        <option value="TWD">TWD</option>
         <option value="CHF">CHF</option>
         <option value="EUR">EUR</option>
         <option value="HKD">HKD</option>
+        <option value="TWD">TWD</option>
       </select>
       <input type="number" id="exp-amt" class="form-control" placeholder="金額">
     </div>
@@ -3108,11 +3108,18 @@ function updateRateHintUI(){
 const t = fmtHHMM(lastRateFetchedAt);
 const tLabel = t ? `（最後更新 ${t}）` : "";
 
-if (ratesStatus === 'ok' && r){
+if (ratesStatus === 'loading') {
+
+  hint.innerText = "匯率：更新中…";
+  if (manualWrap) manualWrap.style.display = 'none';
+
+} else if (ratesStatus === 'ok' && r) {
+
   hint.innerText = `匯率：${curr} → TWD ${r.toFixed(2)}${tLabel}`;
   if (manualWrap) manualWrap.style.display = 'none';
+
 } else {
-  // ✅ 離線/失敗時：如果有快取時間，也顯示最後更新
+
   hint.innerText = `匯率：目前無法取得（離線/失敗）— 可用手動備援${tLabel}`;
   if (manualWrap) {
     manualWrap.style.display = 'block';
@@ -3122,6 +3129,7 @@ if (ratesStatus === 'ok' && r){
       if (saved && manualInput.value === '') manualInput.value = saved;
     }
   }
+
 }
 }
 
@@ -3151,8 +3159,20 @@ async function refreshRates(showToast = false){
       rates
     }));
 
-    if (showToast) alert('✅ 匯率已更新（僅影響新紀錄）');
-  }catch(e){
+if (showToast) {
+  const hint = document.getElementById('rateHint');
+  if (hint) {
+    const original = hint.innerText;
+    hint.innerText = "✓ 匯率已更新（僅影響新紀錄）";
+    hint.style.color = "var(--bs-primary)";
+    setTimeout(() => {
+      hint.innerText = original;
+      hint.style.color = "";
+    }, 1500);
+  }
+}
+  }
+catch(e){
     // 失敗：嘗試用 cache 顯示（但仍視為 offline，新增時若非 TWD 會出手動備援）
     ratesStatus = "offline";
 
@@ -3164,11 +3184,43 @@ async function refreshRates(showToast = false){
       }catch(_){}
     }
 
-    if (showToast) alert('⚠️ 無法獲取即時匯率（可用手動備援繼續記帳）');
-  }finally{
-    updateRateHintUI();
+if (showToast) {
+  const hint = document.getElementById('rateHint');
+  if (hint) {
+    const original = hint.innerText;
+    hint.innerText = "⚠ 無法獲取即時匯率（可用手動備援繼續記帳）";
+    hint.style.color = "var(--danger-fg)";
+    setTimeout(() => {
+      hint.innerText = original;
+      hint.style.color = "";
+    }, 2000);
   }
 }
+} finally {
+
+  // 先更新成正常匯率顯示
+  updateRateHintUI();
+
+  if (showToast) {
+    const hint = document.getElementById('rateHint');
+    if (hint) {
+      const original = hint.innerText;
+
+      hint.innerText = ratesStatus === "ok"
+        ? "✓ 匯率已更新（僅影響新紀錄）"
+        : "⚠ 無法獲取即時匯率（可用手動備援）";
+
+      hint.style.color = ratesStatus === "ok"
+        ? "var(--bs-primary)"
+        : "var(--danger-fg)";
+
+      setTimeout(() => {
+        hint.innerText = original;
+        hint.style.color = "";
+      }, 1500);
+    }
+  }
+}}
 
 // 新增記帳：鎖定匯率 + 鎖定換算 TWD
 function addExp(){
