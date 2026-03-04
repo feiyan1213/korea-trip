@@ -1414,11 +1414,42 @@ color: var(--bs-primary);
 #budget .btn-rate-edit:active{
   transform: scale(.95);
 }
+/* ===== 匯率刷新動畫 ===== */
+
+#budget .rate-refresh-icon{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+}
+
+#budget .rate-refresh-icon i,
+#budget .rate-refresh-icon .icon-success{
+  position: absolute;
+  transition:
+    opacity .3s ease,
+    transform .3s ease;
+}
+
+/* 旋轉動畫 */
+@keyframes spinRefresh{
+  from{ transform: rotate(0deg); }
+  to{ transform: rotate(360deg); }
+}
+
+#budget .is-spinning i{
+  animation: spinRefresh .8s linear;
+}
 
 #budget .btn-rate-edit.active{
   background: rgba(var(--bs-primary-rgb), .12);
   border-color: rgba(var(--bs-primary-rgb), .35);
   color: var(--text-1);
+}
+#rateHintText{
+  transition: opacity .25s ease, color .25s ease;
 }
 /* 今日卡頭（日期＋今日總額） */
 .budget-today-head{
@@ -2616,9 +2647,13 @@ html[data-theme="dark"]
   <div class="card-custom">
     <div class="d-flex justify-content-between align-items-center mb-2">
       <h6 class="fw-bold m-0">新增支出</h6>
-      <button id="rateRefreshBtn" class="btn btn-sm btn-icon-mini btn-rate-refresh" onclick="refreshRates(true)">
-        <i class="fas fa-sync-alt"></i>
-      </button>
+<button id="rateRefreshBtn"
+        class="btn btn-sm btn-icon-mini btn-rate-refresh"
+        onclick="refreshRates(true)">
+
+  <i class="fas fa-sync-alt"></i>
+
+</button>
     </div>
 
     <!-- 幣別 + 金額 -->
@@ -3181,13 +3216,12 @@ function updateRateHintUI(){
   }
 
   // ② 有匯率數值（即時或快取）
-  if (Number.isFinite(r)){
-    if (ratesStatus === "ok"){
-      hint.innerText = `匯率：${curr} → TWD ${r.toFixed(2)}${tLabel}`;
-    } else {
-      hint.innerText = `匯率：${curr} → TWD ${r.toFixed(2)}${tLabel}｜離線`;
-    }
-
+if (Number.isFinite(r)){
+  if (ratesStatus === "offline"){
+    hint.innerText = `匯率：${curr} → TWD ${r.toFixed(2)}${tLabel}｜離線`;
+  } else {
+    hint.innerText = `匯率：${curr} → TWD ${r.toFixed(2)}${tLabel}`;
+  }
     // 不強制顯示手動
     if (manualWrap) manualWrap.style.display = 'none';
     return;
@@ -3201,6 +3235,13 @@ function updateRateHintUI(){
 
 // 抓匯率（進入頁面抓一次；想更新才按按鈕）
 async function refreshRates(showToast = false){
+const btn = document.getElementById('rateRefreshBtn');
+if (btn){
+  btn.classList.remove('is-spinning');
+  void btn.offsetWidth; // 強制重繪，確保動畫能重播
+  btn.classList.add('is-spinning');
+}
+const spinStart = Date.now();
   ratesStatus = "loading";
   updateRateHintUI();
 
@@ -3224,18 +3265,9 @@ async function refreshRates(showToast = false){
       at: lastRateFetchedAt,
       rates
     }));
-
+updateRateHintUI();
 if (showToast) {
-  const hint = document.getElementById('rateHint');
-  if (hint) {
-    const original = hint.innerText;
-    hint.innerText = "✓ 匯率已更新（僅影響新紀錄）";
-    hint.style.color = "var(--bs-primary)";
-    setTimeout(() => {
-      hint.innerText = original;
-      hint.style.color = "";
-    }, 1500);
-  }
+  showRateToast("✓ 匯率已更新", "var(--bs-primary)");
 }
   }
 catch(e){
@@ -3249,45 +3281,38 @@ catch(e){
         if (parsed?.rates) rates = { ...rates, ...parsed.rates };
       }catch(_){}
     }
+updateRateHintUI();
 
 if (showToast) {
-  const hint = document.getElementById('rateHint');
-  if (hint) {
-    const original = hint.innerText;
-    hint.innerText = "⚠ 無法獲取即時匯率（可用手動備援繼續記帳）";
-    hint.style.color = "var(--danger-fg)";
-    setTimeout(() => {
-      hint.innerText = original;
-      hint.style.color = "";
-    }, 2000);
-  }
+  showRateToast("⚠ 無法取得即時匯率", "var(--danger-fg)");
 }
 } finally {
 
   // 先更新成正常匯率顯示
-  updateRateHintUI();
-
-  if (showToast) {
-    const hint = document.getElementById('rateHintText');
-    if (hint) {
-      const original = hint.innerText;
-
-      hint.innerText = ratesStatus === "ok"
-        ? "✓ 匯率已更新（僅影響新紀錄）"
-        : "⚠ 無法獲取即時匯率（可用手動備援）";
-
-      hint.style.color = ratesStatus === "ok"
-        ? "var(--bs-primary)"
-        : "var(--danger-fg)";
-
-      setTimeout(() => {
-        hint.innerText = original;
-        hint.style.color = "";
-      }, 1500);
-    }
-  }
 }}
+function showRateToast(message, color){
 
+  const hint = document.getElementById('rateHintText');
+  if (!hint) return;
+
+  hint.style.opacity = "0";
+
+  setTimeout(() => {
+    hint.innerText = message;
+    hint.style.color = color;
+    hint.style.opacity = "1";
+  }, 200);
+
+  setTimeout(() => {
+    hint.style.opacity = "0";
+  }, 1400);
+
+  setTimeout(() => {
+    hint.style.color = "";
+    updateRateHintUI();
+    hint.style.opacity = "1";
+  }, 1700);
+}
 // 新增記帳：鎖定匯率 + 鎖定換算 TWD
 function addExp(){
   const curr = document.getElementById('exp-curr').value;
