@@ -3196,7 +3196,10 @@ function updateRateHintUI(){
   const manualInput = document.getElementById('manualRateInput');
 
   if (!hint) return;
-
+if (ratesStatus === "loading") {
+  hint.innerText = "匯率載入中…";
+  return;
+}
   if (curr === 'TWD'){
     hint.innerText = `匯率：TWD`;
     if (manualWrap) manualWrap.style.display = 'none';
@@ -3229,7 +3232,7 @@ if (Number.isFinite(r)){
   }
 
   // ③ 無匯率（唯一強制情況）
-  hint.innerText = `匯率：目前無法取得<i class="fas fa-exclamation-circle"></i>`;
+  hint.innerHTML = `匯率：目前無法取得<i class="fas fa-exclamation-circle"></i>`;
   if (manualWrap) manualWrap.style.display = 'block';
 }
 
@@ -3266,9 +3269,10 @@ const spinStart = Date.now();
       at: lastRateFetchedAt,
       rates
     }));
-updateRateHintUI();
 if (showToast) {
   showRateToast("✓ 匯率已更新", "var(--bs-primary)");
+} else {
+  updateRateHintUI();
 }
   }
 catch(e){
