@@ -1,1 +1,6144 @@
-fas fa-exclamation-circle
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2026 德瑞瑞士之旅</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap">
+
+<style>
+/* =========================
+   0) Theme tokens (Color System)
+   - Step 1: 只建立色卡，不改元件
+========================= */
+:root{
+  /* Day */
+  --bg:#F6F7F5;         /* 淡紙色 */
+  --surface:#FFFFFF;    /* 純白紙卡 */
+  --surface-2:#EEF1F3;  /* 極淡霧灰 */
+  --border:#E4E7EB;     /* 淡冷灰邊線 */
+
+  --text-1:#1F2933;     /* 深石墨 */
+  --text-2:#52606D;     /* 霧灰藍 */
+  --text-3:#9AA5B1;     /* 淡霧灰 */
+
+  --brand:#6B8A9A;      /* 霧藍石（互動主色） */
+  --sand:#C9A46A;       /* 沙金（少量點綴） */
+
+  /* Legacy mapping（先讓舊 code 不中斷） */
+  --jp-wash: var(--bg);
+  --accent:  var(--text-1);
+  --highlight: var(--sand);
+
+  /* Bootstrap primary → brand */
+  --bs-primary: var(--brand);
+  /* Bootstrap 需要 rgb 數字，先手動填，之後若改 brand 再一起改這行即可 */
+  --bs-primary-rgb: 107,138,154;
+  /* ===== Component tokens (Day) ===== */
+  --ink-rgb: 31,41,51;            /* 近似 text-1，用於做透明灰藍的底 */
+  --pill-bg: rgba(var(--ink-rgb), .06);
+  --pill-bg-hover: rgba(var(--ink-rgb), .10);
+  --pill-bd: rgba(var(--ink-rgb), .14);
+  --pill-bd-strong: rgba(var(--ink-rgb), .22);
+  --pill-fg: var(--text-2);
+  --pill-fg-strong: var(--text-1);
+
+  --focus-ring: rgba(var(--bs-primary-rgb), .25);
+  /* Danger system (Day) */
+  --danger: #B42318;
+  --danger-rgb: 180,35,24;
+  --danger-fg: rgba(var(--danger-rgb), .80);
+  --danger-bg: rgba(var(--danger-rgb), .12);
+  --danger-bg-strong: rgba(var(--danger-rgb), .18);
+  --shadow-rgb: 0,0,0;
+  --shadow-1: 0 2px 6px rgba(var(--shadow-rgb), .10);
+  --shadow-2: 0 2px 8px rgba(var(--shadow-rgb), .12);
+  --shadow-3: 0 4px 15px rgba(var(--shadow-rgb), .10);
+  --shadow-3-top: 0 -4px 15px rgba(var(--shadow-rgb), .10);
+
+  --timeline-x:16px;
+  /* Bootstrap text system (Day) */
+  --bs-body-color: var(--text-1);
+  --bs-body-color-rgb: 31,41,51; /* 對應你的 --ink-rgb / text-1 */
+  --bs-secondary-color: var(--text-2); /* 讓 .text-muted / 次要字更可讀 */
+  --bs-tertiary-color: var(--text-3);  /* 更淡的提示字 */
+}
+
+html[data-theme="dark"]{
+  /* Night */
+  --bg:#121416;         /* 深墨夜 */
+  --surface:#1A1A1A;    /* 深石板卡 */
+  --surface-2:#222222;  /* 略亮石板層 */
+  --border:#2C2C2C;     /* 深灰邊線 */
+
+  --text-1:#E6E8EA;     /* 柔白 */
+  --text-2:#B8B8B8;     /* 霧灰 */
+  --text-3:#8C8C8C;     /* 深霧灰 */
+
+  /* brand/sand 在暗色不變：保持品牌一致 */
+  --brand:#6B8A9A;
+  --sand:#C9A46A;
+
+  /* Legacy mapping */
+  --jp-wash: var(--bg);
+  --accent:  var(--text-1);
+  --highlight: var(--sand);
+
+  --bs-primary: var(--brand);
+  --bs-primary-rgb: 107,138,154;
+  /* ===== Component tokens (Night) ===== */
+  --ink-rgb: 235,235,235;          /* 用亮字去做透明白感 */
+  --pill-bg: rgba(255,255,255,.06);
+  --pill-bg-hover: rgba(255,255,255,.10);
+  --pill-bd: rgba(255,255,255,.14);
+  --pill-bd-strong: rgba(255,255,255,.22);
+  --pill-fg: var(--text-2);
+  --pill-fg-strong: var(--text-1);
+
+  --focus-ring: rgba(var(--bs-primary-rgb), .35); 
+
+  /* Danger system (Night) */
+  --danger-fg: rgba(255,150,160,.95);
+  --danger-bg: rgba(255,90,110,.12);
+  --danger-bg-strong: rgba(255,90,110,.22);
+  /* Shadow tokens */
+  --shadow-rgb: 0,0,0;
+  --shadow-1: 0 2px 6px rgba(var(--shadow-rgb), .50);
+  --shadow-2: 0 2px 8px rgba(var(--shadow-rgb), .45);
+  --shadow-3: 0 4px 15px rgba(var(--shadow-rgb), .50);
+  --shadow-3-top: 0 -4px 15px rgba(var(--shadow-rgb), .50);
+  /* Bootstrap text system (Night) */
+  --bs-body-color: var(--text-1);
+  --bs-body-color-rgb: 230,235,240; /* 對應你夜間 --ink-rgb */
+  --bs-secondary-color: var(--text-2); /* ⭐關鍵：夜間小字變亮一階 */
+  --bs-tertiary-color: var(--text-3);
+}
+body{
+  background:var(--bg);
+  font-family:"Noto Sans TC",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang TC","Microsoft JhengHei",sans-serif;
+  padding-bottom:80px;
+  color:var(--text-1);
+  letter-spacing:.02em;
+  font-weight:400;
+  transition:background-color .5s ease,color .5s ease;
+}
+
+html[data-theme="dark"] body{
+  color:var(--text-1);
+}
+
+h1,h2,h3{ font-weight:600; }
+small,.text-muted{ font-weight:500; }
+
+/* sections fade */
+.content-section{ display:none; padding:15px; animation:fadeIn .3s ease; }
+.content-section.active{ display:block; }
+@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+
+/* =========================
+   1) Header / Sticky / Clock area (smooth day<->night)
+========================= */
+.sticky-top,
+.sticky-top .p-3,
+header{
+  background-color:var(--bg) !important; /* 原本 var(--jp-wash) 也等於 bg，這裡直接收斂 */
+  border-bottom-color:var(--border) !important;
+  transition:background-color .5s ease,border-color .5s ease,box-shadow .5s ease !important;
+}
+
+.sticky-top{ min-height:105px; }
+
+/* Clock block (你用 .sticky-top .d-flex 當時鐘區塊)*/
+.sticky-top .d-flex{
+  background-color:var(--surface-2) !important;
+  border:1px solid var(--border) !important;
+  box-shadow:none !important;
+  transition:background-color .5s ease,border-color .5s ease,box-shadow .5s ease !important;
+  will-change:background-color,border-color;
+}
+
+
+/* Clock text：全部只吃既有 text tokens（dark 會自動換成夜間 token） */
+#tw-time{ color:var(--text-2) !important; }
+#eu-time{ color:var(--text-1) !important; }
+#tw-date-label,
+#eu-date-label,
+.sticky-top small{ color:var(--text-3) !important; }
+
+/* =========================
+   2) Theme button (唯一最終版)
+========================= */
+.theme-toggle{
+  position:absolute;
+  top:8px;
+  right:8px;
+  z-index:10;
+  line-height:1;
+}
+
+#themeBtn{
+  width:40px; height:40px; padding:0;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:1.15rem; line-height:1;
+
+  border:none !important;
+  background:transparent !important;
+
+  /* ✅ Day：用既有文字色系（不再寫死 rgba(44,62,80,...)） */
+  color: var(--text-2);
+
+  opacity:.62;
+  outline:none !important;
+  box-shadow:none !important;
+  transition:transform .16s ease,opacity .2s ease,color .2s ease;
+}
+
+#themeBtn:focus,
+#themeBtn:focus-visible,
+#themeBtn:active{
+  outline:none !important;
+  box-shadow:none !important;
+}
+
+#themeBtn:active{
+  transform:scale(.9);
+  opacity:.95;
+}
+/* =========================
+   3) Today pill
+========================= */
+#todayBtn{
+  width:auto; height:20px; padding:0 10px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:.6rem; font-weight:500; letter-spacing:.4px;
+
+  border-radius:999px;
+
+  border:1px solid var(--pill-bd);
+  background-color:var(--surface);
+  color:var(--pill-fg);
+backdrop-filter: blur(4px);
+-webkit-backdrop-filter: blur(4px);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+
+  white-space:nowrap;
+
+  box-shadow:var(--shadow-1);
+
+  transition:background-color .5s ease,color .5s ease,border-color .5s ease,box-shadow .5s ease,transform .15s ease;
+  cursor:pointer;
+  line-height:1.1;
+}
+
+#todayBtn:active{ transform:scale(.9); }
+
+/* =========================
+   4) Cards / Lists common
+========================= */
+.card-custom{
+  background:var(--surface);
+  border-radius:12px;
+  padding:18px;
+  margin-bottom:12px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-2);
+}
+
+.pack-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  padding:8px 0;
+}
+
+.pack-text{
+  flex-grow:1;
+  margin-left:10px;
+  cursor:pointer;
+  font-size:.95rem;
+}
+
+.pack-text.checked{
+  text-decoration:line-through;
+  color:var(--text-3);
+}
+
+/* =========================
+   5) Bottom nav + Day nav
+========================= */
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  box-shadow:var(--shadow-3-top);
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  z-index:1000;
+}
+
+.nav-item{
+  color:var(--text-3);
+  text-decoration:none;
+  text-align:center;
+  font-size:.7rem;
+  cursor:pointer;
+  flex:1;
+  font-weight:500 !important;
+}
+
+.nav-item.active{
+  color:var(--text-1);
+  font-weight:700;
+}
+
+.nav-item i{
+  font-size:1.3rem;
+  display:block;
+  margin-bottom:3px;
+}
+
+.day-nav-container{
+  display:flex;
+  overflow-x:auto;
+  background:var(--surface);
+  padding:15px 10px;
+  gap:15px;
+  position:sticky;
+  top:105px;
+  z-index:999;
+  border-bottom:1px solid var(--border);
+  -webkit-overflow-scrolling:touch;
+}
+.day-nav-container::-webkit-scrollbar{ display:none; }
+
+.day-tab{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  flex:0 0 auto;
+  min-width:50px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+
+.day-tab .day-week{
+  font-size:.65rem;
+  text-transform:uppercase;
+  color:var(--text-3);
+  opacity:.85;
+  margin-bottom:4px;
+  letter-spacing:.5px;
+  font-weight:500 !important;
+}
+
+.day-tab .day-num{
+  font-size:1.2rem;
+  font-weight:400;
+  color:var(--text-3);
+  opacity:.85;
+  position:relative;
+  padding-bottom:8px;
+  font-weight:500 !important;
+}
+
+.day-tab.active .day-week{
+  color:var(--text-2);
+  font-weight:700;
+}
+
+.day-tab.active .day-num{
+  color:var(--text-1);
+  font-weight:700;
+}
+
+.day-tab.active .day-num::after{
+  content:'';
+  position:absolute;
+  bottom:0; left:50%;
+  transform:translateX(-50%);
+  width:4px; height:4px;
+  background-color: var(--brand);
+  border-radius:50%;
+}
+
+/* =========================
+   6) Budget + buttons + forms (dark unify)
+========================= */
+.budget-sum{
+  background: var(--surface);
+  color: var(--text-1);
+
+  border: 1px solid var(--border);
+  border-radius:15px;
+  padding:25px;
+  text-align:center;
+  margin-bottom:20px;
+
+  border-left: 4px solid var(--brand);
+  box-shadow: var(--shadow-3);
+}
+
+.form-control,
+.form-select,
+.input-group-text{
+  background-color: var(--surface-2) !important;
+  border-color: var(--border) !important;
+  color: var(--text-1) !important;
+}
+
+.form-control::placeholder{
+  color: var(--text-3) !important;
+}
+
+.input-group .btn-dark{
+  border: 1px solid var(--border);
+}
+
+/* =========================
+   7) Day content + timeline
+========================= */
+.day-content{ display:none; animation:fadeIn .4s ease; }
+.day-content.active{ display:block; }
+
+.day-content .text-primary{ color:var(--text-1) !important; }
+html[data-theme="dark"] .day-content .text-primary{ color:var(--text-1) !important; }
+
+/* Timeline items */
+.time-item{
+  position:relative;
+  padding-left:32px;
+  padding-top:12px;
+  padding-bottom:24px;
+  opacity:0;
+  transform:translateY(6px);
+  animation:timelineFade .6s ease forwards;
+}
+.time-item::before{
+  content:'';
+  position:absolute;
+  left:15px;
+  top:12px;
+  bottom:-24px;
+  width:2px;
+  background-color:var(--border);
+}
+.time-item:last-child::before{ display:none; }
+
+.time-item:nth-child(1){ animation-delay:.05s; }
+.time-item:nth-child(2){ animation-delay:.15s; }
+.time-item:nth-child(3){ animation-delay:.25s; }
+.time-item:nth-child(4){ animation-delay:.35s; }
+
+.time-node{
+  position:absolute;
+  left:calc(var(--timeline-x) - 6px);
+  top:12px;
+  width:12px; height:12px;
+
+  background-color:var(--brand);
+  border-radius:50%;
+
+  /* 這圈是「切開線」用的，建議跟卡片表面一致 */
+  border:2px solid var(--surface);
+
+  transform:scale(.6);
+  opacity:0;
+  animation:nodePop .4s ease forwards;
+  animation-delay:inherit;
+}
+
+@keyframes timelineFade{ to{ opacity:1; transform:translateY(0) } }
+@keyframes nodePop{ to{ opacity:1; transform:scale(1) } }
+
+/* Time detail collapse/expand */
+.time-header{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  cursor:pointer;
+  user-select:none;
+}
+.toggle-icon{
+  font-size:.9rem;
+  color:var(--text-3);
+  transition:transform .3s ease;
+}
+.time-detail{
+  max-height:0;
+  transform:scaleY(0);
+  transform-origin:top;
+  opacity:0;
+  overflow:hidden;
+  transition:max-height .35s ease,transform .35s ease,opacity .35s ease;
+}
+.time-item.open .time-detail{
+  max-height:500px;
+  transform:scaleY(1);
+  opacity:1;
+}
+.time-item.open .toggle-icon{ transform:rotate(180deg); }
+
+/* Header time bar（原本 inline style 搬出來） */
+.timebar{
+  background: var(--surface-2);
+  border-radius: 20px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* =========================
+   8) Accommodation bar
+========================= */
+.accommodation-bar{
+  position:fixed;
+  bottom:65px;
+  left:15px;
+  right:15px;
+  background: var(--surface);
+  padding:12px 18px;
+  border-radius:12px;
+  box-shadow: var(--shadow-3-top);
+  z-index:998;
+  display:none;
+  justify-content:space-between;
+  align-items:center;
+  border:1px solid var(--border);
+}
+
+.accommodation-bar .btn-map{
+  width:40px;
+  height:25px;
+  padding:0 !important;
+  border-radius:14px;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  background: var(--pill-bg) !important;
+  border:1px solid var(--pill-bd) !important;
+
+  color: var(--brand) !important;
+
+  text-decoration:none !important;
+  transition:transform .12s ease, opacity .15s ease, background-color .15s ease, border-color .15s ease;
+}
+
+.accommodation-bar .btn-map i{
+  font-size:0.8rem;
+  line-height:1;
+}
+
+.accommodation-bar .btn-map:active{
+  transform:translateY(1px) scale(.96);
+  opacity:.92;
+}
+
+/* =========================
+   10) Favorites: collapse + title badge + items + link pills
+========================= */
+/* 收藏頁細項收合（唯一版） */
+.card-custom .item-list{
+  max-height:0;
+  transform:scaleY(0);
+  transform-origin:top;
+  opacity:0;
+  overflow:hidden;
+  transition:max-height .35s ease,transform .35s ease,opacity .35s ease;
+}
+.card-custom.open .item-list{
+  max-height:1000px;
+  transform:scaleY(1);
+  opacity:1;
+  overflow:visible;
+}
+
+/* 收藏頁展開箭頭旋轉 */
+.card-custom.open .fav-icon.toggle-icon i{ transform:rotate(180deg); }
+
+/* fav title */
+.fav-title-text{ font-weight:700; font-size:1.05rem; line-height:1.3; }
+
+.fav-title-badge{
+  font-size:.75rem;
+  font-weight:500;
+  padding:2px 8px;
+  margin-left:6px;
+  border-radius:999px;
+  background: var(--pill-bg);
+  border: 1px solid var(--pill-bd);
+  color: var(--pill-fg);
+
+  line-height:1.4;
+}
+
+/* item card */
+.item-list .item-div{
+  border-radius:8px;
+  border:1px solid var(--border);
+  padding:8px 12px;
+  margin-bottom:6px;
+  background: var(--surface);
+  transition:background .3s, box-shadow .3s;
+}
+
+.item-list .item-div:hover{
+  box-shadow: var(--shadow-1);
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+/* 收藏頁連結膠囊 */
+#fav-list-container a.item-link{
+  display:inline-block !important;
+  color:var(--pill-fg-strong) !important;
+  background:var(--pill-bg) !important;
+  text-decoration:none !important;
+  font-weight:500 !important;
+  font-size:.75rem !important;
+  padding:1px 10px !important;
+  border-radius:50px !important;
+  margin-top:2px !important;
+  margin-right:5px !important;
+  margin-bottom:8px !important;
+  border:1px solid var(--pill-bd) !important;
+  transition:all .2s ease;
+}
+#fav-list-container a.item-link:hover{
+  background: var(--pill-bg-hover) !important;
+  border-color: var(--pill-bd-strong) !important;
+  opacity: .95;
+  transform:scale(1.03);
+}
+#fav-list-container a.item-link:active{
+  transform:scale(.98);
+}
+
+/* 行李頁刪除 icon */
+#pack-list-container i.fa-trash,
+#pack-list-container i.fa-trash-alt,
+#pack-list-container i.fas.fa-trash-alt{
+  color: var(--danger-fg) !important;
+}
+
+/* 收藏頁 bookmark 小一點+上移 */
+#fav-list-container i.fa-bookmark,
+#fav-list-container i[class*="fa-bookmark"]{
+  font-size:.95rem !important;
+  position:relative;
+  top:-2px;
+  opacity:.65;
+}
+
+#fav-list-container button.mark-icon,
+#fav-list-container .mark-icon{
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  color:var(--text-3) !important;
+}
+
+/* ✅ 收藏頁：地點細項的「編輯/刪除」兩顆 icon 永遠淺灰（token 化，不寫死 #999） */
+#fav-list-container .item-list .item-div button{
+  opacity: 1 !important;
+  background: transparent !important;
+}
+
+#fav-list-container .item-list .item-div button i{
+  color: var(--text-3) !important;
+}
+
+#fav-list-container .item-list .item-div button:hover,
+#fav-list-container .item-list .item-div button:active{
+  opacity: 1 !important;
+  background: transparent !important;
+}
+
+#fav-list-container .item-list .item-div button:hover i,
+#fav-list-container .item-list .item-div button:active i{
+  color: var(--text-3) !important;
+}
+
+/* jump highlight outline（移除 rgba 寫死色） */
+@keyframes favBreathOutline{
+  0%{ outline-color:transparent; }
+  40%,60%{ outline-color:var(--highlight); }
+  100%{ outline-color:transparent; }
+}
+#fav-list-container .item-list .item-div.jump-highlight{
+  outline:1px solid transparent;
+  outline-offset:2px;
+  animation:favBreathOutline 1.5s ease-in-out 1;
+}
+
+/* 收藏頁：新增地點按鈕 */
+#fav-list-container .item-list .btn-outline-primary{
+  width:28px; height:28px; padding:0;
+  border-radius:8px;
+  font-size:1.1rem;
+  background:transparent;
+
+  border:1px dashed var(--pill-bd);
+  color: var(--pill-fg-strong);
+}
+/* ✅ 收藏頁：把 Bootstrap .border 收斂到 token（避免出現偏白框線） */
+#fav-list-container .border{
+  border-color: var(--border) !important;
+}
+
+/* =========================
+   11) fav-top-list
+========================= */
+#fav-top-container{ padding:6px 0; }
+
+#fav-top-list{
+  padding:6px 0;
+  border:none;
+  background:none;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+#fav-top-list .topmark-row{
+  padding:12px;
+  border-radius:16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-2);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+#fav-top-list .topmark-row:active{
+  transform:scale(.99);
+  background: var(--surface-2);
+}
+
+/* 內容排版 */
+#fav-top-list .topmark-info{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+  flex:1;
+}
+
+#fav-top-list .topmark-title{
+  font-size:.78rem;
+  font-weight:600;
+  opacity:.75;
+  white-space:nowrap;
+}
+
+#fav-top-list .topmark-place{
+  font-size:.86rem;
+  font-weight:500;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  margin:0;
+}
+
+#fav-top-list .topmark-links{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:0;
+}
+#fav-top-list .topmark-links > a{ order:1; }
+
+/* fav-top-list：自訂連結膠囊（token 化） */
+#fav-top-list .topmark-links a{
+  display:inline-flex;
+  align-items:center;
+  font-size:.75rem;
+  font-weight:500;
+  padding:2px 10px;
+  border-radius:999px;
+
+  color: var(--pill-fg) !important;
+  background: var(--pill-bg) !important;
+  border:1px solid var(--pill-bd);
+
+  text-decoration:none !important;
+  transition:background .18s ease, border-color .18s ease, color .18s ease, transform .12s ease;
+}
+
+#fav-top-list .topmark-links a:hover{
+  background: var(--pill-bg-hover) !important;
+  border-color: var(--pill-bd-strong);
+  color: var(--pill-fg-strong) !important;
+}
+
+#fav-top-list .topmark-links a:active{
+  transform:scale(.96);
+}
+
+/* fav-top-list：刪除 X（token 化：一般用 pill 字色） */
+#fav-top-list .topmark-x{
+  width:24px; height:28px;
+  border:none;
+  background:transparent;
+  border-radius:8px;
+  font-size:18px;
+  line-height:1;
+  cursor:pointer;
+
+  color: var(--pill-fg);
+  opacity:.65;
+
+  transition:background .15s ease, color .15s ease, opacity .15s ease, transform .12s ease;
+}
+
+#fav-top-list .topmark-x:active{
+  opacity:1;
+  transform:scale(.98);
+}
+
+/* fav-top-list：+N / 展開（token 化，跟連結膠囊同系統） */
+#fav-top-list .topmark-more{
+  order:3;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.75rem;
+  font-weight:600;
+  padding:2px 10px;
+  border-radius:999px;
+  cursor:pointer;
+  user-select:none;
+
+  color: var(--pill-fg);
+  background: var(--pill-bg);
+  border:1px solid var(--pill-bd);
+
+  transition:background .18s ease, border-color .18s ease, color .18s ease, transform .12s ease;
+}
+
+#fav-top-list .topmark-more:hover{
+  background: var(--pill-bg-hover);
+  border-color: var(--pill-bd-strong);
+  color: var(--pill-fg-strong);
+}
+
+#fav-top-list .topmark-more:active{ transform:scale(.96); }
+
+#fav-top-list .topmark-links-extra{
+  order:2;
+  display:none;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-left:0;
+}
+
+#fav-top-list .topmark-links.links-expanded .topmark-links-extra{ display:inline-flex; }
+
+/* =========================
+   12) Small helpers you had
+========================= */
+.day-label{
+  font-size:1.1rem;
+  font-weight:700;
+  display:inline-block;
+  margin:15px 0 10px;
+  letter-spacing:1px;
+}
+
+/* ✅ 導航小按鈕：收斂到既有 pill 系統（不寫死黑底白字） */
+.btn-nav{
+  background: var(--pill-bg);
+  color: var(--pill-fg-strong);
+  border: 1px solid var(--pill-bd);
+  border-radius:50px;
+  font-size:.75rem;
+  padding:6px 15px;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+}
+.btn-nav:active{ transform:scale(.98); }
+
+/* 行李清單標題色跟主題色
+*/
+#pack-list-container .text-primary{ color:var(--text-1) !important; }
+
+/* Trip title/subtitle：不再用寫死 hex，直接收斂到 text tokens */
+.trip-title{ color: var(--text-1); }
+.trip-subtitle{ color: var(--text-2); }
+
+/* Global transition helper (保留你想要的平滑切換) */
+body,.sticky-top,.card,.bg-white{
+  transition:background-color .5s ease,color .5s ease,border-color .5s ease;
+}
+
+/* =========================
+   Step 4) Primary / Links unify
+========================= */
+
+/* Bootstrap primary 文字（避免被舊規則改回去） */
+.text-primary{ color: var(--brand) !important; }
+
+/* 主要按鈕 */
+.btn-primary{
+  background-color: var(--brand) !important;
+  border-color: var(--brand) !important;
+}
+.btn-primary:hover{ filter: brightness(0.96); }
+.btn-primary:active{ transform: scale(.98); }
+
+/* 一般連結（先只做最保守版本：不動你已經客製的 item-link） */
+a:not(.item-link){
+  color: var(--brand);
+}
+a:not(.item-link):hover{
+  color: var(--brand);
+  opacity: .9;
+}
+/* ✅ 行李頁：模式按鈕選中狀態（方案 2：日夜一致的一階加強）
+   只作用在 #packing，避免影響其他頁 btn-group/active
+*/
+#packing #btn-pack-trip.btn.btn-dark,
+#packing #btn-pack-template.btn.btn-dark{
+  background-color: rgba(var(--bs-primary-rgb), .28) !important;
+  border-color: rgba(var(--bs-primary-rgb), .55) !important;
+  color: var(--text-1) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,.18),
+    inset 0 -1px 0 rgba(255,255,255,.10);
+
+  transform: none !important;
+}
+/* ✅ 同步中心：Tab 選中樣式（與行李頁一致） */
+#sync-center #sync-tab-share.btn.btn-dark,
+#sync-center #sync-tab-receive.btn.btn-dark{
+  background-color: rgba(var(--bs-primary-rgb), .28) !important;
+  border-color: rgba(var(--bs-primary-rgb), .55) !important;
+  color: var(--text-1) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,.18),
+    inset 0 -1px 0 rgba(255,255,255,.10);
+
+  transform: none !important;
+}
+/* ===== 同步按鈕平滑狀態切換 ===== */
+
+.sync-generate-btn {
+  position: relative;
+  min-height: 32px;
+
+  transition:
+    background-color .45s cubic-bezier(.4,0,.2,1),
+    border-color .45s cubic-bezier(.4,0,.2,1),
+    box-shadow .45s cubic-bezier(.4,0,.2,1),
+    transform .2s ease;
+}
+
+.sync-generate-btn .btn-label-success {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .45s cubic-bezier(.4,0,.2,1);
+}
+
+.sync-generate-btn .btn-label-default {
+  transition: opacity .45s cubic-bezier(.4,0,.2,1);
+}
+
+.sync-generate-btn.is-success .btn-label-default {
+  opacity: 0;
+}
+
+.sync-generate-btn.is-success .btn-label-success {
+  opacity: 1;
+}
+/* Receive 使用同樣動畫系統 */
+.sync-confirm-btn {
+  position: relative;
+  min-height: 32px;
+
+  transition:
+    background-color .45s cubic-bezier(.4,0,.2,1),
+    border-color .45s cubic-bezier(.4,0,.2,1),
+    box-shadow .45s cubic-bezier(.4,0,.2,1);
+}
+
+.sync-confirm-btn .btn-label-success {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .45s cubic-bezier(.4,0,.2,1);
+}
+
+.sync-confirm-btn .btn-label-default {
+  transition: opacity .45s cubic-bezier(.4,0,.2,1);
+}
+
+.sync-confirm-btn.is-success .btn-label-default {
+  opacity: 0;
+}
+
+.sync-confirm-btn.is-success .btn-label-success {
+  opacity: 1;
+}
+/* ===== Sync icon 共用動畫 ===== */
+
+.sync-icon {
+  position: relative;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+}
+
+.sync-icon i,
+.sync-icon span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .35s cubic-bezier(.4,0,.2,1),
+              transform .35s cubic-bezier(.4,0,.2,1);
+}
+
+.sync-icon span {
+  opacity: 0;
+  transform: scale(.8);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.sync-icon.is-success i {
+  opacity: 0;
+  transform: scale(.8);
+color: var(--bs-primary);
+}
+
+.sync-icon.is-success span {
+  opacity: 1;
+  transform: scale(1);
+color: var(--bs-primary);
+}
+
+/* =========================
+   ✅ Button 系統：次要按鈕（本站語義）
+   class: .btn-secondary-soft
+   - Day/Night 走 token：pill-bg / pill-bd / pill-fg-strong
+   - 手機優先：active 有回饋；不依賴 hover
+   - 不接管 Bootstrap：不改 .btn-outline-dark
+========================= */
+
+.btn.btn-secondary-soft{
+  background-color: var(--pill-bg) !important;
+  border: 1px solid var(--pill-bd) !important;
+  color: var(--pill-fg-strong) !important;
+  box-shadow: none !important;
+}
+
+.btn.btn-secondary-soft:hover{
+  background-color: var(--pill-bg-hover) !important;
+  border-color: var(--pill-bd-strong) !important;
+}
+
+.btn.btn-secondary-soft:active{
+  background-color: var(--pill-bg-hover) !important;
+  border-color: var(--pill-bd-strong) !important;
+  transform: scale(0.98);
+}
+
+.btn.btn-secondary-soft:focus{
+  box-shadow: none !important;
+}
+
+.btn.btn-secondary-soft:focus-visible{
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+/* 行李頁：選中按鈕按下回饋（沿用同語言） */
+#packing .btn.btn-outline-dark.active:active{
+  transform: scale(0.98);
+}
+/* ✅ 移除：收藏頁 item-div 的按鈕「永遠淺灰 #999」規則
+   這套已在 10) Favorites 區塊用 var(--text-3) token 化完成，這裡不再重複。
+*/
+/* 右下角「顯示更多/收合」控制列 */
+#fav-top-list .topmark-toggle-row{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:6px;
+}
+
+#fav-top-list .topmark-toggle-btn{
+  border:none;
+  background: transparent;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  cursor: pointer;
+
+  color: var(--pill-fg);
+  transition:transform .12s ease, background-color .18s ease, opacity .18s ease;
+}
+
+#fav-top-list .topmark-toggle-btn:hover{
+  opacity: .9;
+}
+
+#fav-top-list .topmark-toggle-btn:active{
+  transform: scale(0.98);
+  background: var(--pill-bg);
+}
+/* =========================
+   ✅ Button 統一：.btn-dark（本站語義＝主品牌按鈕 / D1）
+   - Day/Night 一致：brand 實心 + surface 文字
+   - 手機優先：active 回饋；不依賴 hover
+========================= */
+
+.btn.btn-dark{
+  background-color: var(--surface-2) !important;
+  border-color: var(--pill-bd) !important;
+  color: var(--text-1) !important;
+  box-shadow: none !important;
+}
+
+.btn.btn-dark:hover{
+  background-color: var(--pill-bg-hover) !important;
+  border-color: var(--pill-bd-strong) !important;
+}
+/* active：手機主要回饋 */
+.btn.btn-dark:active{
+  transform: scale(0.98);
+}
+
+/* focus：不要 Bootstrap 藍光 */
+.btn.btn-dark:focus{
+  box-shadow: none !important;
+}
+
+.btn.btn-dark:focus-visible{
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+/* =========================================================
+   ✅ 行程詳情 Sheet（1a：底部彈出）
+========================================================= */
+
+.detail-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+  z-index:2000;
+}
+
+.detail-sheet{
+  position:fixed;
+  left:0; right:0;
+  bottom:0;
+  transform:translateY(100%);
+  transition:transform .28s ease;
+  z-index:2001;
+  padding:10px 12px 16px;
+}
+
+.detail-sheet .detail-card{
+  max-width:640px;
+  margin:0 auto;
+  background:var(--surface);
+  border-radius:18px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-3);
+  overflow:hidden;
+}
+
+/* 顯示狀態 */
+.detail-open .detail-backdrop{
+  opacity:1;
+  pointer-events:auto;
+}
+.detail-open .detail-sheet{
+  transform:translateY(0);
+}
+
+/* Header */
+.detail-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 16px 10px;
+  border-bottom:1px solid var(--border);
+  touch-action: none;
+  cursor: grab;
+}
+
+.detail-meta{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.detail-tag{
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.8px;
+  padding:2px 10px;
+  border-radius:999px;
+  border:1px solid var(--pill-bd);
+  background:var(--pill-bg);
+  color:var(--pill-fg-strong);
+}
+
+.detail-time{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--text-2);
+  opacity:.85;
+}
+
+.detail-title{
+  font-size:1.15rem;
+  font-weight:800;
+  margin:6px 0 0;
+  line-height:1.25;
+  color:var(--text-1);
+}
+
+.detail-sub{
+  margin:6px 0 0;
+  font-size:.82rem;
+  color:var(--text-2);
+}
+
+.detail-close{
+  width:36px; height:36px;
+  border:none;
+  background:transparent;
+  border-radius:12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--text-2);
+}
+
+.detail-close:active{
+  background:var(--pill-bg);
+  transform:scale(.98);
+}
+
+/* Body */
+.detail-body{
+  padding:12px 16px 16px;
+  max-height:min(68vh, 520px);
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.detail-block{
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  border-radius:14px;
+  padding:12px;
+  margin:10px 0;
+}
+
+.detail-block h6{
+  font-size:.78rem;
+  letter-spacing:.6px;
+  font-weight:800;
+  opacity:.75;
+  margin:0 0 8px;
+  color:var(--text-2);
+}
+
+.detail-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 0;
+  border-top:1px dashed var(--border);
+}
+.detail-row:first-of-type{ border-top:none; padding-top:0; }
+
+.detail-row .k{
+  font-size:.78rem;
+  color:var(--text-2);
+  min-width:78px;
+}
+
+.detail-row .v{
+  flex:1;
+  font-size:.86rem;
+  font-weight:600;
+  color:var(--text-1);
+}
+
+.detail-row .v a{
+  color:var(--highlight);
+  text-decoration:none;
+}
+.detail-row .v a:hover{ text-decoration:underline; }
+
+.detail-note{
+  font-size:.86rem;
+  line-height:1.55;
+  color:var(--text-1);
+}
+.detail-note ul{ margin:0; padding-left:18px; }
+.detail-note li{ margin:4px 0; }
+
+.detail-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+
+/* ✅ LINK 膠囊：完全收斂到既有 pill 系統（day/night 同一套） */
+.detail-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:.78rem;
+  font-weight:700;
+  padding:6px 10px;
+  border-radius:999px;
+
+  border:1px solid var(--pill-bd);
+  background:var(--pill-bg);
+  color:var(--pill-fg-strong);
+
+  text-decoration:none;
+  box-shadow:none;
+  transition:background .18s ease, border-color .18s ease, transform .12s ease, opacity .15s ease;
+}
+
+.detail-pill:hover{
+  background:var(--pill-bg-hover);
+  border-color:var(--pill-bd-strong);
+}
+
+.detail-pill:active{
+  transform:scale(.97);
+  opacity:.95;
+}
+
+/* =========================
+   Budget UI: pay pills + day groups
+========================= */
+
+/* 付款方式 pills */
+.pay-pills{
+  display:flex;
+  gap:8px;
+  justify-content:flex-start;
+  align-items:center;
+}
+
+.pay-pill{
+  border:1px solid var(--pill-bd);
+  background:var(--pill-bg);
+  color:var(--pill-fg-strong);
+
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:.72rem;
+  font-weight:700;
+  line-height:1;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .12s ease, background .15s ease, border-color .15s ease, opacity .15s ease;
+  white-space:nowrap;
+}
+
+.pay-pill:active{ transform:scale(.98); }
+
+.pay-pill.active{
+  background:rgba(var(--bs-primary-rgb), .35);
+  border-color:var(--pill-bd-strong);
+}
+/* 匯率修改 Ghost Mini Button */
+#budget .btn-rate-edit{
+  background: transparent;
+  border: 1px solid var(--pill-bd);
+  color: var(--pill-fg);
+
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: .7rem;
+  font-weight: 600;
+  line-height: 1.2;
+
+  cursor: pointer;
+  transition:
+    background-color .2s ease,
+    border-color .2s ease,
+    color .2s ease,
+    transform .12s ease;
+}
+
+#budget .btn-rate-edit:hover{
+  background: var(--pill-bg);
+  border-color: var(--pill-bd-strong);
+  color: var(--pill-fg-strong);
+}
+
+#budget .btn-rate-edit:active{
+  transform: scale(.95);
+}
+/* ===== 匯率刷新動畫 ===== */
+
+#budget .rate-refresh-icon{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+}
+
+#budget .rate-refresh-icon i,
+#budget .rate-refresh-icon .icon-success{
+  position: absolute;
+  transition:
+    opacity .3s ease,
+    transform .3s ease;
+}
+
+/* 旋轉動畫 */
+@keyframes spinRefresh{
+  from{ transform: rotate(0deg); }
+  to{ transform: rotate(360deg); }
+}
+
+#budget .is-spinning i{
+  animation: spinRefresh .8s linear;
+}
+
+#budget .btn-rate-edit.active{
+  background: rgba(var(--bs-primary-rgb), .12);
+  border-color: rgba(var(--bs-primary-rgb), .35);
+  color: var(--text-1);
+}
+#rateHintText{
+  transition: opacity .25s ease, color .25s ease;
+}
+/* 今日卡頭（日期＋今日總額） */
+.budget-today-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.budget-today-date{
+  font-size:.85rem;
+  font-weight:800;
+  letter-spacing:.4px;
+  color:var(--text-1);
+}
+
+.budget-today-sub{
+  font-size:.72rem;
+  font-weight:600;
+  opacity:.65;
+  color:var(--text-2);
+}
+
+.budget-today-total{
+  font-size:1.25rem;
+  font-weight:900;
+  white-space:nowrap;
+  color:var(--text-1);
+}
+
+/* 清單每筆：左右對齊（左資訊 / 右金額） */
+.exp-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.exp-left{
+  min-width:0;
+  flex:1;
+}
+
+.exp-cat{
+  font-weight:800;
+  font-size:.92rem;
+  line-height:1.2;
+  color:var(--text-1);
+}
+
+.exp-meta{
+  margin-top:4px;
+  font-size:.75rem;
+  color:var(--text-2);
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+/* 右側：三欄（icon / 金額兩行 / …） */
+.exp-right{
+  white-space:nowrap;
+}
+
+.exp-right-top{
+  display:grid;
+  grid-template-columns: auto 1fr; /* icon | money */
+  column-gap:8px;
+  align-items:start;
+  justify-content:end;
+}
+
+/* ① icon 欄：只在第一行出現 */
+.exp-pay-ic{
+  line-height:1;
+  margin-top:5px;
+  color:var(--text-3);
+  opacity:.9;
+}
+
+/* ② 金額欄：兩行靠左貼齊 */
+.exp-money{
+  text-align:left;
+  min-width:0;
+  color:var(--text-1);
+}
+
+.exp-money .exp-amt{
+  display:inline-flex;
+  align-items:flex-start;
+  gap:8px;
+  line-height:1;
+}
+
+/* 台幣換算：跟主金額左緣對齊 */
+.exp-money .exp-twd{
+  margin-top:4px;
+  font-size:.76rem;
+  font-weight:700;
+  opacity:.8;
+  text-align:left;
+  color:var(--text-2);
+}
+
+.exp-left-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-start;
+  gap:10px;
+}
+
+.exp-left-top .exp-cat{
+  min-width:0;
+}
+
+/* 左側的 … 降低存在感、縮小一點 */
+.more-btn.exp-more-left{
+  opacity:.55;
+  padding:2px 4px;
+  font-size:1rem;
+  line-height:1;
+}
+
+.exp-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+  margin-top:6px;
+}
+
+/* 其他日期：收合列 */
+.day-group{
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  background:var(--surface);
+  box-shadow:var(--shadow-1);
+  margin-bottom:10px;
+}
+
+.day-group-head{
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  user-select:none;
+}
+
+.day-group-head:active{ transform:scale(.99); }
+
+.day-group-title{
+  font-weight:900;
+  font-size:.9rem;
+  color:var(--text-1);
+}
+
+.day-group-sum{
+  font-weight:900;
+  font-size:.9rem;
+  white-space:nowrap;
+  color:var(--text-1);
+}
+
+.day-group-body{
+  max-height:0;
+  overflow:hidden;
+  transform:scaleY(0);
+  transform-origin:top;
+  opacity:0;
+  transition:max-height .35s ease, transform .35s ease, opacity .35s ease;
+  padding: 0 14px;
+  box-sizing: border-box;
+}
+
+.day-group.open .day-group-body{
+  max-height: 5000px;
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+.day-group-toggle{
+  margin-left:8px;
+  opacity:.7;
+  transition: transform .25s ease;
+  color:var(--text-3);
+}
+
+.day-group.open .day-group-toggle{
+  transform: rotate(180deg);
+}
+/* =========================
+   Budget: Edit-day popover (B2)
+========================= */
+.budget-popover{
+  position:absolute;
+  z-index:1800;
+  min-width: 240px;
+  max-width: 280px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  box-shadow:var(--shadow-3);
+  padding:10px;
+}
+
+.budget-popover .pop-title{
+  font-size:.78rem;
+  font-weight:900;
+  letter-spacing:.4px;
+  opacity:.82;
+  margin-bottom:6px;
+  color:var(--text-1);
+}
+
+.budget-popover .pop-pills{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-bottom:8px;
+}
+
+.budget-popover .pop-pill{
+  border:1px solid var(--pill-bd);
+  background:var(--pill-bg);
+  color:var(--pill-fg-strong);
+
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:.72rem;
+  font-weight:800;
+  line-height:1;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .12s ease, background .15s ease, border-color .15s ease, opacity .15s ease;
+}
+
+.budget-popover .pop-pill:active{ transform:scale(.98); }
+
+.budget-popover .pop-row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.budget-popover input{
+  width:100%;
+  border-radius:10px;
+  border:1px solid var(--border);
+  padding:6px 10px;
+  font-size:.85rem;
+  outline:none;
+
+  background:var(--surface);
+  color:var(--text-1);
+}
+
+.budget-popover input::placeholder{
+  color:var(--text-3);
+}
+
+.budget-popover .pop-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:8px;
+}
+
+.budget-popover .pop-btn{
+  border:none;
+  background:transparent;
+  padding:6px 8px;
+  border-radius:10px;
+  font-size:.78rem;
+  font-weight:900;
+  cursor:pointer;
+  color:var(--text-2);
+}
+
+.budget-popover .pop-btn.primary{
+  background:var(--text-1);
+  color:var(--surface);
+  padding:6px 10px;
+}
+
+.budget-popover .pop-btn:active{ transform:scale(.98); }
+/* =========================
+   Budget: More actions (⋯)
+========================= */
+.more-btn{
+  border:none;
+  background:transparent;
+  padding:4px 6px;
+  border-radius:8px;
+  font-size:1.1rem;
+  line-height:1;
+  color:var(--text-3);
+  cursor:pointer;
+}
+.more-btn:active{
+  transform: scale(.95);
+}
+
+/* 小選單（編輯 / 刪除） */
+.more-menu{
+  position:absolute;
+  z-index:1700;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:var(--shadow-3);
+  padding:6px;
+  min-width:140px;
+}
+
+.more-menu .menu-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:8px;
+  font-size:.85rem;
+  font-weight:700;
+  cursor:pointer;
+  color:var(--text-1);
+}
+
+.more-menu .menu-item:hover{
+  background:var(--pill-bg);
+}
+
+.more-menu .menu-item.danger{
+  color:var(--danger-fg);
+}
+
+.more-menu .menu-item.danger:hover{
+  background:var(--danger-bg);
+}
+
+/* 記帳頁：項目寬度與幣值一致 */
+#budget #exp-cat{
+  max-width: 92px;   /* 跟 exp-curr 一樣 */
+  width: 92px;
+}
+#budget .exp-meta{
+  margin-top:6px;
+  font-size:0.85rem;
+  opacity:.9;
+  display:flex;
+  align-items:center;
+  gap:0px;
+}
+
+.pay-ic{
+  opacity:.75;
+}
+
+.note{
+  opacity:.9;
+}
+/* 記帳卡：左側備註行 */
+.exp-note{
+  margin-top: 4px;
+  font-size: 0.85rem;
+  opacity: 0.8;
+  line-height: 1.25;
+}
+
+/* 金額列內 icon 與文字對齊 */
+.exp-amt{
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.exp-amt .pay-ic{
+  font-size: 0.95em;
+  line-height: 1;
+}
+/* 只影響付款方式 pills */
+#pay-method-pills{
+  display:flex;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+
+width: 190px;
+margin-left:-40px;    
+}
+
+#pay-method-pills::-webkit-scrollbar{
+  display:none;
+}
+
+#pay-method-pills .pay-pill{
+  flex:0 0 auto; /* 不壓縮 */
+}
+/* ================================
+   🧳 行李模板操作：淡色膠囊按鈕（方案 B）
+================================ */
+
+/* 基礎：跟全站 pill 系統一致 */
+.pack-pill{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+
+  padding: 6px 10px !important;
+  border-radius: 999px !important;
+  font-size: 0.78rem !important;
+  line-height: 1;
+  letter-spacing: 0.02em;
+
+  background: var(--pill-bg);
+  border: 1px solid var(--pill-bd);
+  color: var(--pill-fg-strong);
+
+  box-shadow: none;
+  transition: transform .08s ease, background .15s ease, border-color .15s ease, opacity .15s ease;
+}
+
+.pack-pill:hover{
+  background: var(--pill-bg-hover);
+  border-color: var(--pill-bd-strong);
+}
+
+.pack-pill:active{
+  transform: scale(0.98);
+}
+
+/* 主按鈕（合併）：用既有 token，維持辨識但不破壞整體 */
+.pack-pill-primary{
+  background: var(--surface-2);
+  border-color: var(--pill-bd-strong);
+  color: var(--text-1);
+}
+
+.pack-pill-primary:hover{
+  background: var(--pill-bg-hover);
+  border-color: var(--pill-bd-strong);
+}
+
+/* 危險操作：用 danger token */
+.pack-pill-danger{
+  background: var(--danger-bg);
+  border-color: var(--danger-bg-strong);
+  color: var(--danger-fg);
+}
+
+.pack-pill-danger:hover{
+  background: var(--danger-bg-strong);
+  border-color: var(--danger-bg-strong);
+}
+
+/* • 隨身 標記 */
+.carry-badge{
+  margin-left: 8px;
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+
+/* ⋯ 選單 */
+.carry-menu{
+  position: absolute;
+  z-index: 9999;
+  min-width: 150px;
+  padding: 6px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-3);
+}
+
+.carry-menu-item{
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--text-1);
+}
+
+.carry-menu-item:hover{
+  background: var(--pill-bg);
+}
+/* =========================
+   ✅ Packing: icon-only buttons（對齊收藏頁 fav-icon 語言）
+   - 只影響行李頁分類 header 的「新增項目 +」
+   - 無框、固定 hit-area、active 才出淡底、focus 有 ring
+========================= */
+#packing [data-act="add-item"]{
+  width:34px;
+  height:34px;
+
+  padding:0 !important;
+  border:none !important;
+  background:transparent !important;
+  box-shadow:none !important;
+
+  border-radius:12px;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  color: var(--pill-fg-strong) !important; /* 比 text-2 再清楚一點 */
+}
+
+#packing [data-act="add-item"] i{
+  font-size:.95rem;
+  line-height:1;
+}
+
+/* 手機優先：active 回饋（不依賴 hover） */
+#packing [data-act="add-item"]:active{
+  transform:scale(.90);
+  background: var(--pill-bg-hover) !important;
+}
+
+/* 鍵盤焦點 */
+#packing [data-act="add-item"]:focus{
+  box-shadow:none !important;
+}
+#packing [data-act="add-item"]:focus-visible{
+  outline:2px solid var(--focus-ring);
+  outline-offset:2px;
+}
+/* ✅ 行李模式徽章（本次/隨身包/模板） */
+.pack-mode-badge{
+  display:inline-flex;
+  align-items:center;
+  margin-left:8px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:0.75rem;
+  line-height:1;
+
+  border:1px solid var(--pill-bd);
+  background: var(--pill-bg);
+  color: var(--pill-fg-strong);
+}
+
+/* 隨身包：用 highlight token（不寫死 rgba） */
+.pack-mode-badge.is-carry{
+  border-color: var(--pill-bd-strong);
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+/* 模板：仍然屬於一般狀態，不需要另一套色 */
+.pack-mode-badge.is-template{
+  border-color: var(--pill-bd-strong);
+  background: var(--pill-bg);
+  color: var(--pill-fg-strong);
+}
+
+/* 隨身小包 switch：checked 收斂到 brand */
+#carryModeSwitch.form-check-input:checked{
+  background-color: rgba(var(--bs-primary-rgb), .55);
+  border-color: rgba(var(--bs-primary-rgb), .65);
+}
+
+/* focus 時不要出現藍光 */
+#carryModeSwitch.form-check-input:focus{
+  box-shadow: none;
+}
+
+/* switch 未選取狀態：收斂到 surface-2/border */
+#carryModeSwitch.form-check-input{
+  background-color: var(--surface-2);
+  border-color: var(--border);
+}
+/* =========================
+   HTML inline → CSS（Phase: 先把 HTML 清乾淨）
+   - 不動結構
+   - 顏色全部走 token
+========================= */
+
+/* Trip title/subtitle */
+.trip-title{
+  font-size: 1.2rem;
+  letter-spacing: 4px;
+  margin: 0;
+  font-weight: 300;
+}
+.trip-subtitle{
+  font-size: 0.75rem;
+}
+
+/* Timebar columns */
+.time-col{ min-width: 100px; }
+
+.time-date{
+  font-size: 0.5rem;
+  vertical-align: middle;
+  color: var(--text-3);
+}
+.time-clock{
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-2);
+}
+.time-clock-strong{ color: var(--text-1); }
+
+.time-loc{
+  font-size: 0.5rem;
+  display: block;
+  margin-top: -4px;
+  color: var(--text-3);
+}
+.time-loc-strong{ color: var(--text-2); }
+
+.time-divider{
+  height: 15px;
+  width: 1px;
+  background: var(--pill-bd);
+}
+
+/* Today button position (inline 搬出) */
+#todayBtn.today-float{
+  position: absolute;
+  right: -10px;
+  bottom: -5px;
+}
+
+/* Day-all badge：保留 bg-dark class，但我們用 token 接管色 */
+.badge-trip{
+  /* 不碰結構，只把顏色收斂到 token */
+  background-color: var(--text-1) !important;
+  color: var(--surface) !important;
+}
+
+/* Icon-only mini buttons (原本一堆 inline font-size/padding) */
+.btn-icon-mini{
+  width:28px;
+  height:28px;
+
+  padding:0 !important;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  /* Apple style：平常無框 */
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+
+  border-radius:12px;
+
+  /* 你選 1：icon 低調色 */
+  color: var(--text-2) !important;
+
+  transition:transform .12s ease, background-color .15s ease, opacity .15s ease;
+}
+
+/* icon 本體大小（避免受 btn-sm 影響） */
+.btn-icon-mini i{
+  font-size:.95rem;
+  line-height:1;
+}
+
+/* 手機優先：按下回饋 */
+.btn-icon-mini:active{
+  transform:scale(.90);
+  background: var(--pill-bg-hover) !important;
+}
+
+/* focus：跟收藏頁一致 */
+.btn-icon-mini:focus{
+  box-shadow:none !important;
+}
+.btn-icon-mini:focus-visible{
+  outline:2px solid var(--focus-ring);
+  outline-offset:2px;
+}
+/* ✅ Favorites：在 btn-icon-mini 系統下的少量特例（不再使用 fav-icon 系統） */
+
+/* +：比一般 icon 更清楚一階（只限收藏頁 header 的新增） */
+#fav-list-container .fav-btn-group .fav-add-icon{
+  color: var(--pill-fg-strong) !important;
+}
+
+/* 🗑️：只讓垃圾桶紅（不影響 X） */
+#fav-list-container .fav-btn-group .text-danger i.fa-trash,
+#fav-list-container .fav-btn-group .text-danger i.fa-trash-alt,
+#fav-list-container .fav-btn-group .text-danger i.fas.fa-trash-alt{
+  color: var(--danger-fg) !important;
+}
+/* Budget: refresh button */
+.btn-rate-refresh{
+  font-size: inherit;
+}
+
+/* Budget: currency select width */
+select.exp-curr{
+  max-width: 92px;
+}
+
+/* Budget: rate hint margin */
+.rate-hint{
+  margin-top: -2px;
+}
+
+/* "其他日期" 標題 inline 搬出 */
+.other-days-title{
+  font-weight: 700;
+  letter-spacing: .4px;
+}
+
+/* Budget sum small text + breakdown（把 inline opacity/letter-spacing/border-top 搬出） */
+.budget-sum-sub{
+  opacity: 0.8;
+  letter-spacing: 1px;
+}
+.budget-sum-breakdown{
+  font-size: 0.75rem;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  padding-top: 10px;
+}
+
+/* Packing progress（把 inline 色搬出，讓 token 接管） */
+.progress.packing-progress{
+  height: 8px;
+  background-color: var(--surface-2);
+  border-radius: 4px;
+}
+#packing-bar.packing-bar{
+  width: 0%;
+  height: 100%;
+  transition: width 0.3s;
+  background-color: var(--brand);
+}
+
+/* Info sync note */
+.sync-note{
+  font-size: 0.65rem;
+  color: var(--text-3);
+}
+/* =====================================================
+   ✅ Packing ONLY — Apple/Notion-ish Checkbox
+   Scope: #pack-list-container 內的核取方塊
+   - 小圓框 + 延伸勾
+   - Day：深色勾 / Night：白色勾
+   - 不影響全站 / 不影響 switch
+===================================================== */
+
+/* 行李核取方塊專用變數（不改全站） */
+:root{
+  --pack-chk-size: 14px;                         /* 圓框尺寸 */
+  --pack-chk-bd: var(--pill-bd-strong);          /* 外框 */
+  --pack-chk-bg: var(--surface);                 /* 未勾底 */
+  --pack-chk-on-bg: rgba(var(--bs-primary-rgb), .14); /* ✅ 勾選底色：淡霧藍灰 */
+  --pack-chk-on-bd: rgba(var(--bs-primary-rgb), .28); /* ✅ 勾選框線：比底色深一點 */
+
+  /* ✅ Day tick：深色（比 text-1 稍柔，不死黑） */
+  --pack-chk-tick: rgba(var(--ink-rgb), .92);
+}
+
+/* ✅ Night tick：白色 */
+html[data-theme="dark"]{
+  --pack-chk-tick: rgba(255,255,255,.95);
+}
+
+/* 只抓行李區：核取方塊（排除 switch，如果它剛好也在容器內） */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input){
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: var(--pack-chk-size);
+  height: var(--pack-chk-size);
+  border-radius: 999px;
+
+  border: 1.5px solid var(--pack-chk-bd);
+  background: var(--pack-chk-bg);
+
+  position: relative;
+  display: inline-block;
+  vertical-align: -2px;
+
+  cursor: pointer;
+
+  transition:
+    border-color .18s ease,
+    background-color .18s ease,
+    transform .08s ease,
+    box-shadow .18s ease;
+}
+
+/* hover：框線微提亮（但不變品牌藍光） */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input):hover{
+  border-color: var(--pill-bd-strong);
+  box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), .08);
+}
+
+/* 勾勾（延伸） */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input)::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+
+  /* ✅ 比圈大 → 勾會延伸出來 */
+  width: 19px;
+  height: 19px;
+
+  /* ✅ 置中 + 微調：讓折點更靠近中心 */
+  transform: translate(-50%,-50%) translate(1px,-1px);
+  opacity: 0;
+
+  transition: opacity .12s ease, transform .12s ease;
+
+  /* ✅ 勾勾顏色（Day 深 / Night 白） */
+  background: var(--pack-chk-tick);
+
+  /* SVG tick：圓滑端點、圓滑轉折 */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5.2 12.0l4.4 4.6L19.2 6.9' fill='none' stroke='black' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5.2 12.0l4.4 4.6L19.2 6.9' fill='none' stroke='black' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+
+  /* ✅ Day：讓深色勾在亮底更清楚但不髒 */
+  filter:
+    drop-shadow(0 1px 0 rgba(0,0,0,.18))
+    drop-shadow(0 0 1px rgba(0,0,0,.12));
+}
+
+/* 勾選狀態：淡霧藍灰底 + 稍深框線 */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input):checked{
+  background: var(--pack-chk-on-bg);
+  border-color: var(--pack-chk-on-bd);
+}
+
+/* 勾出現 */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input):checked::after{
+  opacity: 1;
+  transform: translate(-50%,-50%) translate(1px,-2px) scale(1.06);
+}
+
+/* 點按回饋 */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input):active{
+  transform: scale(.92);
+}
+
+/* 鍵盤 focus（輕量，不要藍光爆炸） */
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input):focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), .16);
+}
+
+/* Night：把陰影收乾淨，避免髒灰 */
+html[data-theme="dark"]
+#pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input)::after{
+  filter: drop-shadow(0 0 1px rgba(0,0,0,.55));
+}
+
+</style>
+</head>
+<body>
+<div class="sticky-top bg-white border-bottom shadow-sm">
+    <div class="p-3 text-center">
+        <h1 class="trip-title">
+            SEP 2026 EUROPE
+        </h1>
+
+        <small class="trip-subtitle d-block mb-2">
+            Germany • Norway Cruise • Switzerland • Italy
+        </small>
+
+        <div class="d-flex justify-content-center align-items-center gap-3 py-1 position-relative timebar">
+
+            <!-- 台灣時間 -->
+            <div class="text-end time-col">
+                <span id="tw-date-label" class="time-date"></span>
+                <span id="tw-time" class="time-clock">--:--</span>
+                <small class="time-loc">TAIWAN</small>
+            </div>
+
+            <div class="time-divider"></div>
+
+            <!-- 歐洲時間 -->
+            <div class="text-start time-col">
+                <span id="eu-time" class="time-clock time-clock-strong">--:--</span>
+                <span id="eu-date-label" class="time-date"></span>
+                <small class="time-loc time-loc-strong">EUROPE</small>
+            </div>
+
+            <!-- Today 按鈕固定在右下角 -->
+            <button id="todayBtn" class="today-float" onclick="jumpToToday()" title="跳轉至今日行程">
+                Today · <span id="todayDate">--/--</span>
+            </button>
+        </div>
+
+        <div class="theme-toggle">
+            <button id="themeBtn"
+                    class="btn btn-sm"
+                    onclick="toggleTheme()">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="itinerary" class="content-section active">
+    <div class="day-nav-container">
+        <div class="day-tab active" onclick="switchDay('all', this)">
+            <span class="day-week">ALL</span><span class="day-num">總覽</span>
+        </div>
+        <div class="day-tab" onclick="switchDay('910', this)"><span class="day-week">THU</span><span class="day-num">10</span></div>
+        <div class="day-tab" onclick="switchDay('911', this)"><span class="day-week">FRI</span><span class="day-num">11</span></div>
+        <div class="day-tab" onclick="switchDay('912', this)"><span class="day-week">SAT</span><span class="day-num">12</span></div>
+        <div class="day-tab" onclick="switchDay('913', this)"><span class="day-week">SUN</span><span class="day-num">13</span></div>
+        <div class="day-tab" onclick="switchDay('914', this)"><span class="day-week">MON</span><span class="day-num">14</span></div>
+        <div class="day-tab" onclick="switchDay('915', this)"><span class="day-week">TUE</span><span class="day-num">15</span></div>
+        <div class="day-tab" onclick="switchDay('916', this)"><span class="day-week">WED</span><span class="day-num">16</span></div>
+        <div class="day-tab" onclick="switchDay('917', this)"><span class="day-week">THU</span><span class="day-num">17</span></div>
+        <div class="day-tab" onclick="switchDay('918', this)"><span class="day-week">FRI</span><span class="day-num">18</span></div>
+        <div class="day-tab" onclick="switchDay('919', this)"><span class="day-week">SAT</span><span class="day-num">19</span></div>
+        <div class="day-tab" onclick="switchDay('920', this)"><span class="day-week">SUN</span><span class="day-num">20</span></div>
+        <div class="day-tab" onclick="switchDay('921', this)"><span class="day-week">MON</span><span class="day-num">21</span></div>
+        <div class="day-tab" onclick="switchDay('922', this)"><span class="day-week">TUE</span><span class="day-num">22</span></div>
+        <div class="day-tab" onclick="switchDay('923', this)"><span class="day-week">WED</span><span class="day-num">23</span></div>
+        <div class="day-tab" onclick="switchDay('924', this)"><span class="day-week">THU</span><span class="day-num">24</span></div>
+        <div class="day-tab" onclick="switchDay('925', this)"><span class="day-week">FRI</span><span class="day-num">25</span></div>
+        <div class="day-tab" onclick="switchDay('926', this)"><span class="day-week">SAT</span><span class="day-num">26</span></div>
+        <div class="day-tab" onclick="switchDay('927', this)"><span class="day-week">SUN</span><span class="day-num">27</span></div>
+        <div class="day-tab" onclick="switchDay('928', this)"><span class="day-week">MON</span><span class="day-num">28</span></div>
+    </div>
+
+    <div id="day-all" class="day-content active">
+        <div class="card-custom">
+            <h5 class="fw-bold">2026 德國、挪威、瑞士 🇪🇺</h5>
+            <p class="small text-muted">高雄出發，橫跨德國、挪威郵輪與瑞士深度遊。</p>
+            <div class="badge bg-dark badge-trip">Total 19 Days</div>
+        </div>
+    </div>
+
+    <div id="day-910" class="day-content" data-day="910">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">啟程飛行</h6>
+            </div>
+            <div class="time-item" data-detail="kaohsiung-airport-departure">
+                <div class="time-node"></div>
+
+                <div class="time-header">
+                    <div class="fw-bold">19:00 高雄小港機場</div>
+                    <span class="toggle-icon">▾</span>
+                </div>
+
+                <div class="time-detail">
+                    <div class="small text-muted">
+                        出境、準備起飛、貴賓室
+                    </div>
+                </div>
+            </div>
+            <div class="time-item">
+                <div class="time-node"></div>
+
+                <div class="time-header">
+                    <div class="fw-bold">23:00 抵達香港機場</div>
+                    <span class="toggle-icon">▾</span>
+                </div>
+
+                <div class="time-detail">
+                    <div class="small text-muted">
+                        等待轉機 (Kiel)
+                    </div>
+                </div>
+            </div>
+        </div> <!-- ⭐ card-custom -->
+    </div>     <!-- ⭐ day-910 -->
+
+    <div id="day-911" class="day-content" data-day="911">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">🇩🇪 抵達德國</h6>
+                <div class="d-flex gap-1">
+                    <a href="https://www.google.com/search?q=Kiel+Weather" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-sun"></i>
+                    </a>
+                    <a href="https://maps.app.goo.gl/9ZfWp6G1P8Ue2SjN8" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="time-item">
+                <div class="time-node"></div>
+
+                <div class="time-header">
+                    <div class="fw-bold">07:15 抵達 FRA T2</div>
+                    <span class="toggle-icon">▾</span>
+                </div>
+
+                <div class="time-detail">
+                    <div class="small text-muted">
+                        抵達後通關、領取行李<br>
+                        123<br>
+                        3221<br>
+                        123547<br>
+                    </div>
+                </div>
+            </div>
+            <div class="time-item">
+                <div class="time-node"></div>
+
+                <div class="time-header">
+                    <div class="fw-bold">09:41 ICE 高鐵</div>
+                    <span class="toggle-icon">▾</span>
+                </div>
+
+                <div class="time-detail">
+                    <div class="small text-muted">
+                        法蘭克福 ➔ 15:21 抵達基爾 (Kiel)
+                    </div>
+                </div>
+            </div>
+        </div> <!-- ⭐ card-custom -->
+    </div>     <!-- ⭐ day-911 -->
+
+    <div id="day-912" class="day-content" data-day="912">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">🚢 登船：基爾 Kiel</h6>
+                <div class="d-flex gap-1">
+                    <a href="https://www.yr.no/en" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-sun"></i>
+                    </a>
+                    <a href="https://maps.app.goo.gl/xjPNo9XXZtwXu1qR7" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="time-item">
+                <div class="time-node"></div>
+
+                <div class="time-header">
+                    <div class="fw-bold">16:00 MSC EURIBIA登船</div>
+                    <span class="toggle-icon">▾</span>
+                </div>
+
+                <div class="time-detail">
+                    <div class="small text-muted">
+                        Terminal MSC Kiel 
+                    </div>
+                </div>
+            </div>
+            <div class="time-item">
+                <div class="time-node"></div>
+
+                <div class="time-header">
+                    <div class="fw-bold">19:00 啟航</div>
+                    <span class="toggle-icon">▾</span>
+                </div>
+
+                <div class="time-detail">
+                    <div class="small text-muted">
+                        房號10103
+                    </div>
+                </div>
+            </div>
+        </div> <!-- ⭐ card-custom -->
+    </div>     <!-- ⭐ day-912 -->
+
+    <div id="day-913" class="day-content" data-day="913"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 哥本哈根</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
+    <div id="day-914" class="day-content" data-day="914"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 海上巡航</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
+    <div id="day-915" class="day-content" data-day="915"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 希雷斯利特</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
+    <div id="day-916" class="day-content" data-day="916"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 奧勒松</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
+    <div id="day-917" class="day-content" data-day="917"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 弗洛姆</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
+    <div id="day-918" class="day-content" data-day="918"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 海上巡航</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
+
+    <div id="day-919" class="day-content" data-day="919">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">🇨🇭 琉森 Luzern</h6>
+                <div class="d-flex gap-1">
+                    <a href="https://www.meteoswiss.admin.ch/local-forecasts/lucerne/6000.html" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-sun"></i>
+                    </a>
+                    <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">抵達琉森</div><div class="small text-muted">市區觀光、卡貝爾橋</div></div>
+        </div>
+    </div>
+
+    <div id="day-920" class="day-content" data-day="920">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">🇨🇭 少女峰區：溫根 Wengen</h6>
+                <div class="d-flex gap-1">
+                    <a href="https://www.meteoswiss.admin.ch/local-forecasts/wengen/3823.html" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-sun"></i>
+                    </a>
+                    <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">入住 Wengen</div><div class="small text-muted">少女峰、小夏戴克</div></div>
+        </div>
+    </div>
+
+    <div id="day-921" class="day-content" data-day="921">
+        <div class="card-custom">
+            <h6 class="fw-bold text-primary mb-3">🏔️ 健行：Männlichen ➔ 小夏戴克</h6>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">全景健行 (2h)</div><div class="small text-muted">格林德瓦 ➔ First 山</div></div>
+        </div>
+    </div>
+
+    <div id="day-922" class="day-content" data-day="922">
+        <div class="card-custom">
+            <h6 class="fw-bold text-primary mb-3">🏔️ 雪朗峰 (Schilthorn)</h6>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">景點探索</div><div class="small text-muted">或前往厄西嫩湖 (Oeschinensee)。宿溫根</div></div>
+        </div>
+    </div>
+
+    <div id="day-923" class="day-content" data-day="923">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">🇨🇭 策馬特 Zermatt</h6>
+                <div class="d-flex gap-1">
+                    <a href="https://www.meteoswiss.admin.ch/local-forecasts/zermatt/3920.html" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-sun"></i>
+                    </a>
+                    <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">五湖健行 / 冰川天堂</div></div>
+        </div>
+    </div>
+
+    <div id="day-924" class="day-content" data-day="924">
+        <div class="card-custom">
+            <h6 class="fw-bold text-primary mb-3">🗻 冰川天堂 (Glacier Paradise)</h6>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">景點遊覽</div><div class="small text-muted">策馬特周邊景點探索</div></div>
+        </div>
+    </div>
+
+    <div id="day-925" class="day-content" data-day="925">
+        <div class="card-custom">
+            <h6 class="fw-bold text-primary mb-3">🗻 策馬特周邊</h6>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">五湖健行</div><div class="small text-muted">Sunnegga 五湖健行或鎮上放鬆</div></div>
+        </div>
+    </div>
+
+    <div id="day-926" class="day-content" data-day="926">
+        <div class="card-custom">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-primary m-0">🇮🇹 米蘭 Milan</h6>
+                <div class="d-flex gap-1">
+                    <a href="https://www.google.com/search?q=Milan+Weather" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-sun"></i>
+                    </a>
+                    <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">米蘭大教堂 / 購物</div></div>
+        </div>
+    </div>
+
+    <div id="day-927" class="day-content" data-day="927">
+        <div class="card-custom">
+            <h6 class="fw-bold text-primary mb-3">✈️ 賦歸 (MXP - HKG)</h6>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">12:45 米蘭 (MXP) 起飛</div><div class="small text-muted">前往香港 (11h 40m)</div></div>
+        </div>
+    </div>
+
+    <div id="day-928" class="day-content" data-day="928">
+        <div class="card-custom">
+            <h6 class="fw-bold text-primary mb-3">🏠 抵達高雄</h6>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">06:25 抵達香港 (HKG)</div></div>
+            <div class="time-item"><div class="time-node"></div><div class="fw-bold">08:35 香港 ➔ 10:15 高雄</div></div>
+        </div>
+    </div>
+</div>
+
+<div id="budget" class="content-section">
+
+  <!-- 新增記帳：輸入卡 -->
+  <div class="card-custom">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h6 class="fw-bold m-0">新增支出</h6>
+<button id="rateRefreshBtn"
+        class="btn btn-sm btn-icon-mini btn-rate-refresh"
+        onclick="refreshRates(true)">
+
+  <i class="fas fa-sync-alt"></i>
+
+</button>
+    </div>
+
+    <!-- 幣別 + 金額 -->
+    <div class="input-group input-group-sm mb-2">
+      <select id="exp-curr" class="form-select exp-curr" onchange="onBudgetCurrencyChange()">
+        <option value="CHF">CHF</option>
+        <option value="EUR">EUR</option>
+        <option value="HKD">HKD</option>
+        <option value="TWD">TWD</option>
+      </select>
+      <input type="number" id="exp-amt" class="form-control" placeholder="金額">
+    </div>
+
+    <!-- 匯率顯示（即時/離線提示 + 手動備援只顯示目前幣別） -->
+<div id="rateHint"
+     class="small text-muted rate-hint d-flex justify-content-between align-items-center">
+
+  <span id="rateHintText">
+    匯率：載入中…
+  </span>
+
+<button id="rateEditBtn"
+        type="button"
+        class="btn-rate-edit"
+        onclick="toggleManualRate(event)">
+  修改
+</button>
+  </span>
+</div>
+    <div id="manualRateWrap" style="display:none;" class="mt-2">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text" id="manualRateLabel">CHF→TWD</span>
+        <input type="number" id="manualRateInput" class="form-control" placeholder="手動匯率（離線備援）" step="0.01">
+      </div>
+      <div class="small text-muted mt-1">提示：離線也能記帳；此匯率只影響「新增的這筆」，舊帳不變。</div>
+    </div>
+
+    <hr class="my-3">
+
+    <!-- 分類 + 付款方式 pills（同一列，不增加行數） -->
+    <div class="row g-2 align-items-center mb-2">
+      <div class="col-6">
+        <select id="exp-cat" class="form-select form-select-sm">
+          <option value="餐飲">餐飲</option>
+          <option value="交通">交通</option>
+          <option value="門票">門票</option>
+          <option value="住宿">住宿</option>
+          <option value="購物">購物</option>
+          <option value="超市">超市</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="col-6">
+        <div class="pay-pills" id="pay-method-pills">
+          <button type="button" class="pay-pill active" data-pay="card" onclick="setPayMethod('card', this)">信用卡</button>
+          <button type="button" class="pay-pill" data-pay="cash" onclick="setPayMethod('cash', this)">現金</button>
+          <button type="button" class="pay-pill" data-pay="mobile" onclick="setPayMethod('mobile', this)">行動支付</button>
+          <button type="button" class="pay-pill" data-pay="other" onclick="setPayMethod('other', this)">其他</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 備註 -->
+    <textarea id="exp-note" class="form-control form-control-sm mb-2" placeholder="備註"></textarea>
+
+    <!-- 加入 -->
+    <button class="btn btn-dark w-100 btn-sm shadow-sm" onclick="addExp()">加入這筆記帳</button>
+  </div>
+
+  <!-- 今日 -->
+  <div class="card-custom">
+    <div class="budget-today-head">
+      <div>
+        <div class="budget-today-date" id="todayLabel">Today</div>
+        <div class="budget-today-sub" id="todaySub">CHF 0 | EUR 0 | HKD 0</div>
+      </div>
+      <div class="budget-today-total">NT$ <span id="todayTotal">0</span></div>
+    </div>
+    <div class="mt-3" id="todayList"></div>
+  </div>
+
+  <!-- 其他日期（預設收合，但你點開後會保留，直到整頁 reload） -->
+  <div class="mt-2">
+    <div class="small text-muted mb-2 other-days-title">其他日期</div>
+    <div id="dayGroups"></div>
+  </div>
+
+  <!-- 旅程總覽（沿用你原本卡片概念） -->
+  <div class="budget-sum">
+    <small class="budget-sum-sub">旅程總支出 (TWD)</small>
+    <div class="h1 my-2">NT$ <span id="total-twd">0</span></div>
+    <div class="small budget-sum-breakdown">
+      CHF: <span id="total-chf">0</span> | EUR: <span id="total-eur">0</span> | HKD: <span id="total-hkd">0</span>
+    </div>
+  </div>
+
+  <button class="btn btn-link btn-sm w-100 text-muted mt-4" onclick="clearAll()">清空所有記帳紀錄</button>
+</div>
+
+<div id="packing" class="content-section">
+  <div class="day-label"> 行李清單 <span id="pack-mode-badge" class="pack-mode-badge">本次清單</span></div>
+
+  <!-- ✅ 行李：模式控制列（新版） -->
+  <div class="card-custom mb-3">
+    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+      <!-- 左側：本次 + 隨身小包 -->
+      <div class="d-flex align-items-center gap-3">
+        <div class="btn-group btn-group-sm" role="group" aria-label="packing mode">
+          <button class="btn btn-secondary-soft" id="btn-pack-trip" onclick="setPackView('trip')">本次清單</button>
+        </div>
+
+        <div class="form-check form-switch m-0">
+          <input class="form-check-input" type="checkbox" id="carryModeSwitch" onchange="toggleCarryMode(this.checked)">
+          <label class="form-check-label small text-muted" for="carryModeSwitch">隨身小包模式</label>
+        </div>
+      </div>
+
+      <!-- 右側：模板 -->
+      <div class="btn-group btn-group-sm" role="group" aria-label="packing mode">
+        <button class="btn btn-secondary-soft" id="btn-pack-template" onclick="setPackView('template')">模板</button>
+      </div>
+    </div>
+
+    <!-- ✅ 只在模板視圖才顯示的操作列 -->
+    <div id="template-actions" class="mt-2" style="display:none;">
+      <div class="d-flex flex-wrap gap-2 justify-content-end">
+        <button class="btn pack-pill pack-pill-primary" onclick="applyTemplateToTripMerge()">合併</button>
+        <button class="btn pack-pill pack-pill-danger" onclick="resetTripFromTemplate()">重建</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 進度條（模板視圖會被 JS 隱藏） -->
+  <div class="card-custom mb-3" id="packing-progress-container" style="display: none;">
+    <div class="d-flex justify-content-between mb-1">
+      <span class="small fw-bold">打包進度</span>
+      <span class="small text-muted" id="packing-percent">0%</span>
+    </div>
+    <div class="progress packing-progress">
+      <div id="packing-bar" class="progress-bar packing-bar"></div>
+    </div>
+  </div>
+
+  <!-- 新增分類 -->
+  <div class="card-custom mb-3">
+    <div class="input-group input-group-sm">
+      <input type="text" id="new-cat-input" class="form-control" placeholder="新增類別 (如：化妝品)">
+      <button class="btn btn-dark" onclick="addNewCategory()">建立分類</button>
+    </div>
+  </div>
+
+  <!-- 清單容器（一定只能有一個） -->
+  <div id="pack-list-container"></div>
+
+  <button class="btn btn-link btn-sm w-100 text-muted mt-2" onclick="clearCheckedItems()">清除所有已勾選項目</button>
+</div>
+
+<div id="info" class="content-section">
+  <div class="day-label">🔗 快速連結與電話</div>
+  <div class="card-custom">
+    <h6 class="fw-bold">緊急連絡</h6>
+    <p class="small mb-2">外交部急難救助：+886-800-085-095</p>
+    <hr>
+    <h6 class="fw-bold">常用連結</h6>
+    <div class="d-grid gap-2">
+<a href="https://www.sbb.ch/en" target="_blank" class="btn btn-sm btn-secondary-soft text-start">SBB 瑞士國鐵官網</a>
+<a href="https://www.meteoswiss.admin.ch/" target="_blank" class="btn btn-sm btn-secondary-soft text-start">MeteoSwiss 瑞士天氣</a>
+    </div>
+  </div>
+
+  <div class="card-custom" id="sync-center">
+    <!-- 標題 -->
+    <div class="text-center mb-3">
+      <h6 class="fw-bold mb-1">隊友同步中心</h6>
+      <small class="text-muted">同步記帳紀錄與行李清單</small>
+    </div>
+
+    <!-- 狀態 + 本機摘要（之後由 JS 填入） -->
+    <div class="mb-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="fw-bold">上次同步</div>
+        <div class="small text-muted" id="sync-last-time">尚無紀錄</div>
+      </div>
+      <div class="small mt-1" id="sync-last-status">—</div>
+
+      <hr class="my-2">
+
+      <div class="small text-muted" id="sync-local-summary">
+        本機資料：記帳 —｜行李模板 —｜本次行李 —｜收藏 —
+      </div>
+    </div>
+
+    <!-- Tab（外觀先到位；切換行為下一步接 JS） -->
+    <div class="d-flex gap-2 mb-3">
+      <button type="button" class="btn btn-sm btn-secondary-soft flex-fill" id="sync-tab-share">
+        我要分享
+      </button>
+      <button type="button" class="btn btn-sm btn-secondary-soft flex-fill" id="sync-tab-receive">
+        我要同步
+      </button>
+    </div>
+
+    <!-- 我要分享 -->
+    <div class="mb-3" id="sync-pane-share">
+<hr class="my-3">
+      <div class="fw-bold mb-2">我要分享給隊友</div>
+
+      <!-- 分享內容勾選（先做出來；下一步才真的影響匯出內容） -->
+      <div class="small mb-2">
+<div class="pay-pills">
+  <input type="checkbox" id="sync-share-exp" class="d-none" checked>
+  <button type="button" class="pay-pill active"
+          onclick="toggleSyncPill(this, 'sync-share-exp')">
+    記帳
+  </button>
+
+  <input type="checkbox" id="sync-share-pack" class="d-none" checked>
+  <button type="button" class="pay-pill active"
+          onclick="toggleSyncPill(this, 'sync-share-pack')">
+    行李
+  </button>
+
+  <input type="checkbox" id="sync-share-fav" class="d-none" checked>
+  <button type="button" class="pay-pill active"
+          onclick="toggleSyncPill(this, 'sync-share-fav')">
+    收藏
+  </button>
+</div>
+      </div>
+
+<button class="btn btn-sm btn-secondary-soft w-100 mb-2" onclick="analyzeShareContent()">
+  <i class="fas fa-search"></i> 分析將分享內容
+</button>
+
+<div class="small text-muted mb-2" id="sync-share-preview">
+  （分析後會顯示將分享內容）
+</div>
+
+<div id="sync-share-actions" class="d-none mb-2">
+  <div class="d-flex gap-2">
+    <button type="button" class="btn btn-sm btn-secondary-soft flex-fill" onclick="cancelSharePreview()">
+      取消
+    </button>
+<button type="button"
+        class="btn btn-sm btn-primary flex-fill sync-generate-btn"
+        id="btn-generate-code"
+        onclick="confirmShareGenerate(this)">
+
+  <span class="btn-label-default">產生同步碼</span>
+  <span class="btn-label-success">✓ 已複製</span>
+
+</button>
+  </div>
+</div>
+    </div>
+
+    <!-- 我要同步 -->
+    <div class="mb-2" id="sync-pane-receive">
+<hr class="my-3">
+      <div class="fw-bold mb-2">我要同步朋友資料</div>
+
+      <!-- 同步內容勾選（下一步才真的影響「分類覆蓋」） -->
+      <div class="small mb-2">
+<div class="pay-pills">
+  <input type="checkbox" id="sync-recv-exp" class="d-none" checked>
+  <button type="button" class="pay-pill active"
+          onclick="toggleSyncPill(this, 'sync-recv-exp')">
+    記帳
+  </button>
+
+  <input type="checkbox" id="sync-recv-pack" class="d-none" checked>
+  <button type="button" class="pay-pill active"
+          onclick="toggleSyncPill(this, 'sync-recv-pack')">
+    行李
+  </button>
+
+  <input type="checkbox" id="sync-recv-fav" class="d-none" checked>
+  <button type="button" class="pay-pill active"
+          onclick="toggleSyncPill(this, 'sync-recv-fav')">
+    收藏
+  </button>
+</div>
+      </div>
+
+      <!-- 貼上代碼（先用 textarea 取代 prompt 的體驗；下一步才接分析/預覽/確認） -->
+      <div class="mb-2">
+        <div class="small fw-bold mb-1">貼上同步碼</div>
+<div class="position-relative">
+  <textarea id="sync-code-input"
+            class="form-control pe-5"
+            rows="3"
+            placeholder="貼上同步碼"></textarea>
+
+<span class="sync-icon"
+      onclick="pasteSyncCode(this)"
+      style="position:absolute; right:10px; top:10px; cursor:pointer; width:16px; height:16px;">
+
+  <i class="fas fa-paste text-primary"></i>
+  <span class="paste-check">✓</span>
+
+</span>
+</div>
+      </div>
+
+      <!-- 先保留你原本可用的匯入按鈕（避免現在點了沒反應）
+           下一步我們會改成：分析 → 預覽 → 確認才套用 -->
+<button class="btn btn-sm btn-secondary-soft w-100 mb-2" onclick="analyzeSyncContent()">
+  <i class="fas fa-search"></i> 分析同步內容
+</button>
+
+      <!-- 預覽/警示區（下一步接：將更新哪些 + 自動備份提示 + 確認同步） -->
+<div class="small text-muted mb-2" id="sync-recv-preview">
+  （下一步會在這裡顯示：將更新內容摘要、是否覆蓋、同步前自動備份）
+</div>
+
+<div id="sync-recv-actions" class="d-none mb-2">
+  <div class="small text-warning mb-2">
+    ⚠ 同步前將自動備份（可復原）
+  </div>
+  <div class="d-flex gap-2">
+    <button type="button" class="btn btn-sm btn-secondary-soft flex-fill" onclick="cancelSyncPreview()">
+      取消
+    </button>
+    <button type="button"
+        class="btn btn-sm btn-primary flex-fill sync-confirm-btn"
+        onclick="confirmSync(this)">
+
+  <span class="btn-label-default">確認同步</span>
+  <span class="btn-label-success">✓ 已同步</span>
+
+</button>
+  </div>
+</div>
+
+      <!-- 你選的 1A：復原上一版（先放位置；下一步接功能）
+           先 disabled，避免現在按了沒作用 -->
+<button type="button"
+        class="btn btn-sm btn-secondary-soft w-100 sync-confirm-btn"
+        id="sync-undo-btn"
+        onclick="undoSync()"
+        disabled>
+
+  <span class="btn-label-default">復原上一版（同步前備份）</span>
+  <span class="btn-label-success">✓ 已復原</span>
+
+</button>
+    </div>
+
+    <!-- 最近同步紀錄（你選 A：顯示少量即可；下一步接資料） -->
+    <hr class="my-3">
+    <div class="small">
+      <div class="fw-bold mb-2">最近同步</div>
+      <div id="sync-log-list" class="text-muted">
+        （下一步會在這裡顯示最近 3～5 筆：匯出/匯入、成功/失敗、時間）
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <div class="nav-item active" onclick="switchTab('itinerary', this)"><i class="fas fa-calendar-alt"></i>行程</div>
+  <div class="nav-item" onclick="switchTab('info', this)"><i class="fas fa-info-circle"></i>資訊</div>
+  <div class="nav-item" onclick="switchTab('budget', this)"><i class="fas fa-wallet"></i>記帳</div>
+  <div class="nav-item" onclick="switchTab('packing', this)"><i class="fas fa-check-square"></i>行李</div>
+  <div class="nav-item" onclick="switchTab('favorites', this)"><i class="fas fa-heart"></i>收藏</div>
+</nav>
+
+<div id="favorites" class="content-section">
+  <div id="fav-top-container" class="mb-3">
+    <div id="fav-top-list"></div>
+  </div>
+
+  <div id="fav-list-container"></div>
+
+  <button class="btn btn-sm btn-dark mt-2" onclick="addFavoritePrompt()">+ 新增收藏</button>
+</div>
+
+</div>
+</body>
+<script>
+function updateClocks() {
+    const now = new Date();
+    
+    // 1. 調整格式：加入 second: '2-digit' 來顯示秒數
+    const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+    
+    // 2. 獲取時間字串
+    const twStr = now.toLocaleTimeString('zh-TW', { ...options, timeZone: 'Asia/Taipei' });
+    const euStr = now.toLocaleTimeString('zh-TW', { ...options, timeZone: 'Europe/Berlin' });
+    
+    // 3. 獲取日期數字判斷跨日 (使用 Intl.DateTimeFormat 較為穩定)
+    const twDay = parseInt(new Intl.DateTimeFormat('en-US', { day: 'numeric', timeZone: 'Asia/Taipei' }).format(now));
+    const euDay = parseInt(new Intl.DateTimeFormat('en-US', { day: 'numeric', timeZone: 'Europe/Berlin' }).format(now));
+
+    // 4. 更新 DOM (加上安全檢查確保 ID 存在)
+    const twTimeEl = document.getElementById('tw-time');
+    const euTimeEl = document.getElementById('eu-time');
+    const twLabel = document.getElementById('tw-date-label');
+    const euLabel = document.getElementById('eu-date-label');
+
+    if (twTimeEl) twTimeEl.innerText = twStr;
+    if (euTimeEl) euTimeEl.innerText = euStr;
+
+    // 5. 判斷日期差異標籤
+    if (twLabel && euLabel) {
+        if (twDay > euDay) {
+            twLabel.innerText = "明天 "; 
+            euLabel.innerText = "";
+        } else if (twDay < euDay) {
+            twLabel.innerText = "";
+            euLabel.innerText = " (昨日)"; 
+        } else {
+            twLabel.innerText = "";
+            euLabel.innerText = "";
+        }
+    }
+}
+
+// --- 關鍵：確保這行在函數外面，這才會每秒執行一次 ---
+setInterval(updateClocks, 1000);
+// --- 基礎分頁切換 ---
+function switchTab(id, el) {
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+    window.scrollTo(0,0);
+// 【新增指令】：每當切換大分頁時，強制重新判定住宿框
+    if (typeof refreshHotelBar === 'function') {
+        refreshHotelBar();
+    }
+    // ✅ 切到記帳頁：自動抓一次匯率（不彈通知）
+    if (id === 'budget' && typeof initBudgetPageIfNeeded === 'function') {
+        initBudgetPageIfNeeded();
+    }
+
+}
+
+function switchDay(dayId, el) {
+    const container = el.parentElement;
+    container.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.day-content').forEach(c => c.classList.remove('active'));
+    const target = document.getElementById('day-' + dayId);
+    if (target) target.classList.add('active');
+    window.scrollTo(0, 0);
+}
+// --- 記帳邏輯（新版：每筆鎖匯率 / 今日+分日 / 展開狀態保留） ---
+let expenses = JSON.parse(localStorage.getItem('trip_v2026')) || [];
+
+// 匯率狀態（只影響新增，不回頭改舊帳）
+let rates = { CHF: null, EUR: null, HKD: null };   // foreign -> TWD
+let ratesStatus = "loading"; // "ok" | "offline" | "loading"
+let lastRateFetchedAt = 0;
+
+// UI 狀態：其他日期展開狀態（直到整頁 reload；但 render 不會把你打開的收回）
+let openDaySet = new Set(JSON.parse(localStorage.getItem('trip_budget_open_days') || '[]'));
+
+// 付款方式：記住上一次
+let currentPay = localStorage.getItem('trip_budget_last_pay') || 'card';
+
+// 小工具：取得「本地日期 key」（依手機所在時區，不指定 timeZone）
+function getLocalDayKey(date = new Date()) {
+  // 以 YYYY-MM-DD 做 key，比較穩定
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function formatLocalDayLabel(dayKey){
+  // dayKey: YYYY-MM-DD
+  const [y,m,d] = dayKey.split('-').map(n => parseInt(n,10));
+  const dt = new Date(y, (m-1), d);
+  // 例：Thu, 9/10
+  const wk = new Intl.DateTimeFormat('en-US', { weekday:'short' }).format(dt);
+  return `${wk} · ${m}/${d}`;
+}
+
+function num(n){
+  const x = Number(n);
+  return Number.isFinite(x) ? x : 0;
+}
+
+function toMoney(n){
+  return Math.round(num(n)).toLocaleString();
+}
+function fmtHHMM(ts){
+  if (!ts) return "";
+  const d = new Date(ts);
+  const hh = String(d.getHours()).padStart(2,'0');
+  const mm = String(d.getMinutes()).padStart(2,'0');
+  return `${hh}:${mm}`;
+}
+
+// 當幣別變更：更新匯率顯示 / 手動備援欄位
+function onBudgetCurrencyChange(){
+  updateRateHintUI();
+}
+
+// 付款方式 pill
+function setPayMethod(pay, btnEl){
+  currentPay = pay;
+  localStorage.setItem('trip_budget_last_pay', pay);
+
+  document.querySelectorAll('#budget .pay-pill').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  else {
+    // fallback：找同 pay 的按鈕
+    const t = document.querySelector(`#budget .pay-pill[data-pay="${pay}"]`);
+    if (t) t.classList.add('active');
+  }
+}
+function toggleManualRate(ev){
+  if (ev) ev.stopPropagation();
+
+  const wrap = document.getElementById('manualRateWrap');
+  const btn  = document.getElementById('rateEditBtn');
+  if (!wrap || !btn) return;
+
+  const isOpen = (wrap.style.display === 'block');
+
+  if (isOpen){
+    wrap.style.display = 'none';
+    btn.innerText = "修改";
+    btn.classList.remove('active');
+  } else {
+    wrap.style.display = 'block';
+    btn.innerText = "收起";
+    btn.classList.add('active');
+  }
+}
+// 匯率提示 UI
+function updateRateHintUI(){
+
+  const curr = document.getElementById('exp-curr')?.value || 'TWD';
+  const hint = document.getElementById('rateHintText');
+  const manualWrap = document.getElementById('manualRateWrap');
+  const manualInput = document.getElementById('manualRateInput');
+
+  if (!hint) return;
+
+  if (curr === 'TWD'){
+    hint.innerText = `匯率：TWD`;
+    if (manualWrap) manualWrap.style.display = 'none';
+    return;
+  }
+
+  const r = rates[curr];
+  const manual = parseFloat(manualInput?.value);
+  const t = fmtHHMM(lastRateFetchedAt);
+  const tLabel = t ? `<span class="ms-2"><i class="far fa-clock ms-1 opacity-75"></i> ${t}` : "";
+
+  // ① 有手動值 → 永遠顯示手動
+  if (Number.isFinite(manual) && manual > 0){
+    hint.innerText = `匯率：${curr} → TWD ${manual.toFixed(2)}（手動）`;
+    if (manualWrap) manualWrap.style.display = 'block';
+    return;
+  }
+
+  // ② 有匯率數值（即時或快取）
+if (Number.isFinite(r)){
+  if (ratesStatus === "offline"){
+   hint.innerHTML = `匯率：${curr} → TWD ${r.toFixed(2)}${tLabel}
+    <i class="fas fa-exclamation-circle"></i>`;
+  } else {
+    hint.innerHTML = `匯率：${curr} → TWD ${r.toFixed(2)}${tLabel}`;
+  }
+    // 不強制顯示手動
+    if (manualWrap) manualWrap.style.display = 'none';
+    return;
+  }
+
+  // ③ 無匯率（唯一強制情況）
+  hint.innerText = `匯率：目前無法取得<i class="fas fa-exclamation-circle"></i>`;
+  if (manualWrap) manualWrap.style.display = 'block';
+}
+
+
+// 抓匯率（進入頁面抓一次；想更新才按按鈕）
+async function refreshRates(showToast = false){
+const btn = document.getElementById('rateRefreshBtn');
+if (btn){
+  btn.classList.remove('is-spinning');
+  void btn.offsetWidth; // 強制重繪，確保動畫能重播
+  btn.classList.add('is-spinning');
+}
+const spinStart = Date.now();
+  ratesStatus = "loading";
+  updateRateHintUI();
+
+  try{
+    // 取 TWD base，回來是 1 TWD = ? foreign
+    const res = await fetch('https://open.er-api.com/v6/latest/TWD', { cache: "no-store" });
+    const data = await res.json();
+
+    if (!data || !data.rates) throw new Error("No rates");
+
+    // foreign -> TWD = 1 / (TWD -> foreign)
+    rates.CHF = data.rates.CHF ? (1 / data.rates.CHF) : null;
+    rates.EUR = data.rates.EUR ? (1 / data.rates.EUR) : null;
+    rates.HKD = data.rates.HKD ? (1 / data.rates.HKD) : null;
+
+    ratesStatus = "ok";
+    lastRateFetchedAt = Date.now();
+
+    // 緩存一份（離線時至少顯示最後成功的）
+    localStorage.setItem('trip_budget_rates_cache', JSON.stringify({
+      at: lastRateFetchedAt,
+      rates
+    }));
+updateRateHintUI();
+if (showToast) {
+  showRateToast("✓ 匯率已更新", "var(--bs-primary)");
+}
+  }
+catch(e){
+    // 失敗：嘗試用 cache 顯示（但仍視為 offline，新增時若非 TWD 會出手動備援）
+    ratesStatus = "offline";
+
+    const cache = localStorage.getItem('trip_budget_rates_cache');
+    if (cache){
+      try{
+        const parsed = JSON.parse(cache);
+        if (parsed?.rates) rates = { ...rates, ...parsed.rates };
+      }catch(_){}
+    }
+updateRateHintUI();
+
+if (showToast) {
+  showRateToast("⚠ 無法取得即時匯率", "var(--danger-fg)");
+}
+} finally {
+
+  // 先更新成正常匯率顯示
+}}
+function showRateToast(message, color){
+
+  const hint = document.getElementById('rateHintText');
+  if (!hint) return;
+
+  hint.style.opacity = "0";
+
+  setTimeout(() => {
+    hint.innerText = message;
+    hint.style.color = color;
+    hint.style.opacity = "1";
+  }, 200);
+
+  setTimeout(() => {
+    hint.style.opacity = "0";
+  }, 1400);
+
+  setTimeout(() => {
+    hint.style.color = "";
+    updateRateHintUI();
+    hint.style.opacity = "1";
+  }, 1700);
+}
+// 新增記帳：鎖定匯率 + 鎖定換算 TWD
+function addExp(){
+  const curr = document.getElementById('exp-curr').value;
+  const amtRaw = document.getElementById('exp-amt').value;
+  const cat = document.getElementById('exp-cat').value;
+  const note = document.getElementById('exp-note').value || "";
+
+  const amt = parseFloat(amtRaw);
+
+if (!Number.isFinite(amt) || amt <= 0){
+
+  const input = document.getElementById('exp-amt');
+  if (input){
+    input.classList.add('is-invalid');
+
+    setTimeout(() => {
+      input.classList.remove('is-invalid');
+    }, 1500);
+  }
+
+  return;
+}
+// 決定這筆使用的匯率
+let rateAtSave = 1; // TWD
+let rateSource = "auto";
+
+if (curr !== 'TWD'){
+
+  const manualInput = document.getElementById('manualRateInput');
+  const manual = parseFloat(manualInput?.value);
+
+  // ① 若有手動輸入 → 永遠優先使用
+  if (Number.isFinite(manual) && manual > 0){
+    rateAtSave = manual;
+    rateSource = "manual";
+    localStorage.setItem(`trip_budget_manual_rate_${curr}`, String(manual));
+  } 
+  // ② 否則只要有匯率數值（即時或快取）就用
+  else if (Number.isFinite(rates[curr])){
+    rateAtSave = rates[curr];
+    rateSource = (ratesStatus === "ok") ? "auto" : "cache";
+  } 
+  // ③ 真的沒有匯率才強制手動
+  else {
+const hintText = document.getElementById('rateHintText');
+if (hintText){
+  const original = hintText.innerText;
+
+  hintText.innerText = `請輸入 ${curr}→TWD 手動匯率`;
+  hintText.style.color = "var(--danger-fg)";
+
+  setTimeout(() => {
+    hintText.innerText = original;
+    hintText.style.color = "";
+  }, 2000);
+}
+
+return;
+  }
+}
+  const twdAtSave = (curr === 'TWD') ? amt : (amt * rateAtSave);
+
+  const now = new Date();
+  const dayKey = getLocalDayKey(now);
+
+  expenses.push({
+    id: Date.now(),
+    createdAt: now.toISOString(),
+    localDay: dayKey,           // 用本地日期分組（你在台灣/歐洲都跟著手機）
+    cat,
+    pay: currentPay,            // cash/card/other
+    curr,
+    amt,
+    rateAtSave,                 // foreign -> TWD（每筆鎖死）
+    rateSource,                 // auto/manual
+    twdAtSave,                  // 每筆鎖死的換算 TWD
+    note
+  });
+
+  localStorage.setItem('trip_v2026', JSON.stringify(expenses));
+
+  // 清輸入（保留你選的幣別/分類/付款方式，減少旅行中反覆操作）
+  document.getElementById('exp-amt').value = '';
+  document.getElementById('exp-note').value = '';
+
+  render(); // 重新渲染（但會保留你打開的日期狀態）
+updateLocalSummary();
+}
+
+function deleteExp(id){
+  expenses = expenses.filter(e => e.id !== id);
+  localStorage.setItem('trip_v2026', JSON.stringify(expenses));
+  render();
+updateLocalSummary();
+}
+
+function clearAll(){
+  if(confirm("確定要清空所有記帳紀錄嗎？")){
+    expenses = [];
+    localStorage.setItem('trip_v2026', JSON.stringify(expenses));
+    render();
+updateLocalSummary();
+  }
+}
+
+// 渲染（新版）
+function render(){
+  // 兼容舊資料：補 localDay / twdAtSave / rateAtSave / pay
+  let changed = false;
+  expenses.forEach(e => {
+    if (!e.localDay){
+      const dt = e.createdAt ? new Date(e.createdAt) : new Date();
+      e.localDay = getLocalDayKey(dt);
+      changed = true;
+    }
+    if (!Number.isFinite(Number(e.twdAtSave))){
+      // 舊版用當下匯率算；我們只能用「目前欄位」補一次（避免爆掉）
+      const amt = num(e.amt);
+      const curr = e.curr || 'TWD';
+      const r = num(e.rateAtSave) || 1;
+      e.twdAtSave = (curr === 'TWD') ? amt : (amt * r);
+      changed = true;
+    }
+    if (!e.pay){
+      e.pay = 'card';
+      changed = true;
+    }
+  });
+  if (changed){
+    localStorage.setItem('trip_v2026', JSON.stringify(expenses));
+  }
+
+  // 更新今日標籤
+  const todayKey = getLocalDayKey(new Date());
+  const todayLabel = document.getElementById('todayLabel');
+  if (todayLabel) todayLabel.innerText = `Today · ${formatLocalDayLabel(todayKey)}`;
+
+  // 分組（依 localDay）
+  const byDay = new Map();
+  expenses.forEach(e => {
+    const k = e.localDay || todayKey;
+    if (!byDay.has(k)) byDay.set(k, []);
+    byDay.get(k).push(e);
+  });
+
+  // 日期排序：新到舊
+  const dayKeys = Array.from(byDay.keys()).sort((a,b) => (a < b ? 1 : -1));
+
+  // 旅程總覽（沿用你的總覽顯示）
+  let totalTWD = 0, totalCHF = 0, totalEUR = 0, totalHKD = 0;
+  expenses.forEach(e => {
+    totalTWD += num(e.twdAtSave);
+    if (e.curr === 'CHF') totalCHF += num(e.amt);
+    if (e.curr === 'EUR') totalEUR += num(e.amt);
+    if (e.curr === 'HKD') totalHKD += num(e.amt);
+  });
+
+  document.getElementById('total-twd').innerText = toMoney(totalTWD);
+  document.getElementById('total-chf').innerText = totalCHF.toFixed(1);
+  document.getElementById('total-eur').innerText = totalEUR.toFixed(1);
+  document.getElementById('total-hkd').innerText = totalHKD.toFixed(1);
+
+  // 今日區塊
+  const todayListEl = document.getElementById('todayList');
+  const todayTotalEl = document.getElementById('todayTotal');
+  const todaySubEl = document.getElementById('todaySub');
+
+  const todayItems = byDay.get(todayKey) || [];
+  let todayTWD = 0, todayCHF = 0, todayEUR = 0, todayHKD = 0;
+
+  todayItems.forEach(e => {
+    todayTWD += num(e.twdAtSave);
+    if (e.curr === 'CHF') todayCHF += num(e.amt);
+    if (e.curr === 'EUR') todayEUR += num(e.amt);
+    if (e.curr === 'HKD') todayHKD += num(e.amt);
+  });
+
+  if (todayTotalEl) todayTotalEl.innerText = toMoney(todayTWD);
+  if (todaySubEl) todaySubEl.innerText = `CHF ${todayCHF.toFixed(1)} | EUR ${todayEUR.toFixed(1)} | HKD ${todayHKD.toFixed(1)}`;
+
+  if (todayListEl){
+    todayListEl.innerHTML = todayItems.length
+      ? todayItems
+          .slice()
+          .sort((a,b) => (a.createdAt < b.createdAt ? 1 : -1))
+          .map(e => renderExpCard(e))
+          .join('')
+      : `<div class="text-center small text-muted py-2">今天尚無記帳</div>`;
+  }
+
+  // 其他日期（排除今日）
+  const dayGroupsEl = document.getElementById('dayGroups');
+  if (dayGroupsEl){
+    const otherDays = dayKeys.filter(k => k !== todayKey);
+    if (!otherDays.length){
+      dayGroupsEl.innerHTML = `<div class="text-center small text-muted py-2">尚無其他日期紀錄</div>`;
+    } else {
+      dayGroupsEl.innerHTML = otherDays.map(k => renderDayGroup(k, byDay.get(k))).join('');
+    }
+  }
+
+  // 恢復付款方式 pill（避免 reload 以外的 render 把 UI 弄回去）
+  setPayMethod(currentPay, null);
+
+  // 匯率提示更新
+  updateRateHintUI();
+}
+
+// 單筆卡片 HTML（左：分類+備註+付款方式；右：原幣+TWD）
+function payLabel(pay){
+  if (pay === 'cash') return '現金';
+  if (pay === 'mobile') return '行動支付';
+  if (pay === 'other') return '其他';
+  return '信用卡';
+}
+
+function payIcon(pay){
+  if (pay === 'cash') return 'fa-coins';
+  if (pay === 'mobile') return 'fa-mobile-screen-button';
+  if (pay === 'other') return 'fa-shapes';
+  return 'fa-credit-card';
+}
+// =========================
+// Budget: Edit-day popover (B2)
+// =========================
+let activePop = null; // { id, el }
+
+function closeEditPopover(){
+  if (activePop?.el) activePop.el.remove();
+  activePop = null;
+}
+
+function ymdFromDate(dt){
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth()+1).padStart(2,'0');
+  const d = String(dt.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+
+function addDays(dt, delta){
+  const x = new Date(dt);
+  x.setDate(x.getDate() + delta);
+  return x;
+}
+
+function isValidYMD(s){
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const [y,m,d] = s.split('-').map(n=>parseInt(n,10));
+  const test = new Date(y, m-1, d);
+  return test.getFullYear()===y && (test.getMonth()+1)===m && test.getDate()===d;
+}
+
+function setPopoverDateInput(popEl, ymd){
+  const input = popEl.querySelector('input[data-role="day"]');
+  if (input) input.value = ymd;
+}
+
+function saveEditedDay(expId, newDay){
+  if (!isValidYMD(newDay)){
+const pop = document.querySelector('.budget-popover');
+if (pop){
+
+  let msg = pop.querySelector('.pop-error');
+
+  if (!msg){
+    msg = document.createElement('div');
+    msg.className = 'pop-error small mt-1';
+    msg.style.color = 'var(--danger-fg)';
+    pop.appendChild(msg);
+  }
+
+  msg.innerText = "日期格式請用 YYYY-MM-DD";
+
+  setTimeout(() => {
+    if (msg) msg.innerText = "";
+  }, 2000);
+}
+
+return;
+  }
+  const idx = expenses.findIndex(e => e.id === expId);
+  if (idx < 0) return;
+
+  // ✅ 只改付款日（分組用的 localDay）
+  expenses[idx].localDay = newDay;
+
+  localStorage.setItem('trip_v2026', JSON.stringify(expenses));
+  closeEditPopover();
+  render();
+}
+
+// anchorBtn：你點的 ✏️ 那顆
+function openEditPopover(expId, anchorBtn){
+  closeEditPopover();
+
+  const e = expenses.find(x => x.id === expId);
+  if (!e) return;
+
+  // 建 popover
+  const pop = document.createElement('div');
+  pop.className = 'budget-popover';
+  pop.dataset.popover = 'budget-edit';
+  pop.innerHTML = `
+    <div class="pop-title">付款日（刷卡/付款那天）</div>
+
+    <div class="pop-pills">
+      <div class="pop-pill" data-delta="0">今天</div>
+      <div class="pop-pill" data-delta="-1">昨天</div>
+      <div class="pop-pill" data-delta="-2">前天</div>
+    </div>
+
+    <div class="pop-row">
+      <input data-role="day" inputmode="numeric" placeholder="YYYY-MM-DD" />
+    </div>
+
+    <div class="pop-actions">
+      <button type="button" class="pop-btn" data-act="cancel">取消</button>
+      <button type="button" class="pop-btn primary" data-act="save">保存</button>
+    </div>
+  `;
+
+  // 預填原本日期
+  setPopoverDateInput(pop, e.localDay || getLocalDayKey(new Date(e.createdAt || Date.now())));
+
+  // 定位：貼在按鈕旁邊（右側/下方）
+  const rect = anchorBtn.getBoundingClientRect();
+  const scrollX = window.scrollX || document.documentElement.scrollLeft;
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+  pop.style.left = `${scrollX +  rect.left}px`; // 先往左推，避免超出右邊
+  pop.style.top  = `${scrollY + rect.bottom + 6}px`;
+
+  // 若太靠左，拉回來
+  setTimeout(() => {
+    const pr = pop.getBoundingClientRect();
+    if (pr.left < 8) pop.style.left = `${scrollX + 8}px`;
+    if (pr.right > window.innerWidth - 8) pop.style.left = `${scrollX + window.innerWidth - pr.width - 8}px`;
+  }, 0);
+
+  document.body.appendChild(pop);
+  activePop = { id: expId, el: pop };
+
+  // 快速 pill
+  pop.querySelectorAll('.pop-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const delta = parseInt(pill.dataset.delta, 10);
+      const ymd = ymdFromDate(addDays(new Date(), delta));
+      setPopoverDateInput(pop, ymd);
+    });
+  });
+
+  // Cancel/Save
+  pop.querySelector('[data-act="cancel"]').addEventListener('click', closeEditPopover);
+  pop.querySelector('[data-act="save"]').addEventListener('click', () => {
+    const input = pop.querySelector('input[data-role="day"]');
+    const val = (input?.value || '').trim();
+    saveEditedDay(expId, val);
+  });
+
+  // Enter 直接保存
+  pop.querySelector('input[data-role="day"]').addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter'){
+      ev.preventDefault();
+      const val = ev.target.value.trim();
+      saveEditedDay(expId, val);
+    }
+  });
+}
+
+// 點空白處關閉（只綁一次）
+// 點空白處關閉（只綁一次）✅ 修正版：點到 more-menu / more-btn 不要立刻關掉
+document.addEventListener('click', (ev) => {
+  if (!activePop?.el) return;
+
+  const pop = activePop.el;
+
+  const clickedInsidePop = pop.contains(ev.target);
+  const clickedMoreMenu  = ev.target.closest?.('.more-menu');
+  const clickedMoreBtn   = ev.target.closest?.('[data-more-btn="1"]');
+  const clickedEditBtn   = ev.target.closest?.('[data-editday-btn="1"]'); // 你目前其實沒用到，但留著也OK
+
+  if (!clickedInsidePop && !clickedMoreMenu && !clickedMoreBtn && !clickedEditBtn) {
+    closeEditPopover();
+  }
+});
+
+function renderExpCard(e){
+  return `
+    <div class="card-custom mb-2">
+      <div class="exp-row">
+<div class="exp-left">
+  <div class="exp-left-top">
+    <div class="exp-cat">${escapeHtml(e.cat || '其他')}</div>
+
+    <button class="more-btn exp-more-left" data-more-btn="1"
+            onclick="openMoreMenu(${e.id}, this)">
+      &hellip;
+    </button>
+  </div>
+
+  ${e.note ? `<div class="exp-note">${escapeHtml(e.note)}</div>` : ``}
+</div>
+
+<div class="exp-right">
+  <div class="exp-right-top">
+    <!-- ① icon 獨立欄（只有第一行） -->
+    <i class="fa-solid ${payIcon(e.pay)} pay-ic exp-pay-ic"></i>
+
+    <!-- ② 金額欄：第一行主金額 / 第二行台幣換算（左對齊） -->
+    <div class="exp-money">
+      <div class="exp-amt">
+        <span class="amt-val">${num(e.amt).toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
+        <span class="amt-curr">${escapeHtml(e.curr || 'TWD')}</span>
+      </div>
+      <div class="exp-twd">NT$ ${toMoney(e.twdAtSave)}</div>
+    </div>
+
+  </div>
+</div>
+      </div>
+    </div>
+  `;
+}
+// =========================
+// Budget: more actions menu (⋯)
+// =========================
+let activeMoreMenu = null;
+
+function closeMoreMenu(){
+  if (activeMoreMenu) activeMoreMenu.remove();
+  activeMoreMenu = null;
+}
+
+function openMoreMenu(expId, anchorBtn){
+  closeMoreMenu();
+  closeEditPopover(); // 避免兩個 popover 疊在一起
+
+  const menu = document.createElement('div');
+  menu.className = 'more-menu';
+  menu.innerHTML = `
+    <div class="menu-item" data-act="edit">
+      <i class="fas fa-pen"></i> 編輯付款日
+    </div>
+    <div class="menu-item danger" data-act="delete">
+      <i class="fas fa-trash-alt"></i> 刪除
+    </div>
+  `;
+
+  // 定位
+  const rect = anchorBtn.getBoundingClientRect();
+  const scrollX = window.scrollX || document.documentElement.scrollLeft;
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+  menu.style.left = `${scrollX + rect.left}px`;
+  menu.style.top  = `${scrollY + rect.bottom + 6}px`;
+
+  document.body.appendChild(menu);
+const menuRect = menu.getBoundingClientRect();
+const minLeft = 8; // 你想留的邊界
+const maxLeft = window.scrollX + document.documentElement.clientWidth - menuRect.width - 8;
+
+let left = scrollX + rect.left;
+left = Math.max(window.scrollX + minLeft, Math.min(left, maxLeft));
+menu.style.left = `${left}px`;
+
+  activeMoreMenu = menu;
+
+  // 行為
+  menu.querySelector('[data-act="edit"]').onclick = () => {
+    closeMoreMenu();
+    openEditPopover(expId, anchorBtn);
+  };
+  menu.querySelector('[data-act="delete"]').onclick = () => {
+    closeMoreMenu();
+    deleteExp(expId);
+  };
+}
+
+// 點空白處關閉
+document.addEventListener('click', (ev) => {
+  if (activeMoreMenu && !activeMoreMenu.contains(ev.target) && !ev.target.closest('[data-more-btn="1"]')){
+    closeMoreMenu();
+  }
+});
+
+
+// 日期群組（收合/展開：render 不會重置你已展開的狀態）
+function renderDayGroup(dayKey, items){
+  const sumTWD = items.reduce((acc, e) => acc + num(e.twdAtSave), 0);
+  const isOpen = openDaySet.has(dayKey);
+
+  const body = items
+    .slice()
+    .sort((a,b) => (a.createdAt < b.createdAt ? 1 : -1))
+    .map(e => renderExpCard(e))
+    .join('');
+
+  return `
+    <div class="day-group ${isOpen ? 'open' : ''}" data-day="${dayKey}">
+      <div class="day-group-head" onclick="toggleDayGroup('${dayKey}')">
+        <div class="day-group-title">${formatLocalDayLabel(dayKey)}</div>
+        <div class="d-flex align-items-center">
+          <div class="day-group-sum">NT$ ${toMoney(sumTWD)}</div>
+          <div class="day-group-toggle">▾</div>
+        </div>
+      </div>
+      <div class="day-group-body">
+        ${body}
+      </div>
+    </div>
+  `;
+}
+
+function toggleDayGroup(dayKey){
+  if (openDaySet.has(dayKey)) openDaySet.delete(dayKey);
+  else openDaySet.add(dayKey);
+
+  // 你要求「除非 reload 否則保留」，render 時不會重置；
+  // 這裡順便寫入 localStorage，避免你切換分頁後仍想保留。
+  localStorage.setItem('trip_budget_open_days', JSON.stringify(Array.from(openDaySet)));
+
+  // 只切 class，不整頁重畫（更穩）
+  const el = document.querySelector(`.day-group[data-day="${dayKey}"]`);
+  if (el) el.classList.toggle('open');
+}
+
+// 記帳頁進場初始化：抓匯率 + UI 恢復
+function initBudgetPageIfNeeded(){
+  // 恢復付款方式（按你上次）
+  setPayMethod(currentPay, null);
+
+  // 更新匯率提示
+  updateRateHintUI();
+
+  // 若尚未成功抓過，就進頁抓一次（不跳 alert）
+  if (!lastRateFetchedAt){
+    refreshRates(false);
+  }
+}
+// --- 行李清單邏輯（模板 + 本次清單 + 隨身小包模式） ---
+
+// ✅ localStorage keys
+const PACK_OLD_KEY = 'trip_pack_cat';          // 你原本的 key（用來 migration）
+const PACK_TEMPLATE_KEY = 'trip_pack_template';
+const PACK_TRIP_KEY = 'trip_pack_trip_current';
+const PACK_VIEW_KEY = 'trip_pack_view';        // 'trip' | 'template'
+const PACK_CARRY_KEY = 'trip_pack_carry_mode'; // '0' | '1'
+const PACK_CARRY_CHECK_KEY = 'trip_pack_carry_checked'; // ✅ 隨身檢查勾選（獨立）
+
+// ✅ 資料容器
+let packTemplate = [];
+let packTrip = [];
+
+// ✅ 畫面狀態
+let packView = 'trip';     // 'trip' 或 'template'
+let carryMode = false;     // 隨身小包模式（只影響顯示）
+let carryCheckedMap = {}; // ✅ { "category||text": true/false }
+
+// ---------- 工具 ----------
+function deepCopy(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function loadJSON(key, fallback) {
+  try {
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : fallback;
+  } catch (e) {
+    console.error('loadJSON error', key, e);
+    return fallback;
+  }
+}
+
+function saveJSON(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+// ---------- 初始化 / Migration ----------
+function initPacking() {
+  // 1) 先讀新結構
+  packTemplate = loadJSON(PACK_TEMPLATE_KEY, null);
+  packTrip = loadJSON(PACK_TRIP_KEY, null);
+
+  // 2) 讀 UI 狀態
+  packView = localStorage.getItem(PACK_VIEW_KEY) || 'trip';
+  carryMode = (localStorage.getItem(PACK_CARRY_KEY) || '0') === '1';
+
+  // 3) migration
+  if (!Array.isArray(packTemplate) || !Array.isArray(packTrip)) {
+    const old = loadJSON(PACK_OLD_KEY, []);
+    if (Array.isArray(old) && old.length > 0) {
+      packTemplate = deepCopy(old);
+      packTrip = deepCopy(old);
+    } else {
+      packTemplate = [];
+      packTrip = [];
+    }
+    saveJSON(PACK_TEMPLATE_KEY, packTemplate);
+    saveJSON(PACK_TRIP_KEY, packTrip);
+  }
+
+  // 4) 同步 UI
+  syncPackControlsUI();
+
+  // ⭐⭐⭐ 在這裡貼上 ⭐⭐⭐
+  // 舊資料相容：補上 carry 預設值（只處理本次清單）
+  if (Array.isArray(packTrip)) {
+    packTrip.forEach(cat => {
+      (cat.items || []).forEach(it => {
+        if (typeof it.carry !== 'boolean') it.carry = false;
+        if (typeof it.checked !== 'boolean') it.checked = false;
+      });
+    });
+    saveJSON(PACK_TRIP_KEY, packTrip);
+  carryCheckedMap = loadJSON(PACK_CARRY_CHECK_KEY, {}) || {};
+
+  }
+}
+
+function syncPackControlsUI() {
+  const btnTrip = document.getElementById('btn-pack-trip');
+  const btnTpl = document.getElementById('btn-pack-template');
+
+if (btnTrip && btnTpl) {
+  btnTrip.classList.toggle('btn-dark', packView === 'trip');
+  btnTrip.classList.toggle('btn-secondary-soft', packView !== 'trip');
+
+  btnTpl.classList.toggle('btn-dark', packView === 'template');
+  btnTpl.classList.toggle('btn-secondary-soft', packView !== 'template');
+}
+// ✅ 更新「目前模式」徽章（本次清單 / 隨身包 / 模板）
+function updatePackModeBadge() {
+  const badge = document.getElementById('pack-mode-badge');
+  if (!badge) return;
+
+  // 2-A：模板優先（模板視圖不允許隨身檢查）
+  let modeText = '本次清單';
+  badge.classList.remove('is-carry', 'is-template');
+
+  if (packView === 'template') {
+    modeText = '模板';
+    badge.classList.add('is-template');
+  } else if (carryMode) {
+    modeText = '隨身包';
+    badge.classList.add('is-carry');
+  }
+
+  badge.textContent = modeText;
+}
+
+  const sw = document.getElementById('carryModeSwitch');
+  if (sw) sw.checked = !!carryMode;
+
+  // ✅ 模板視圖才顯示「套用模板」操作列
+  const actions = document.getElementById('template-actions');
+  if (actions) actions.style.display = (packView === 'template') ? 'block' : 'none';
+  updatePackModeBadge(); // ✅ 同步模式徽章
+}
+// ---------- 取得目前正在編輯的清單 ----------
+function getActivePackRef() {
+  return packView === 'template' ? packTemplate : packTrip;
+}
+
+function saveActivePack() {
+  if (packView === 'template') {
+    saveJSON(PACK_TEMPLATE_KEY, packTemplate);
+  } else {
+    saveJSON(PACK_TRIP_KEY, packTrip);
+  }
+}
+
+// ---------- 模式切換 / 重建 ----------
+function setPackView(view) {
+  packView = (view === 'template') ? 'template' : 'trip';
+  localStorage.setItem(PACK_VIEW_KEY, packView);
+  // ✅ 新增：明確標記「哪顆是選中」
+  const tripBtn = document.getElementById('btn-pack-trip');
+  const tplBtn  = document.getElementById('btn-pack-template');
+  if (tripBtn && tplBtn) {
+    const isTrip = (packView === 'trip');
+    tripBtn.classList.toggle('active', isTrip);
+    tplBtn.classList.toggle('active', !isTrip);
+    tripBtn.setAttribute('aria-pressed', String(isTrip));
+    tplBtn.setAttribute('aria-pressed', String(!isTrip));
+  }
+  // ✅ 2-A：切到模板時，自動關掉隨身檢查模式（避免狀態矛盾）
+  if (packView === 'template' && carryMode) {
+    carryMode = false;
+    localStorage.setItem(PACK_CARRY_KEY, '0');
+    const sw = document.getElementById('carryModeSwitch');
+    if (sw) sw.checked = false;
+  }
+
+  syncPackControlsUI();
+  renderPackList();
+}
+
+function toggleCarryMode(on) {
+  carryMode = !!on;
+  localStorage.setItem(PACK_CARRY_KEY, carryMode ? '1' : '0');
+  renderPackList();
+}
+function carryKey(catName, itemText) {
+  return `${catName}||${itemText}`;
+}
+
+function toggleCarryChecked(catName, itemText) {
+  const key = carryKey(catName, itemText);
+  carryCheckedMap[key] = !carryCheckedMap[key];
+  saveJSON(PACK_CARRY_CHECK_KEY, carryCheckedMap);
+}
+
+// 從模板重建本次清單（會清掉本次的勾選與新增/刪除的調整）
+function resetTripFromTemplate() {
+  if (!confirm("確定要用「模板」重建「本次清單」嗎？\n這會覆蓋本次清單目前的調整與勾選狀態。")) return;
+  packTrip = deepCopy(packTemplate);
+  saveJSON(PACK_TRIP_KEY, packTrip);
+updateLocalSummary();
+  // 回到本次清單視圖
+  setPackView('trip');
+  alert("已從模板重建本次清單。");
+}
+// ✅ 合併套用模板：只補模板新增的分類/項目，不覆蓋本次新增與勾選
+function applyTemplateToTripMerge() {
+  if (!confirm("確定要把「模板」合併套用到「本次清單」嗎？\n只會新增本次缺少的分類/項目，不會覆蓋或刪除本次內容。")) return;
+
+  // 建索引：本次分類名稱 -> 分類物件
+  const tripByCat = new Map();
+  packTrip.forEach(cat => tripByCat.set(cat.category, cat));
+
+  packTemplate.forEach(tCat => {
+    const tItems = tCat.items || [];
+
+    // 本次沒有此分類：整個分類新增（保留 checked=false）
+    if (!tripByCat.has(tCat.category)) {
+      const newCat = { category: tCat.category, items: [] };
+      tItems.forEach(it => {
+        newCat.items.push({ text: it.text, checked: false });
+      });
+      packTrip.push(newCat);
+      tripByCat.set(newCat.category, newCat);
+      return;
+    }
+
+    // 本次有此分類：逐項補齊（以 text 去重）
+    const tripCat = tripByCat.get(tCat.category);
+    tripCat.items = tripCat.items || [];
+
+    const tripTextSet = new Set(tripCat.items.map(it => it.text));
+    tItems.forEach(it => {
+      if (!tripTextSet.has(it.text)) {
+        tripCat.items.push({ text: it.text, checked: false });
+        tripTextSet.add(it.text);
+      }
+    });
+  });
+
+  saveJSON(PACK_TRIP_KEY, packTrip);
+updateLocalSummary();
+  // ✅ 套用後跳回本次清單（你指定要這樣）
+  setPackView('trip');
+  alert("已合併套用模板到本次清單（不覆蓋本次新增與勾選）。");
+}
+
+// ---------- CRUD：新增/刪除/勾選 ----------
+function addNewCategory() {
+  const catInput = document.getElementById('new-cat-input');
+  const catName = (catInput?.value || '').trim();
+  if (!catName) return;
+
+  const active = getActivePackRef();
+  if (active.find(c => c.category === catName)) {
+    alert("此類別已存在");
+    return;
+  }
+
+  active.push({ category: catName, items: [] });
+  catInput.value = "";
+
+  saveActivePack();
+  renderPackList();
+updateLocalSummary();
+}
+
+function addItemToCat(catIdx) {
+  const active = getActivePackRef();
+  const cat = active[catIdx];
+  if (!cat) return;
+
+  const itemName = prompt(`在「${cat.category}」新增項目：`);
+  if (!itemName || itemName.trim() === "") return;
+
+  cat.items = cat.items || [];
+cat.items.push({ text: itemName.trim(), checked: false, carry: false });
+
+  saveActivePack();
+  renderPackList();
+updateLocalSummary();
+}
+
+function toggleItem(catIdx, itemIdx) {
+  const active = getActivePackRef();
+  const cat = active[catIdx];
+  if (!cat || !cat.items || !cat.items[itemIdx]) return;
+
+  cat.items[itemIdx].checked = !cat.items[itemIdx].checked;
+
+  saveActivePack();
+  renderPackList();
+}
+
+function deleteCategory(catIdx) {
+  const active = getActivePackRef();
+  const cat = active[catIdx];
+  if (!cat) return;
+
+  if (confirm(`確定要刪除「${cat.category}」整個分類嗎？`)) {
+    active.splice(catIdx, 1);
+    saveActivePack();
+    renderPackList();
+updateLocalSummary();
+  }
+}
+
+function deleteSingleItem(catIdx, itemIdx) {
+  const active = getActivePackRef();
+  const cat = active[catIdx];
+  if (!cat || !cat.items) return;
+
+  cat.items.splice(itemIdx, 1);
+
+  saveActivePack();
+  renderPackList();
+updateLocalSummary();
+}
+
+// 清除已勾選：只對「本次清單」有意義（模板通常不需要 checked）
+// 但為了不破壞你原本按鈕行為：
+// - 若在模板視圖：也會清掉已勾（如果你模板也曾勾選）
+// - 建議你平常在「本次清單」使用它
+function clearCheckedItems() {
+  if (!confirm("確定要清除所有已勾選項目嗎？")) return;
+
+  const active = getActivePackRef();
+  active.forEach(cat => {
+    cat.items = (cat.items || []).filter(item => !item.checked);
+  });
+
+  saveActivePack();
+  renderPackList();
+updateLocalSummary();
+}
+// ================================
+// ✅ 隨身小包：項目級標記（A2）
+// - 只作用在「本次清單」
+// - carryMode ON 時只顯示 carry=true 的項目
+// ================================
+let activeCarryMenu = null;
+
+function closeCarryMenu() {
+  if (activeCarryMenu) activeCarryMenu.remove();
+  activeCarryMenu = null;
+}
+
+document.addEventListener('click', (e) => {
+  // 點到選單內不要關
+  if (activeCarryMenu && activeCarryMenu.contains(e.target)) return;
+  // 點到觸發按鈕也不要立刻關（避免點一下開又關）
+  if (e.target && e.target.closest && e.target.closest('.carry-more-btn')) return;
+  closeCarryMenu();
+});
+
+function toggleCarryFlag(catIdx, itemIdx) {
+  // 只允許在本次清單操作
+  if (packView !== 'trip') return;
+
+  const cat = packTrip[catIdx];
+  if (!cat || !cat.items || !cat.items[itemIdx]) return;
+
+  const item = cat.items[itemIdx];
+  item.carry = !item.carry;
+
+  saveJSON(PACK_TRIP_KEY, packTrip);
+  closeCarryMenu();
+  renderPackList();
+}
+
+function openCarryMenu(catIdx, itemIdx, anchorBtn) {
+  closeCarryMenu();
+
+  // 只允許在本次清單操作
+  if (packView !== 'trip') return;
+
+  const cat = packTrip[catIdx];
+  if (!cat || !cat.items || !cat.items[itemIdx]) return;
+
+  const item = cat.items[itemIdx];
+  const isOn = !!item.carry;
+
+  const menu = document.createElement('div');
+  menu.className = 'carry-menu';
+  menu.innerHTML = `
+    <div class="carry-menu-item" onclick="toggleCarryFlag(${catIdx}, ${itemIdx})">
+      ${isOn ? '從隨身包移除' : '加入隨身包'}
+    </div>
+  `;
+
+  document.body.appendChild(menu);
+  activeCarryMenu = menu;
+
+  // 定位到按鈕下方（偏右）
+  const rect = anchorBtn.getBoundingClientRect();
+  const top = rect.bottom + window.scrollY + 6;
+  const left = rect.right + window.scrollX - menu.offsetWidth;
+
+  menu.style.top = `${top}px`;
+  menu.style.left = `${Math.max(8, left)}px`;
+}
+
+// ---------- Render ----------
+function renderPackList() {
+  const container = document.getElementById('pack-list-container');
+  if (!container) return;
+
+  syncPackControlsUI();
+
+const active = getActivePackRef();
+
+// ✅ 隨身小包模式只作用在「本次清單」
+const effectiveCarryMode = (packView === 'trip') && carryMode;
+// ✅ 隨身檢查模式：隱藏本次打包工具（新增分類 / 清除已勾選）
+const newCatCard = document.getElementById('new-cat-input')?.closest('.card-custom');
+if (newCatCard) newCatCard.style.display = effectiveCarryMode ? 'none' : 'block';
+
+const clearBtn = document.querySelector('#packing button[onclick="clearCheckedItems()"]');
+if (clearBtn) clearBtn.style.display = effectiveCarryMode ? 'none' : 'block';
+
+// ✅ 依 item.carry 來決定顯示哪些分類
+const visibleCats = effectiveCarryMode
+  ? active.filter(cat => (cat.items || []).some(it => !!it.carry))
+  : active;
+
+  container.innerHTML = '';
+
+  visibleCats.forEach((catObj, visibleIdx) => {
+    // 因為 visibleCats 是 filter 後的陣列，操作索引要回到 active 的真實 index
+    const catIdx = active.indexOf(catObj);
+
+    let catHtml = `<div class="card-custom mb-3">
+      <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+        <span class="fw-bold text-primary"># ${catObj.category}</span>
+        <div>
+<button class="btn btn-sm btn-outline-dark py-0"
+        data-act="add-item"
+        type="button"
+        aria-label="新增項目"
+        onclick="addItemToCat(${catIdx})">
+  <i class="fas fa-plus"></i>
+</button>
+          <button class="btn btn-sm btn-icon-mini ms-0" onclick="deleteCategory(${catIdx})"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>`;
+
+const items = catObj.items || [];
+const isTemplate = (packView === 'template');
+
+// ✅ 隨身小包模式：只顯示 carry=true 的項目（只在本次）
+const itemsToShow = (effectiveCarryMode && !isTemplate)
+  ? items.filter(it => !!it.carry)
+  : items;
+
+if (itemsToShow.length === 0) {
+  catHtml += `<div class="text-center py-2 small text-muted">暫無項目</div>`;
+} else {
+itemsToShow.forEach((item) => {
+  const itemIdx = items.indexOf(item);
+  const carryBadge = (!isTemplate && item.carry)
+    ? `<span class="carry-badge">• 隨身</span>`
+    : '';
+
+  const isCarryChecklist = effectiveCarryMode && !isTemplate;
+
+  // ✅ 隨身模式的 checkbox 狀態（獨立，不動本次 checked）
+  const ck = carryKey(catObj.category, item.text);
+  const carryChecked = !!carryCheckedMap[ck];
+
+  const checkboxHtml = isTemplate
+    ? ''
+    : (isCarryChecklist
+        ? `<input type="checkbox" ${carryChecked ? 'checked' : ''} onclick="event.stopPropagation();" onchange="toggleCarryChecked('${catObj.category.replace(/'/g,"\\'")}', '${item.text.replace(/'/g,"\\'")}')">`
+        : `<input type="checkbox" ${item.checked ? 'checked' : ''}>`
+      );
+
+  // ✅ 隨身模式不要點整列去 toggleItem（避免動到本次 checked）
+  const rowOnclick = (isTemplate || isCarryChecklist)
+    ? ''
+    : `onclick="toggleItem(${catIdx}, ${itemIdx})"`;
+
+  // ✅ 隨身模式是「檢查」：不顯示 ⋯、不顯示 ×（避免改 carry / 刪項目）
+  const rightBtns = isTemplate
+    ? `<button class="btn btn-sm text-muted" onclick="deleteSingleItem(${catIdx}, ${itemIdx})">×</button>`
+    : (isCarryChecklist
+        ? ``
+        : `
+          <button class="btn btn-sm text-muted carry-more-btn" onclick="event.stopPropagation(); openCarryMenu(${catIdx}, ${itemIdx}, this)">⋯</button>
+          <button class="btn btn-sm text-muted" onclick="deleteSingleItem(${catIdx}, ${itemIdx})">×</button>
+        `
+      );
+
+  catHtml += `
+    <div class="pack-item d-flex align-items-center justify-content-between py-1">
+      <div class="d-flex align-items-center flex-grow-1" ${rowOnclick}>
+        ${checkboxHtml}
+        <span class="pack-text ${(!isTemplate && !isCarryChecklist && item.checked) ? 'checked' : ''} ${isTemplate ? '' : 'ms-2'}">
+          ${item.text}
+        </span>
+        ${carryBadge}
+      </div>
+      <div class="d-flex align-items-center gap-1">
+        ${rightBtns}
+      </div>
+    </div>
+  `;
+});
+}
+
+    catHtml += `</div>`;
+    container.innerHTML += catHtml;
+  });
+
+  // --- 進度條：只看「目前視圖」的 active（模板也會計算，但通常你在本次清單看） ---
+  let totalItems = 0;
+  let checkedItems = 0;
+
+  active.forEach(cat => {
+    (cat.items || []).forEach(item => {
+      totalItems++;
+      if (item.checked) checkedItems++;
+    });
+  });
+
+  const progressContainer = document.getElementById('packing-progress-container');
+  if (!progressContainer) return;
+// ✅ 模板視圖不顯示進度
+if (packView === 'template' || effectiveCarryMode) {
+  progressContainer.style.display = 'none';
+  return;
+}
+  if (totalItems > 0) {
+    progressContainer.style.display = 'block';
+    const percent = Math.round((checkedItems / totalItems) * 100);
+    const bar = document.getElementById('packing-bar');
+    const txt = document.getElementById('packing-percent');
+    if (bar) bar.style.width = percent + '%';
+    if (txt) txt.innerText = `${checkedItems} / ${totalItems} (${percent}%)`;
+  } else {
+    progressContainer.style.display = 'none';
+  }
+}
+
+
+// 1. 統一的初始化函數
+function initializePage() {
+    console.log("頁面初始化中...");
+    // 重新抓取資料
+    expenses = JSON.parse(localStorage.getItem('trip_v2026')) || [];
+    initPacking();
+
+    // 執行渲染
+    if (typeof render === "function") render();
+    if (typeof renderPackList === "function") renderPackList();
+renderSyncLogs();
+updateLastSyncStatus();
+updateLocalSummary();
+const undoBtn = document.getElementById('sync-undo-btn');
+if (undoBtn) {
+    const backup = localStorage.getItem('trip_sync_backup');
+    undoBtn.disabled = !backup;
+}
+}
+
+// 🔄 匯入同步代碼（修正版：收藏/行李/記帳都同步 + 立刻刷新畫面）
+let pendingSyncData = null;
+function analyzeSyncContent() {
+
+    const input = document.getElementById('sync-code-input');
+if (!input || !input.value.trim()) {
+    const preview = document.getElementById('sync-recv-preview');
+    if (preview) {
+        preview.innerHTML = "<span class='small' style='color: var(--danger-fg);'>請先貼上同步碼</span>";
+    }
+    return;
+}
+    try {
+        const decoded = JSON.parse(decodeURIComponent(atob(input.value.trim())));
+
+        const recvExp  = decoded.expenses || [];
+        const recvFav  = decoded.favorites || [];
+        const recvPackTemplate = decoded.packingTemplate || [];
+        const recvPackTrip = decoded.packingTrip || [];
+const generatedAt = decoded.generatedAt || null;
+        // 本機資料
+        const localExp = expenses || [];
+        const localFav = favorites || [];
+
+        const localPackTemplate = JSON.parse(localStorage.getItem('trip_pack_template') || "[]");
+        const localPackTrip = JSON.parse(localStorage.getItem('trip_pack_trip_current') || "[]");
+
+        // 勾選狀態
+        const useExp  = document.getElementById('sync-recv-exp').checked;
+        const usePack = document.getElementById('sync-recv-pack').checked;
+        const useFav  = document.getElementById('sync-recv-fav').checked;
+
+        let previewHtml = "<div class='fw-bold mb-2'>將更新：</div>";
+
+        if (useExp) {
+            previewHtml += `✓ 記帳 ${localExp.length} → ${recvExp.length} 筆<br>`;
+        }
+
+        if (usePack) {
+            previewHtml += `✓ 行李模板 ${localPackTemplate.length} → ${recvPackTemplate.length} 項<br>`;
+            previewHtml += `✓ 本次行李 ${localPackTrip.length} → ${recvPackTrip.length} 項<br>`;
+        }
+
+        if (useFav) {
+            previewHtml += `✓ 收藏 ${localFav.length} → ${recvFav.length} 項<br>`;
+        }
+// ===== 差異提示 =====
+let hasChange = false;
+
+if (useExp && localExp.length !== recvExp.length) hasChange = true;
+if (usePack && (
+    localPackTemplate.length !== recvPackTemplate.length ||
+    localPackTrip.length !== recvPackTrip.length
+)) hasChange = true;
+if (useFav && localFav.length !== recvFav.length) hasChange = true;
+
+previewHtml += "<hr class='my-2'>";
+if (generatedAt) {
+    const dateStr = new Date(generatedAt).toLocaleString();
+    previewHtml += `<div class='small text-muted mt-1'>此同步碼產生時間：${dateStr}</div>`;
+}
+if (!hasChange) {
+    previewHtml += "<div class='text-success'>✓ 與目前資料相同</div>";
+} else {
+    previewHtml += "<div class='text-warning'>⚠ 將覆蓋目前資料</div>";
+}
+        document.getElementById('sync-recv-preview').innerHTML = previewHtml;
+
+        document.getElementById('sync-recv-actions').classList.remove('d-none');
+
+        pendingSyncData = decoded;
+
+    } 
+catch (e) {
+    console.error(e);
+    saveSyncLog("import", "fail", "代碼無效");
+
+    const preview = document.getElementById('sync-recv-preview');
+    if (preview) {
+        preview.innerHTML = "<span class='small' style='color: var(--danger-fg);'>❌ 代碼無效，請確認完整貼上</span>";
+    }
+
+    document.getElementById('sync-recv-actions')?.classList.add('d-none');
+}
+}
+
+
+function cancelSyncPreview() {
+
+    pendingSyncData = null;
+
+    // 清空預覽
+    document.getElementById('sync-recv-preview').innerHTML =
+        "（已取消預覽）";
+
+    // 收起 actions
+    document.getElementById('sync-recv-actions').classList.add('d-none');
+
+    // 清空貼上內容
+    const input = document.getElementById('sync-code-input');
+    if (input) input.value = "";
+
+}
+
+
+function confirmSync() {
+
+    if (!pendingSyncData) return;
+
+    // 同步前備份（只備份一次）
+    const backup = {
+        expenses: expenses,
+        favorites: favorites,
+        packingTemplate: JSON.parse(localStorage.getItem('trip_pack_template') || "[]"),
+        packingTrip: JSON.parse(localStorage.getItem('trip_pack_trip_current') || "[]")
+    };
+
+    localStorage.setItem('trip_sync_backup', JSON.stringify(backup));
+
+    // 勾選狀態
+    const useExp  = document.getElementById('sync-recv-exp').checked;
+    const usePack = document.getElementById('sync-recv-pack').checked;
+    const useFav  = document.getElementById('sync-recv-fav').checked;
+
+    // ===== 覆蓋資料層 =====
+
+    if (useExp) {
+        const newExp = pendingSyncData.expenses || [];
+        localStorage.setItem('trip_v2026', JSON.stringify(newExp));
+        expenses = newExp;
+    }
+
+    if (useFav) {
+        const newFav = pendingSyncData.favorites || [];
+        localStorage.setItem('trip_favorites', JSON.stringify(newFav));
+        favorites = newFav;
+    }
+
+if (usePack) {
+
+    const newPackTemplate = pendingSyncData.packingTemplate;
+    const newPackTrip = pendingSyncData.packingTrip;
+    const newPackLegacy = pendingSyncData.packing;
+
+    // 新結構
+    if (Array.isArray(newPackTemplate) && Array.isArray(newPackTrip)) {
+
+        localStorage.setItem('trip_pack_template', JSON.stringify(newPackTemplate));
+        localStorage.setItem('trip_pack_trip_current', JSON.stringify(newPackTrip));
+
+    }
+    // 舊結構向下相容
+    else if (Array.isArray(newPackLegacy)) {
+
+        localStorage.setItem('trip_pack_template', JSON.stringify(newPackLegacy));
+        localStorage.setItem('trip_pack_trip_current', JSON.stringify(newPackLegacy));
+        localStorage.setItem('trip_pack_cat', JSON.stringify(newPackLegacy));
+
+    }
+
+    initPacking();
+}
+
+    // ===== 重新渲染 =====
+    if (typeof renderFavorites === "function") renderFavorites();
+    if (typeof renderTopMarked === "function") renderTopMarked();
+    if (typeof renderPackList === "function") renderPackList();
+    if (typeof render === "function") render();
+    if (typeof refreshHotelBar === "function") refreshHotelBar();
+
+// 組合 summary
+let summaryText = "";
+
+if (useExp) {
+    summaryText += `記帳 ${expenses.length} 筆 `;
+}
+if (usePack) {
+    const packTrip = JSON.parse(localStorage.getItem('trip_pack_trip_current') || "[]");
+    summaryText += `行李 ${packTrip.length} 項 `;
+}
+if (useFav) {
+    summaryText += `收藏 ${favorites.length} 項 `;
+}
+
+saveSyncLog("import", "success", summaryText.trim());
+updateLocalSummary();
+// 啟用復原按鈕
+const undoBtn = document.getElementById('sync-undo-btn');
+if (undoBtn) undoBtn.disabled = false;
+
+if (arguments[0]) {
+  const btn = arguments[0];
+
+  btn.classList.add("is-success");
+  btn.disabled = true;
+
+setTimeout(() => {
+  btn.classList.remove("is-success");
+  btn.disabled = false;
+}, 1500);
+}
+}
+// ===== 同步紀錄系統 =====
+
+function getSyncLogs() {
+    return JSON.parse(localStorage.getItem('trip_sync_logs') || "[]");
+}
+
+function saveSyncLog(type, status, summary) {
+
+    let logs = getSyncLogs();
+
+    logs.unshift({
+        type: type,              // import / export
+        status: status,          // success / fail
+        summary: summary || "",
+        time: new Date().toISOString()
+    });
+
+    // 只保留 3 筆
+    logs = logs.slice(0, 3);
+
+    localStorage.setItem('trip_sync_logs', JSON.stringify(logs));
+
+    renderSyncLogs();
+    updateLastSyncStatus();
+}
+function updateLocalSummary() {
+
+    const exp = JSON.parse(localStorage.getItem('trip_v2026') || "[]");
+    const fav = JSON.parse(localStorage.getItem('trip_favorites') || "[]");
+    const packTemplate = JSON.parse(localStorage.getItem('trip_pack_template') || "[]");
+    const packTrip = JSON.parse(localStorage.getItem('trip_pack_trip_current') || "[]");
+
+    const el = document.getElementById('sync-local-summary');
+    if (!el) return;
+
+    el.innerText =
+        `本機資料：記帳 ${exp.length}｜行李模板 ${packTemplate.length}｜本次行李 ${packTrip.length}｜收藏 ${fav.length}`;
+}
+function renderSyncLogs() {
+
+    const logs = getSyncLogs();
+    const container = document.getElementById('sync-log-list');
+
+    if (!container) return;
+
+    if (!logs.length) {
+        container.innerHTML = "尚無同步紀錄";
+        return;
+    }
+
+    let html = "";
+
+    logs.forEach(log => {
+
+        const time = new Date(log.time);
+        const timeStr = time.toLocaleString();
+
+        const icon = log.status === "success" ? "✔" : "✖";
+        const typeText = log.type === "import" ? "匯入" : "匯出";
+
+html += `
+  <div class="mb-2">
+    <div>${icon} ${timeStr}</div>
+    <div class="small text-muted ms-3">
+      ${typeText} ${log.summary}
+    </div>
+  </div>
+`;
+    });
+
+    container.innerHTML = html;
+}
+
+function updateLastSyncStatus() {
+
+    const logs = getSyncLogs();
+    if (!logs.length) return;
+
+    const latest = logs[0];
+    const time = new Date(latest.time);
+
+    const timeEl = document.getElementById('sync-last-time');
+    const statusEl = document.getElementById('sync-last-status');
+
+    if (!timeEl || !statusEl) return;
+
+    timeEl.innerText = time.toLocaleString();
+
+    statusEl.innerText =
+        latest.status === "success"
+            ? `✔ ${latest.type === "import" ? "匯入成功" : "匯出成功"}`
+            : "✖ 同步失敗";
+}
+function undoSync() {
+
+    const backupRaw = localStorage.getItem('trip_sync_backup');
+    if (!backupRaw) return;
+
+    if (!confirm("確定要復原到同步前的版本嗎？")) return;
+
+    const backup = JSON.parse(backupRaw);
+
+    // 還原資料
+    expenses = backup.expenses || [];
+    favorites = backup.favorites || [];
+
+    localStorage.setItem('trip_v2026', JSON.stringify(expenses));
+    localStorage.setItem('trip_favorites', JSON.stringify(favorites));
+
+    localStorage.setItem('trip_pack_template', JSON.stringify(backup.packingTemplate || []));
+    localStorage.setItem('trip_pack_trip_current', JSON.stringify(backup.packingTrip || []));
+
+    initPacking();
+
+    // 重新渲染
+    if (typeof renderFavorites === "function") renderFavorites();
+    if (typeof renderTopMarked === "function") renderTopMarked();
+    if (typeof renderPackList === "function") renderPackList();
+    if (typeof render === "function") render();
+    if (typeof refreshHotelBar === "function") refreshHotelBar();
+
+    saveSyncLog("import", "success", "復原上一版");
+    updateLocalSummary();
+const undoBtn = document.getElementById('sync-undo-btn');
+
+if (undoBtn) {
+  undoBtn.classList.add("is-success");
+  undoBtn.disabled = true;
+
+  setTimeout(() => {
+    undoBtn.classList.remove("is-success");
+    undoBtn.disabled = false;
+  }, 1500);
+}
+    localStorage.removeItem('trip_sync_backup');
+}
+// 🔄 匯出同步代碼
+function toggleSyncPill(btn, checkboxId) {
+  const cb = document.getElementById(checkboxId);
+  if (!cb) return;
+
+  cb.checked = !cb.checked;
+  btn.classList.toggle('active', cb.checked);
+}
+function analyzeShareContent() {
+
+  const useExp  = document.getElementById('sync-share-exp')?.checked;
+  const usePack = document.getElementById('sync-share-pack')?.checked;
+  const useFav  = document.getElementById('sync-share-fav')?.checked;
+
+  const expenses = JSON.parse(localStorage.getItem('trip_v2026')) || [];
+  const favorites = JSON.parse(localStorage.getItem('trip_favorites')) || [];
+  const packingTemplate = JSON.parse(localStorage.getItem('trip_pack_template')) || [];
+  const packingTrip = JSON.parse(localStorage.getItem('trip_pack_trip_current')) || [];
+
+  let html = "<div class='fw-bold mb-2'>將分享：</div>";
+
+  if (useExp) html += `✓ 記帳 ${expenses.length} 筆<br>`;
+  if (usePack) {
+    html += `✓ 行李模板 ${packingTemplate.length} 項<br>`;
+    html += `✓ 本次行李 ${packingTrip.length} 項<br>`;
+  }
+  if (useFav) html += `✓ 收藏 ${favorites.length} 項<br>`;
+
+  if (!useExp && !usePack && !useFav) {
+    html += "（未選擇任何內容）";
+  }
+
+  document.getElementById('sync-share-preview').innerHTML = html;
+  document.getElementById('sync-share-actions').classList.remove('d-none');
+}
+
+function cancelSharePreview() {
+  document.getElementById('sync-share-preview').innerHTML =
+    "（已取消）";
+  document.getElementById('sync-share-actions').classList.add('d-none');
+}
+function confirmShareGenerate(btn) {
+
+  const useExp  = document.getElementById('sync-share-exp')?.checked;
+  const usePack = document.getElementById('sync-share-pack')?.checked;
+  const useFav  = document.getElementById('sync-share-fav')?.checked;
+
+  const favorites = useFav
+      ? (JSON.parse(localStorage.getItem('trip_favorites')) || [])
+      : [];
+
+  const expenses = useExp
+      ? (JSON.parse(localStorage.getItem('trip_v2026')) || [])
+      : [];
+
+  const packingTemplate = usePack
+      ? (JSON.parse(localStorage.getItem('trip_pack_template')) || [])
+      : [];
+
+  const packingTrip = usePack
+      ? (JSON.parse(localStorage.getItem('trip_pack_trip_current')) || [])
+      : [];
+
+  const data = {
+    favorites,
+    expenses,
+    packingTemplate,
+    packingTrip,
+    packing: packingTrip,
+generatedAt: new Date().toISOString()
+  };
+
+  const code = btoa(encodeURIComponent(JSON.stringify(data)));
+window._lastSyncCode = code;
+  navigator.clipboard.writeText(code).then(() => {
+
+    // 同步紀錄
+    let summaryText = "";
+    if (useExp) summaryText += `記帳 ${expenses.length} 筆 `;
+    if (usePack) summaryText += `行李 ${packingTrip.length} 項 `;
+    if (useFav) summaryText += `收藏 ${favorites.length} 項`;
+
+    saveSyncLog("export", "success", summaryText.trim());
+
+// ===== 顯示產生時間 =====
+const now = new Date();
+const timeStr = now.toLocaleString();
+
+const preview = document.getElementById('sync-share-preview');
+
+if (preview) {
+preview.innerHTML += `
+  <hr class="my-2">
+  <div class="text-success fw-bold d-flex justify-content-between align-items-center">
+    <span>同步碼已產生 ✓</span>
+<span class="sync-icon"
+      onclick="reCopyLastCode(this)"
+      style="cursor:pointer">
+
+  <i class="fas fa-copy text-primary"></i>
+  <span class="copy-check">✓</span>
+
+</span>
+  </div>
+  <div class="small text-muted">產生時間：${timeStr}</div>
+`;}
+// 按鈕狀態切換（平滑版本）
+btn.classList.add("is-success");
+btn.disabled = true;
+
+setTimeout(() => {
+  btn.classList.remove("is-success");
+  btn.disabled = false;
+}, 1500);
+
+  }).catch(() => {
+    alert("複製失敗，請手動複製");
+  });
+}
+function reCopyLastCode(wrapperEl) {
+
+  if (!window._lastSyncCode) return;
+
+  navigator.clipboard.writeText(window._lastSyncCode).then(() => {
+
+    wrapperEl.classList.add("is-success");
+
+    setTimeout(() => {
+      wrapperEl.classList.remove("is-success");
+    }, 900);
+
+  });
+
+}
+function pasteSyncCode(wrapperEl) {
+
+  navigator.clipboard.readText().then(text => {
+
+    const input = document.getElementById('sync-code-input');
+    if (input) input.value = text;
+
+    wrapperEl.classList.add("is-success");
+
+    setTimeout(() => {
+      wrapperEl.classList.remove("is-success");
+    }, 900);
+
+  }).catch(() => {
+    alert("無法讀取剪貼簿，請手動貼上");
+  });
+
+}
+// --- 收藏清單 ---
+let favorites = JSON.parse(localStorage.getItem('trip_favorites')) || [];
+
+// --- 建立收藏物件 ---
+function createFavorite({ title, category = "備案" }) {
+    return {
+        id: Date.now(),
+        title,
+        category,
+        note: "",
+        items: [], // 地點清單
+        createdAt: new Date().toISOString()
+    };
+}
+
+// --- 建立地點物件 ---
+function createItem({ name, links = [], note = "" }) {
+    return {
+        id: Date.now(),
+        name,
+        links,
+        note,
+        tempMark: false // 🔖 臨時決策標記
+    };
+}
+
+// --- 儲存到 localStorage ---
+function saveFavorites() {
+    localStorage.setItem('trip_favorites', JSON.stringify(favorites));
+}
+
+// --- 渲染頂部臨時標記區 ---
+let topMarksExpanded = false;          // ① 高亮列整體：收合/展開
+const TOPMARK_COLLAPSE_LIMIT = 6;      // ② 超過幾列就自動收合（可改成 5/8）
+
+function renderTopMarked() {
+    const topContainer = document.getElementById('fav-top-list');
+    if (!topContainer) return;
+
+    topContainer.innerHTML = '';
+
+    // 收集所有 tempMark 的項目
+    const markedRows = [];
+    favorites.forEach(fav => {
+        fav.items.filter(i => i.tempMark).forEach(item => {
+            markedRows.push({ fav, item });
+        });
+    });
+
+    if (markedRows.length === 0) return;
+
+    // 1) 數量多時自動收合：只顯示前 N 筆
+    const needCollapse = markedRows.length > TOPMARK_COLLAPSE_LIMIT;
+    const rowsToShow = (needCollapse && !topMarksExpanded)
+        ? markedRows.slice(0, TOPMARK_COLLAPSE_LIMIT)
+        : markedRows;
+
+    rowsToShow.forEach(({ fav, item }) => {
+        const row = document.createElement('div');
+        row.className = "topmark-row";
+        row.style.cursor = "pointer";
+
+        // 左側資訊（同一行：標題 / 地點 / 連結）
+        const info = document.createElement('div');
+        info.className = "topmark-info";
+
+        const title = document.createElement('span');
+        title.className = "topmark-title";
+        title.innerText = fav.title;
+
+        const place = document.createElement('span');
+        place.className = "topmark-place";
+        place.innerText = item.name;
+
+        info.appendChild(title);
+        info.appendChild(place);
+
+        // 3) 只顯示第一個連結，其餘收成 +N（點 +N 展開/收起，不跳轉）
+// ---- Links: 顯示前 2 個，其餘變 +N ----
+const rawLinks = Array.isArray(item.links) ? item.links : [];
+const links = rawLinks
+  .map(l => {
+    if (typeof l === 'object' && l) {
+      return { name: l.name || '連結', url: l.url || '' };
+    }
+    return { name: '連結', url: String(l || '') };
+  })
+  .filter(l => l.url && l.url.trim());
+
+if (links.length > 0) {
+  const linksDiv = document.createElement('div');
+  linksDiv.className = 'topmark-links';
+
+  // ✅ 顯示前 2 個
+  const visibleLinks = links.slice(0, 2);
+  visibleLinks.forEach(l => {
+    const a = document.createElement('a');
+    a.className = 'item-link';
+    a.href = l.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.innerText = l.name;
+    linksDiv.appendChild(a);
+  });
+
+  // ✅ 剩下的收成 +N
+  const rest = links.slice(2);
+  if (rest.length > 0) {
+    const more = document.createElement('span');
+    more.className = 'topmark-more';
+    more.innerText = `+${rest.length}`;
+
+    const extra = document.createElement('span');
+    extra.className = 'topmark-links-extra';
+    extra.style.gap = '6px';
+
+    extra.innerHTML = rest.map(l => {
+      return `<a class="item-link" href="${l.url}" target="_blank" rel="noopener">${l.name}</a>`;
+    }).join('');
+
+more.onclick = (e) => {
+  e.stopPropagation();
+  const expanded = linksDiv.classList.toggle('links-expanded');
+  more.innerHTML = expanded ? '&times;' : `+${rest.length}`;
+  more.title = expanded ? '收合' : `還有 ${rest.length} 個連結`;
+};
+    linksDiv.appendChild(more);
+    linksDiv.appendChild(extra);
+  }
+
+  info.appendChild(linksDiv);
+}
+
+        // 右側：取消標記 X
+        const btn = document.createElement('button');
+        btn.className = "topmark-x";
+        btn.type = "button";
+        btn.innerText = "×";
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            item.tempMark = false;
+            saveFavorites();
+            renderFavorites();
+            renderTopMarked();
+        };
+
+        // 2) 點整列：滑動回原處 + 閃爍（沿用你 jumpToFavoriteItem）
+        row.onclick = () => {
+            jumpToFavoriteItem(fav.id, item.id);
+        };
+
+        row.appendChild(info);
+        row.appendChild(btn);
+        topContainer.appendChild(row);
+    });
+
+    // 收合/展開控制鈕
+    if (needCollapse) {
+        const toggleRow = document.createElement('div');
+        toggleRow.className = "topmark-toggle-row";
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = "topmark-toggle-btn";
+        const hiddenCount = markedRows.length - TOPMARK_COLLAPSE_LIMIT;
+
+        toggleBtn.innerText = topMarksExpanded
+            ? "收合"
+            : `顯示更多 (+${hiddenCount})`;
+
+        toggleBtn.onclick = (e) => {
+            e.stopPropagation();
+            topMarksExpanded = !topMarksExpanded;
+            renderTopMarked();
+        };
+
+        toggleRow.appendChild(toggleBtn);
+        topContainer.appendChild(toggleRow);
+    }
+}
+
+function jumpToFavoriteItem(favId, itemId) {
+    // 1) 如果不在收藏頁，先切到收藏頁
+    const favTab = document.getElementById('favorites');
+    if (favTab && !favTab.classList.contains('active')) {
+        const navEl = document.querySelector('.nav-item[onclick*="favorites"]');
+        if (typeof switchTab === 'function' && navEl) {
+            switchTab('favorites', navEl);
+        }
+    }
+
+    // 2) 確保 DOM 已渲染
+    if (typeof renderFavorites === 'function') renderFavorites();
+
+    const card = document.querySelector(`.card-custom[data-id="${String(favId)}"]`);
+    const itemEl = document.getElementById(`fav-${favId}-item-${itemId}`);
+    if (!card || !itemEl) return;
+
+    // 3) 若卡片是關的 → 先打開，並等待展開動畫後再 scroll
+const wasClosed = !card.classList.contains("open");
+
+if (wasClosed) {
+    // ✅ 讓瀏覽器先畫出「收合狀態」再展開，transition 才會跑
+    requestAnimationFrame(() => {
+        card.classList.add("open");
+        const toggleIcon = card.querySelector(".toggle-icon");
+        if (toggleIcon) toggleIcon.style.transform = "rotate(180deg)";
+    });
+}
+
+    const doScrollAndFlash = () => {
+        // 再保險：下一個 frame 再滾，避免高度還沒長出來
+        requestAnimationFrame(() => {
+            itemEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        // ⭐ 加在這裡：金色細邊框「淡入淡出」
+        itemEl.classList.remove("jump-highlight");
+        void itemEl.offsetWidth; // 強制 reflow，確保動畫每次都會重新跑
+        itemEl.classList.add("jump-highlight");
+
+        setTimeout(() => {
+            itemEl.classList.remove("jump-highlight");
+        }, 2500);
+            });
+    };
+
+    // 展開動畫時間你 CSS 是 0.35s，所以給 380ms 比較穩
+    if (wasClosed) setTimeout(doScrollAndFlash, 380);
+    else doScrollAndFlash();
+}
+
+
+// --- 渲染收藏列表 ---
+function renderFavorites() {
+    const container = document.getElementById('fav-list-container');
+    
+    // 🔹 STEP 1: 在清空前，精確記錄目前「哪些 ID 的卡片是開啟的」
+    // 注意：這裡要確保 dataset.id 轉為 String 或 Number 格式一致
+    const openFavIds = Array.from(container.querySelectorAll('.card-custom.open'))
+                            .map(c => c.dataset.id);
+
+    container.innerHTML = '';
+
+    if(favorites.length === 0) {
+        container.innerHTML = `<div class="text-center text-muted py-3">尚無收藏項目</div>`;
+        return;
+    }
+
+    favorites.forEach(fav => {
+        const card = document.createElement('div');
+        card.className = "card-custom mb-2 p-2 border";
+        card.dataset.id = fav.id.toString(); // 統一轉為字串比較
+
+        // --- header 大標題區 ---
+        const header = document.createElement('div');
+        header.className = "d-flex justify-content-between align-items-center";
+
+        const titleContainer = document.createElement('div');
+        titleContainer.className = "d-flex align-items-center gap-1";
+        titleContainer.style.cursor = "pointer";
+
+        // 主標題文字
+        const titleText = document.createElement('span');
+        titleText.className = "fav-title-text";
+        titleText.innerText = fav.title;
+        titleContainer.appendChild(titleText);
+
+        // 分類小膠囊
+        const categoryBadge = document.createElement('span');
+        categoryBadge.className = "fav-title-badge";
+        categoryBadge.innerText = fav.category;
+        titleContainer.appendChild(categoryBadge);
+
+        const toggleBtn = document.createElement('span');
+        toggleBtn.innerText = "▾";
+        toggleBtn.className = "toggle-icon";
+        toggleBtn.style.transition = "transform 0.3s"; // 讓旋轉順一點
+        titleContainer.appendChild(toggleBtn);
+
+        // 🔹 統一的開關邏輯
+        titleContainer.onclick = () => {
+            const isOpen = card.classList.toggle("open");
+            toggleBtn.style.transform = isOpen ? "rotate(180deg)" : "rotate(0deg)";
+        };
+
+        // 右側按鈕群 (編輯/刪除)
+        const btnGroup = document.createElement('div');
+        btnGroup.className = "d-flex align-items-center gap-1 fav-btn-group";
+
+// ➕ 新增地點（icon 版，放在右上角跟編輯刪除同一排）
+const addItemIconBtn = document.createElement('button');
+addItemIconBtn.className = "btn btn-sm btn-icon-mini fav-add-icon";
+addItemIconBtn.innerHTML = `<i class="fas fa-plus"></i>`;
+addItemIconBtn.title = "新增地點";
+addItemIconBtn.onclick = (e) => {
+    e.stopPropagation(); // 不要觸發展開/收合
+    addItemPrompt(fav.id);
+};
+btnGroup.appendChild(addItemIconBtn);
+
+        const editBtn = document.createElement('button');
+        editBtn.className = "btn btn-sm btn-icon-mini";
+        editBtn.innerHTML = `<i class="fas fa-pen"></i>`;
+        editBtn.onclick = (e) => {
+            e.stopPropagation(); // 防止觸發標題點擊
+            const newTitle = prompt("編輯標題", fav.title);
+            const newCategory = prompt("編輯分類", fav.category);
+            if(newTitle) fav.title = newTitle;
+            if(newCategory) fav.category = newCategory;
+            saveFavorites();
+            renderFavorites();
+        };
+        btnGroup.appendChild(editBtn);
+
+        const delBtn = document.createElement('button');
+        delBtn.className = "btn btn-sm btn-icon-mini text-danger";
+        delBtn.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+        delBtn.onclick = (e) => { 
+            e.stopPropagation(); 
+            if(confirm("確定刪除此大項？")) removeFavorite(fav.id); 
+        };
+        btnGroup.appendChild(delBtn);
+
+        header.appendChild(titleContainer);
+        header.appendChild(btnGroup);
+        card.appendChild(header);
+
+        // --- 地點清單區 ---
+        const itemList = document.createElement('div');
+        itemList.className = "item-list mt-2"; 
+
+        fav.items.forEach(item => {
+const itemDiv = document.createElement('div');
+itemDiv.className = "item-div"; // 讓你現有的 .item-div CSS 生效
+itemDiv.id = `fav-${fav.id}-item-${item.id}`; // ⭐ 給 jumpToFavoriteItem 用
+
+            // 標記按鈕
+            const markBtn = document.createElement('button');
+            markBtn.className = "btn btn-sm btn-icon-mini mark-icon";
+            markBtn.innerHTML = `<i class="${item.tempMark ? "fas" : "far"} fa-bookmark"></i>`;
+            markBtn.onclick = () => {
+                item.tempMark = !item.tempMark;
+                saveFavorites();
+                renderFavorites();
+                renderTopMarked();
+            };
+
+            const nameSpan = document.createElement('span');
+            nameSpan.innerText = item.name;
+            nameSpan.style.margin = "0 8px";
+
+            // 編輯細項
+            const editItemBtn = document.createElement('button');
+            editItemBtn.className = "btn btn-sm btn-icon-mini";
+            editItemBtn.innerHTML = `<i class="fas fa-pen"></i>`;
+editItemBtn.onclick = () => {
+    const newName = prompt("編輯地點名稱", item.name);
+    
+    // 這裡處理連結：將物件陣列轉回 "名稱:網址" 字串讓使用者編輯
+    const currentLinksString = item.links.map(l => 
+        typeof l === 'object' ? `${l.name}：${l.url}` : l
+    ).join(" | ");
+    
+    const newLinksRaw = prompt("編輯連結 (格式：名稱：網址，多組用空格、 | 分隔)", currentLinksString);
+    const newNote = prompt("編輯備註", item.note);
+
+    if (newName) item.name = newName;
+    
+    // 處理輸入的連結字串，轉回物件格式
+    if (newLinksRaw !== null) {
+        item.links = newLinksRaw.split(/[\s,|]+/).filter(s => s.trim()).map(pair => {
+            if (pair.includes("：")) {
+                const [name, ...urlParts] = pair.split("：");
+                return { name: name.trim(), url: urlParts.join("：").trim() };
+            }
+            return { name: "連結", url: pair.trim() }; // 若沒輸入冒號，預設名稱為"連結"
+        });
+    }
+    
+    if (newNote !== null) item.note = newNote;
+
+    saveFavorites();
+    renderFavorites();
+};
+            // 刪除細項
+            const removeItemBtn = document.createElement('button');
+            removeItemBtn.className = "btn btn-sm btn-icon-mini text-muted";
+            removeItemBtn.innerText = "×";
+            removeItemBtn.onclick = () => {
+                fav.items = fav.items.filter(i => i.id !== item.id);
+                saveFavorites();
+                renderFavorites();
+            };
+
+            const topRow = document.createElement('div');
+            topRow.className = "d-flex align-items-center justify-content-between";
+            
+            const leftPart = document.createElement('div');
+            leftPart.appendChild(markBtn);
+            leftPart.appendChild(nameSpan);
+            
+            const rightPart = document.createElement('div');
+            rightPart.appendChild(editItemBtn);
+            rightPart.appendChild(removeItemBtn);
+
+            topRow.appendChild(leftPart);
+            topRow.appendChild(rightPart);
+            itemDiv.appendChild(topRow);
+
+            // --- 替換這裡的邏輯 ---
+if(item.links && item.links.length > 0){
+    const linkDiv = document.createElement('div');
+    linkDiv.className = "d-flex flex-wrap mt-1"; // 讓按鈕自動換行且靠左對齊
+    linkDiv.innerHTML = item.links.map(l => {
+        const lName = (typeof l === 'object' && l !== null) ? l.name : "連結";
+        const lUrl = (typeof l === 'object' && l !== null) ? l.url : l;
+        return `<a href="${lUrl}" target="_blank" class="item-link">${lName}</a>`;
+    }).join(""); // 移除中間的 " | "，由 CSS 的 margin 控制間距
+    itemDiv.appendChild(linkDiv);
+}
+            // ---------------------
+// 備註
+if(item.note){
+    const noteDiv = document.createElement('div');
+    noteDiv.className = "small text-muted";
+    noteDiv.innerText = item.note;
+    itemDiv.appendChild(noteDiv);
+}
+            itemList.appendChild(itemDiv);
+        });
+
+
+        card.appendChild(itemList);
+
+        // 🔹 STEP 2: 關鍵修正點 - 恢復開啟狀態
+        // 如果這個 ID 存在於剛才記錄的 openFavIds 中，就幫它加回 .open
+        if (openFavIds.includes(fav.id.toString())) {
+            card.classList.add('open');
+            toggleBtn.style.transform = "rotate(180deg)";
+        }
+
+        container.appendChild(card);
+    });
+
+    renderTopMarked();
+}
+// --- 新增大標題收藏 ---
+function addFavoritePrompt() {
+    const title = prompt("輸入收藏大標題");
+    if(!title) return;
+    const category = prompt("分類標籤(可空白, 例如雨備)") || "備案";
+
+    const fav = createFavorite({ title, category });
+    favorites.push(fav);
+    saveFavorites();
+    renderFavorites();
+}
+
+// --- 新增地點 ---
+function addItemPrompt(favId) {
+    const fav = favorites.find(f => f.id === favId);
+    if(!fav) return;
+
+    const name = prompt("地點名稱 (必填)");
+    if(!name) return;
+
+    const linksRaw = prompt("連結 (格式：名稱：網址，多組用空格、 | 分隔)") || "";
+    
+    // 🔹 關鍵修正：將輸入的字串切開並轉換成物件格式
+// 1. 先用空格切開每一組
+const links = linksRaw.split(/\s+/).filter(s => s.trim()).map(s => {
+    const colonIndex = s.indexOf('：');
+    
+    // 3. 只有當冒號存在，且不是在開頭(https://)的情況下才拆分
+    // 如果你輸入 地圖:www.google.com
+    // colonIndex 會是在「地圖」後面
+    if (colonIndex !== -1 && !s.startsWith('http')) {
+        const name = s.substring(0, colonIndex).trim();
+        const url = s.substring(colonIndex + 1).trim();
+        return { name: name || "連結", url: url };
+    }
+    
+    // 4. 如果沒有冒號或格式不符，整串當成網址
+    return { name: "連結", url: s.trim() };
+}).filter(l => l.url);
+    const note = prompt("備註 (可空白)") || "";
+
+    const item = createItem({ name, links, note });
+    fav.items.push(item);
+    saveFavorites();
+    renderFavorites();
+}
+// --- 刪除收藏 ---
+function removeFavorite(id) {
+    favorites = favorites.filter(f => f.id !== id);
+    saveFavorites();
+    renderFavorites();
+}
+
+// --- 初始渲染 ---
+renderFavorites();
+
+// 4. 只有一個 onload，確保所有事情都在這裡發生
+window.onload = function() {
+    const savedTheme = localStorage.getItem('trip_theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+    }
+
+    initializePage();
+    updateClocks(); // 確保頁面一打開就顯示時間
+
+    // ✅ 新增：同步中心 Tab 初始化（預設顯示「我要分享」）
+    initSyncCenterUI();
+};
+
+initScrollSpy();
+
+function initSyncCenterUI() {
+  // 如果這頁沒有同步中心，就直接不做事（避免其他頁報錯）
+  const tabShare = document.getElementById('sync-tab-share');
+  const tabRecv  = document.getElementById('sync-tab-receive');
+  const paneShare = document.getElementById('sync-pane-share');
+  const paneRecv  = document.getElementById('sync-pane-receive');
+
+  if (!tabShare || !tabRecv || !paneShare || !paneRecv) return;
+
+  function setActive(which) {
+    const isShare = (which === 'share');
+
+    // 顯示/隱藏 pane（不靠 CSS，先用 display 控制）
+    paneShare.style.display = isShare ? 'block' : 'none';
+    paneRecv.style.display  = isShare ? 'none' : 'block';
+
+    // 按鈕樣式：沿用你行李頁的語義（btn-dark = 選中）
+    tabShare.classList.toggle('btn-dark', isShare);
+    tabShare.classList.toggle('btn-secondary-soft', !isShare);
+
+    tabRecv.classList.toggle('btn-dark', !isShare);
+    tabRecv.classList.toggle('btn-secondary-soft', isShare);
+
+    // 無障礙（不用懂）：讓瀏覽器知道哪個被按下
+    tabShare.setAttribute('aria-pressed', String(isShare));
+    tabRecv.setAttribute('aria-pressed', String(!isShare));
+  }
+
+  // 點 tab 切換
+  tabShare.addEventListener('click', () => setActive('share'));
+  tabRecv.addEventListener('click',  () => setActive('receive'));
+
+  // 預設先顯示「我要分享」
+  setActive('share');
+}
+
+function fallbackCopy(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+        document.execCommand("copy");
+        alert("✅ 同步代碼已複製（備用模式）");
+    } catch (e) {
+        alert("❌ 無法自動複製，請手動複製");
+        prompt("請手動複製以下代碼：", text);
+    }
+    document.body.removeChild(textarea);
+}
+function initScrollSpy() {
+    const sections = document.querySelectorAll('.day-content[data-day]');
+    const tabs = document.querySelectorAll('.day-tab');
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const dayId = entry.target.dataset.day;
+
+                // 切換 tab 高亮
+                tabs.forEach(t => t.classList.remove('active'));
+                const activeTab = document.querySelector(
+                    `.day-tab[onclick*="'${dayId}'"]`
+                );
+                if (activeTab) activeTab.classList.add('active');
+            }
+        });
+    }, {
+        rootMargin: '-40% 0px -50% 0px', // 重點：決定何時算「進入」
+        threshold: 0
+    });
+
+    sections.forEach(sec => observer.observe(sec));
+}
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('trip_theme', next);
+
+updateThemeIcon(next);
+
+const btn = document.getElementById('themeBtn');
+if (btn) btn.blur(); // ✅ 點完不要停留在 focus 狀態
+}
+
+function updateThemeIcon(theme) {
+    const btn = document.getElementById('themeBtn');
+    if (!btn) return;
+
+    const isDark = theme === 'dark';
+
+    btn.innerHTML = isDark
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
+}
+// 住宿資料庫 (請根據您的實際飯店名稱與 Google Map 連結修改)
+const hotelData = {
+    "911": { name: "Hotel Liegeplatz 13 Kiel by Premiere Classe", map: "https://maps.app.goo.gl/uiViyTyUQAfHDNbq6" },
+    "912": { name: "MSC Cruise Ship", map: "https://maps.app.goo.gl/yAHd1n7yvGv2XG7m8" },
+    "919": { name: "Barabas Luzern", map: "https://maps.app.goo.gl/NdmS1o8y9ZsDfiYu5" },
+    "920": { name: "Hotel Victoria Lauberhorn Wengen", map: "https://maps.app.goo.gl/JUk59ZPRiiRCN5Aw9" },
+    "921": { name: "Hotel Victoria Lauberhorn Wengen", map: "https://maps.app.goo.gl/JUk59ZPRiiRCN5Aw9" },
+    "922": { name: "Hotel Victoria Lauberhorn Wengen", map: "https://maps.app.goo.gl/JUk59ZPRiiRCN5Aw9" },
+    "923": { name: "Zermatt Hotel Alpina", map: "https://maps.app.goo.gl/vPqfrLinN6M45mbN8" },
+    "924": { name: "Zermatt Hotel Alpina", map: "https://maps.app.goo.gl/vPqfrLinN6M45mbN8" },
+    "925": { name: "Zermatt Hotel Alpina", map: "https://maps.app.goo.gl/vPqfrLinN6M45mbN8" },
+    "926": { name: "Hostel INN PETRELLA Milan", map: "https://maps.app.goo.gl/E8gig159c8U69n2x9" },
+    "927": { name: "Milan Malpensa Airport MXP", map: "https://maps.app.goo.gl/PuzkC7L5KWpmE93v5" },
+    "928": { name: "Home", map: "https://maps.app.goo.gl/UNuPB1CaheDYPV9h9" },
+    
+};
+// 【新增指令】：建立一個統一的刷新判定工具
+function refreshHotelBar() {
+    const hotelBar = document.getElementById('hotel-bar');
+    const hotelNameEl = document.getElementById('hotel-name');
+    const hotelLinkEl = document.getElementById('hotel-link');
+    if (!hotelBar) return;
+
+    // 1. 檢查行程分頁是否為 active
+    const isItineraryActive = document.getElementById('itinerary').classList.contains('active');
+
+    // 2. 獲取目前選中的日期
+    const activeTab = document.querySelector('.day-tab.active');
+    const dayId = activeTab ? activeTab.getAttribute('onclick').match(/'([^']+)'/)[1] : 'all';
+
+    // 3. 判定顯示或隱藏
+    if (isItineraryActive && dayId !== 'all' && hotelData[dayId]) {
+        hotelNameEl.innerText = hotelData[dayId].name;
+        hotelLinkEl.href = hotelData[dayId].map;
+        hotelBar.style.setProperty('display', 'flex', 'important');
+    } else {
+        hotelBar.style.setProperty('display', 'none', 'important');
+    }
+}
+// 修改原有的 switchDay 函數
+// 【修改指令】：讓 switchDay 直接調用剛剛建立的工具
+const originalSwitchDay = switchDay;
+switchDay = function(dayId, el) {
+    originalSwitchDay(dayId, el); 
+    refreshHotelBar(); // 直接執行剛寫好的工具
+};
+// 🗓️ 顯示今天日期在按鈕上（歐洲時間）
+(function updateTodayLabel() {
+    const now = new Date();
+
+    const euMonth = new Intl.DateTimeFormat('en-US', {
+        month: 'numeric',
+        timeZone: 'Europe/Berlin'
+    }).format(now);
+
+    const euDay = new Intl.DateTimeFormat('en-US', {
+        day: 'numeric',
+        timeZone: 'Europe/Berlin'
+    }).format(now);
+
+    const label = document.getElementById('todayDate');
+    if (label) {
+        label.textContent = `${euMonth}/${euDay}`;
+    }
+})();
+function jumpToToday() {
+    const now = new Date();
+    const m = now.getMonth() + 1;
+    const d = now.getDate();
+    const y = now.getFullYear();
+
+    // 判斷是否在 2026 年 9 月 10 日至 28 日之間
+    if (y === 2026 && m === 9 && d >= 10 && d <= 28) {
+        const dayId = '9' + d; // 生成 ID 如 910, 911...
+        
+        // 1. 強制切換回「行程」大分頁
+        const itineraryNav = document.querySelector('.nav-item[onclick*="itinerary"]');
+        if (typeof switchTab === 'function') {
+            switchTab('itinerary', itineraryNav);
+        }
+
+// 2. 找到對應日期的 Tab
+        const targetTab = document.querySelector(`.day-tab[onclick*="'${dayId}'"]`);
+        
+        if (targetTab) {
+            // A. 觸發內容切換
+            targetTab.click(); 
+            
+            // B. 同步捲動上方導覽列：讓目標 Tab 滾動到容器的最左側
+            targetTab.scrollIntoView({
+                behavior: 'smooth', // 平滑捲動
+                inline: 'start',    // 對齊到起始位置 (最左側)
+                block: 'nearest'    // 垂直方向保持不動
+            });
+
+            // C. 視覺回饋：滾動頁面到頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+}
+// 頁面加載後自動顯示日期文字
+document.addEventListener('DOMContentLoaded', () => {
+    const now = new Date();
+    const todayBtn = document.getElementById('todayBtn');
+    if (now.getMonth() + 1 === 9) {
+        todayBtn.innerText = `9/${now.getDate()}`;
+    }
+});
+/* =========================================================
+   ✅【行程詳情資料庫】你以後要新增/刪除/編輯「詳情內容」只改這裡就好
+   - key：你自己取（短一點、好記）
+   - 下面每一筆都是「一個行程項目」的詳情
+   - 沒填的欄位不會顯示（例如沒有票價就不會出現票價區）
+========================================================= */
+const detailData = {
+  // 範例：Toyota 取車（你可以照這個格式改成自己的）
+  "kaohsiung-airport-departure": {
+    tag: "TRANSPORT",
+    time: "11:30",
+    title: "取車 (Toyota Rent a Car)",
+    sub: "熊本｜取車與接駁注意事項",
+    location: {
+      text: "熊本縣菊池郡菊陽町大字辛川403-2",
+      map: "https://maps.google.com/?q=熊本縣菊池郡菊陽町大字辛川403-2"
+    },
+    contact: {
+      phone: "096-232-0100"
+    },
+    hours: "依預約取車時間",
+    price: "", // 沒有就留空字串或刪掉
+    reservation: {
+      provider: "Toyota Rent a Car (熊本)",
+      date: "3/14 取車",
+      confirmNo: "" // 可填訂單代碼
+    },
+    notes: [
+      "領完行李出關後，請往左手邊走，尋找「レンタカー (Rent a Car)」綜合櫃檯。",
+      "告知預約大名後，工作人員會指引到接駁車站牌（通常在 1 號站牌）。",
+      "搭乘 Toyota 專屬接駁車前往營業所。"
+    ],
+    links: [
+      { name: "官網", url: "https://rent.toyota.co.jp/" },
+      { name: "地圖", url: "https://maps.google.com/?q=熊本縣菊池郡菊陽町大字辛川403-2" }
+    ]
+  },
+
+  // 你可以繼續在這裡新增更多筆：
+  // "some-key": { ... }
+};
+
+
+/* =========================================================
+   ✅ Sheet 開關/渲染（你不用改，除非你想調排版）
+========================================================= */
+function escapeHtml(str){
+  return String(str ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function buildDetailBody(data){
+  const blocks = [];
+
+  // 位置
+  if (data.location && (data.location.text || data.location.map)) {
+    const locText = data.location.text ? escapeHtml(data.location.text) : "";
+    const locLink = data.location.map
+      ? `<a href="${escapeHtml(data.location.map)}" target="_blank" rel="noopener">開啟地圖</a>`
+      : "";
+    blocks.push(`
+      <div class="detail-block">
+        <h6>LOCATION</h6>
+        <div class="detail-row"><div class="k">地址</div><div class="v">${locText}</div></div>
+        ${locLink ? `<div class="detail-row"><div class="k">導航</div><div class="v">${locLink}</div></div>` : ""}
+      </div>
+    `);
+  }
+
+  // 訂位資訊
+  if (data.reservation && (data.reservation.provider || data.reservation.date || data.reservation.confirmNo)) {
+    const provider = escapeHtml(data.reservation.provider || "");
+    const date = escapeHtml(data.reservation.date || "");
+    const confirmNo = escapeHtml(data.reservation.confirmNo || "");
+    const copyBtn = confirmNo
+      ? `<button class="detail-pill" type="button" onclick="copyText('${confirmNo}')">
+           <i class="fa-regular fa-copy"></i> 複製訂單代碼
+         </button>`
+      : "";
+
+    blocks.push(`
+      <div class="detail-block">
+        <h6>RESERVATION</h6>
+        ${provider ? `<div class="detail-row"><div class="k">預訂</div><div class="v">${provider}</div></div>` : ""}
+        ${date ? `<div class="detail-row"><div class="k">日期</div><div class="v">${date}</div></div>` : ""}
+        ${confirmNo ? `<div class="detail-row"><div class="k">代碼</div><div class="v">${confirmNo}</div></div>` : ""}
+        ${copyBtn ? `<div class="detail-actions">${copyBtn}</div>` : ""}
+      </div>
+    `);
+  }
+
+  // 聯繫方式 / 營業時間 / 票價
+  if ((data.contact && (data.contact.phone || data.contact.email)) || data.hours || data.price) {
+    const rows = [];
+
+    if (data.contact?.phone) {
+      const p = escapeHtml(data.contact.phone);
+      rows.push(`<div class="detail-row"><div class="k">電話</div><div class="v"><a href="tel:${p}">${p}</a></div></div>`);
+    }
+    if (data.contact?.email) {
+      const e = escapeHtml(data.contact.email);
+      rows.push(`<div class="detail-row"><div class="k">Email</div><div class="v"><a href="mailto:${e}">${e}</a></div></div>`);
+    }
+    if (data.hours) rows.push(`<div class="detail-row"><div class="k">營業</div><div class="v">${escapeHtml(data.hours)}</div></div>`);
+    if (data.price) rows.push(`<div class="detail-row"><div class="k">票價</div><div class="v">${escapeHtml(data.price)}</div></div>`);
+
+    blocks.push(`
+      <div class="detail-block">
+        <h6>CONTACT</h6>
+        ${rows.join("")}
+      </div>
+    `);
+  }
+
+  // 注意事項
+  if (Array.isArray(data.notes) && data.notes.length) {
+    const lis = data.notes.map(n => `<li>${escapeHtml(n)}</li>`).join("");
+    blocks.push(`
+      <div class="detail-block">
+        <h6>NOTES</h6>
+        <div class="detail-note"><ul>${lis}</ul></div>
+      </div>
+    `);
+  }
+
+  // 相關連結
+  if (Array.isArray(data.links) && data.links.length) {
+    const pills = data.links
+      .filter(l => l?.url)
+      .map(l => `<a class="detail-pill" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">
+                  <i class="fa-solid fa-up-right-from-square"></i> ${escapeHtml(l.name || "連結")}
+                 </a>`)
+      .join("");
+    blocks.push(`
+      <div class="detail-block">
+        <h6>LINKS</h6>
+        <div class="detail-actions">${pills}</div>
+      </div>
+    `);
+  }
+
+  // 沒內容就給個提示（通常不會發生，因為你 2a 沒資料不顯示 icon）
+  if (!blocks.length) {
+    return `<div class="detail-block"><div class="detail-note">尚未建立詳情。</div></div>`;
+  }
+
+  return blocks.join("");
+}
+
+function openDetail(key){
+  const data = detailData[key];
+  if (!data) return; // 2a：沒資料不顯示 icon，也避免誤開
+
+  const html = document.documentElement;
+
+  // 塞 header
+  document.getElementById("detailTag").innerText = data.tag || "INFO";
+  document.getElementById("detailTime").innerHTML =
+    `<i class="fa-regular fa-clock"></i> ${escapeHtml(data.time || "--:--")}`;
+  document.getElementById("detailTitle").innerText = data.title || "";
+  document.getElementById("detailSub").innerText = data.sub || "";
+
+  // 塞 body
+  document.getElementById("detailBody").innerHTML = buildDetailBody(data);
+
+  // 顯示
+  const backdrop = document.getElementById("detailBackdrop");
+  const sheet = document.getElementById("detailSheet");
+// 顯示（先停在收合狀態）
+backdrop.style.display = "block";
+sheet.style.display = "block";
+sheet.setAttribute("aria-hidden","false");
+
+// ✅ 強制讓瀏覽器先把「收合狀態」畫出來
+html.classList.remove("detail-open"); // 保險：避免殘留狀態
+void sheet.offsetHeight;             // 強制 reflow
+
+// ✅ 下一個 frame 再打開，動畫就會從下往上跑
+requestAnimationFrame(() => {
+  html.classList.add("detail-open");
+});
+
+// 鎖背景滾動
+document.body.style.overflow = "hidden";
+}
+
+function closeDetail(){
+  const html = document.documentElement;
+  const backdrop = document.getElementById("detailBackdrop");
+  const sheet = document.getElementById("detailSheet");
+
+  html.classList.remove("detail-open");
+  sheet.setAttribute("aria-hidden","true");
+  document.body.style.overflow = "";
+
+  // 等動畫結束再 display none
+  setTimeout(() => {
+    backdrop.style.display = "none";
+    sheet.style.display = "none";
+  }, 280);
+}
+
+async function copyText(text){
+  try{
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      alert("✅ 已複製");
+    } else {
+      // fallback
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      alert("✅ 已複製");
+    }
+  }catch(e){
+    alert("❌ 複製失敗");
+  }
+}
+
+function initDetailCloseBindings(){
+  const backdrop = document.getElementById("detailBackdrop");
+
+  // 點遮罩關閉
+  if (backdrop) {
+    backdrop.addEventListener("click", closeDetail);
+  }
+
+  // ✅ 用事件委派處理 X（避免 id / pointer 問題）
+  document.addEventListener("click", (e) => {
+    const closeBtn = e.target.closest(".detail-close, .detail-x, [data-detail-close]");
+    if (!closeBtn) return;
+
+    // 防止被其他 handler 擋掉
+    e.preventDefault();
+    e.stopPropagation();
+
+    closeDetail();
+  });
+
+  // Esc 關閉
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && document.documentElement.classList.contains("detail-open")) {
+      closeDetail();
+    }
+  });
+}
+
+/* 在 DOM 準備好之後初始化 */
+document.addEventListener("DOMContentLoaded", () => {
+  initDetailCloseBindings();   // ✅ 恢復：點空白處 / X / Esc
+  initDetailDragToClose(); // ✅ 新增：等 sheet/backdrop 都在 DOM 了再綁拖曳
+});
+/* =========================================================
+   ✅ 詳情頁：Header 下拉拖曳關閉（只在 header 啟動 / 跟手 / 不夠距離回彈）
+   - 保留：X 關閉、點遮罩關閉
+========================================================= */
+function initDetailDragToClose(){
+  const html = document.documentElement;
+  const sheet = document.getElementById("detailSheet");
+  const backdrop = document.getElementById("detailBackdrop");
+  if (!sheet || !backdrop) return;
+
+  // 只允許 header 開始拖曳
+  const getHeader = () => sheet.querySelector(".detail-head");
+
+  let dragging = false;
+  let startY = 0;
+  let currentY = 0;
+
+  const DRAG_START_THRESHOLD = 8;   // ✅ 小位移不算拖曳（避免誤觸）
+  const CLOSE_THRESHOLD_PX = 90;    // ✅ 超過這個距離就關閉（你也可改 80/100）
+  const MAX_FADE = 220;            // ✅ 拉到這裡遮罩最淡（不必全消失）
+
+  function isOpen(){
+    return html.classList.contains("detail-open");
+  }
+
+  function setBackdropOpacityByDrag(dy){
+    // dy 越大，遮罩越淡（低調）
+    const t = Math.min(Math.max(dy / MAX_FADE, 0), 1);
+    const op = 1 - t * 0.65; // 最多淡到 0.35（不會整個消失，視覺比較穩）
+    backdrop.style.opacity = String(op);
+  }
+
+  function resetBackdropOpacity(){
+    backdrop.style.opacity = ""; // 回到 CSS 控制（預設 1）
+  }
+
+  function snapBack(){
+    // 回彈：要有動畫
+    sheet.style.transition = "transform .28s ease";
+    sheet.style.transform = "translateY(0)";
+    resetBackdropOpacity();
+
+    // 讓桌機手感更像「放手」
+    setTimeout(() => {
+      sheet.style.transition = "";
+      sheet.style.transform = "";
+    }, 300);
+  }
+
+  function closeByDrag(){
+    // 用「同一套往下收回動畫」，但避免 inline transform 覆蓋 CSS
+    sheet.style.transition = "transform .28s ease";
+    sheet.style.transform = "translateY(100%)";
+    backdrop.style.transition = "opacity .25s ease";
+    backdrop.style.opacity = "0";
+
+    // 動畫結束後做乾淨收尾（沿用 closeDetail 的邏輯但避免互打）
+    setTimeout(() => {
+      // 清狀態
+      html.classList.remove("detail-open");
+      document.body.style.overflow = "";
+
+      // 隱藏
+      backdrop.style.display = "none";
+      sheet.style.display = "none";
+      sheet.setAttribute("aria-hidden","true");
+
+      // 清 inline
+      sheet.style.transition = "";
+      sheet.style.transform = "";
+      backdrop.style.transition = "";
+      backdrop.style.opacity = "";
+    }, 280);
+  }
+
+  function onPointerDown(e){
+    if (!isOpen()) return;
+
+    const header = getHeader();
+    if (!header) return;
+
+    // 只允許 header 觸發
+    if (!header.contains(e.target)) return;
+
+ // ✅ 關鍵：點到 X（或你之後可能加的 data-detail-close）時，不要進入拖曳模式
+  if (e.target.closest(".detail-close, .detail-x, [data-detail-close], a, button")) {
+    return;
+  }
+    dragging = true;
+    startY = e.clientY;
+    currentY = 0;
+
+    // 跟手拖曳：先關掉 transition
+    sheet.style.transition = "none";
+
+    // 捕捉指標，避免滑出 header 就斷
+    try{ header.setPointerCapture(e.pointerId); } catch(_) {}
+  }
+
+  function onPointerMove(e){
+    if (!dragging) return;
+
+    const dy = e.clientY - startY;
+
+    // 不處理往上推（避免怪手感）
+    if (dy <= 0) {
+      currentY = 0;
+      sheet.style.transform = "translateY(0)";
+      setBackdropOpacityByDrag(0);
+      return;
+    }
+
+    // 避免一點點抖動就開始「拖曳感」
+    if (dy < DRAG_START_THRESHOLD && currentY === 0) return;
+
+    currentY = dy;
+
+    // sheet 跟手
+    sheet.style.transform = `translateY(${dy}px)`;
+    setBackdropOpacityByDrag(dy);
+
+    // 防止頁面跟著滾
+    e.preventDefault?.();
+  }
+
+  function onPointerUp(){
+    if (!dragging) return;
+    dragging = false;
+
+    // 放手後恢復 transition
+    sheet.style.transition = "transform .28s ease";
+
+    if (currentY >= CLOSE_THRESHOLD_PX) {
+      closeByDrag();
+    } else {
+      snapBack();
+    }
+  }
+
+  // 綁在 document，避免漏接 move/up
+  document.addEventListener("pointerdown", onPointerDown, { passive: true });
+  document.addEventListener("pointermove", onPointerMove, { passive: false });
+  document.addEventListener("pointerup", onPointerUp, { passive: true });
+  document.addEventListener("pointercancel", onPointerUp, { passive: true });
+}
+/* =========================================================
+   ✅ C 方案：長按行程 header 開詳情（無提示）
+   - 短按：展開/收合備註（原本行為）
+   - 長按：若有詳情資料 -> openDetail(key)
+   - 沒資料：長按不反應
+========================================================= */
+(function initLongPressDetailOnHeaders(){
+  const LONGPRESS_MS = 450;     // ✅ 長按多久才觸發（想更難誤觸可改 500~600）
+  const MOVE_TOL = 10;          // ✅ 手指移動超過幾 px 就視為「不是長按」
+  
+  let pressTimer = null;
+  let pressStartX = 0;
+  let pressStartY = 0;
+  let longPressed = false;
+
+  function clearPressTimer(){
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  }
+
+  // 用「事件委派」：不用每個 header 都綁，且新內容也自動生效
+  document.addEventListener("pointerdown", (e) => {
+    const header = e.target.closest(".time-header");
+    if (!header) return;
+
+    const item = header.closest(".time-item");
+    if (!item) return;
+
+    // 只允許「左鍵/手指」觸發
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+
+    longPressed = false;
+    pressStartX = e.clientX;
+    pressStartY = e.clientY;
+
+    // 如果這個行程有 detail key 且 detailData 有資料 -> 才啟用長按
+    const key = item.getAttribute("data-detail");
+    const canOpenDetail = key && typeof detailData === "object" && detailData[key];
+
+    clearPressTimer();
+
+    if (!canOpenDetail) return; // ✅ 沒資料就不做長按計時（長按也不反應）
+
+    pressTimer = setTimeout(() => {
+      longPressed = true;
+
+      // ✅ 長按成功：開詳情
+      openDetail(key);
+
+      // ✅ 抑制接下來那一下 click（避免展開/收合被觸發）
+      header.dataset.suppressClick = "1";
+      setTimeout(() => { delete header.dataset.suppressClick; }, 600);
+    }, LONGPRESS_MS);
+  }, { passive: true });
+
+  document.addEventListener("pointermove", (e) => {
+    if (!pressTimer) return;
+
+    const dx = Math.abs(e.clientX - pressStartX);
+    const dy = Math.abs(e.clientY - pressStartY);
+
+    if (dx > MOVE_TOL || dy > MOVE_TOL) {
+      clearPressTimer(); // ✅ 手指滑動了 -> 取消長按
+    }
+  }, { passive: true });
+
+  document.addEventListener("pointerup", () => {
+    clearPressTimer();
+  }, { passive: true });
+
+  document.addEventListener("pointercancel", () => {
+    clearPressTimer();
+  }, { passive: true });
+
+  // ✅ 短按：展開/收合（取代你原本那段 querySelectorAll click）
+  document.addEventListener("click", (e) => {
+    const header = e.target.closest(".time-header");
+    if (!header) return;
+
+    // ✅ 如果剛剛是長按打開詳情，這一下 click 要忽略
+    if (header.dataset.suppressClick === "1") return;
+
+    const item = header.closest(".time-item");
+    if (!item) return;
+
+    item.classList.toggle("open");
+  });
+})();
+
+</script>
+<div id="hotel-bar" class="accommodation-bar">
+    <div>
+        <small class="text-muted d-block" style="font-size: 0.65rem;">今晚住宿</small>
+        <span id="hotel-name" class="hotel-name">載入中...</span>
+    </div>
+    <a id="hotel-link" href="#" target="_blank" class="btn-map">
+        <i class="fas fa-map-marker-alt"></i> 
+    </a>
+</div>
+<!-- =========================================================
+     ✅ 行程詳情 Sheet（1a：底部彈出）
+========================================================= -->
+<div id="detailBackdrop" class="detail-backdrop" style="display:none;"></div>
+
+<div id="detailSheet" class="detail-sheet" style="display:none;" aria-hidden="true">
+  <div class="detail-card">
+    <div class="detail-head">
+      <div style="min-width:0;">
+        <div class="detail-meta">
+          <span id="detailTag" class="detail-tag">INFO</span>
+          <span id="detailTime" class="detail-time"><i class="fa-regular fa-clock"></i> --:--</span>
+        </div>
+        <div id="detailTitle" class="detail-title">標題</div>
+        <div id="detailSub" class="detail-sub"></div>
+      </div>
+
+      <button id="detailClose" class="detail-close" type="button" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div id="detailBody" class="detail-body">
+      <!-- JS 動態塞內容 -->
+    </div>
+  </div>
+</div>
+
+</html>
