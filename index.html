@@ -417,6 +417,12 @@ html[data-theme="dark"] .day-content .text-primary{ color:var(--text-1) !importa
   padding-left:32px;
   padding-top:12px;
   padding-bottom:24px;
+
+  opacity:1;
+  transform:none;
+}
+
+body.day-switch .time-item{
   opacity:0;
   transform:translateY(6px);
   animation:timelineFade .6s ease forwards;
@@ -448,13 +454,13 @@ html[data-theme="dark"] .day-content .text-primary{ color:var(--text-1) !importa
 
   /* 這圈是「切開線」用的，建議跟卡片表面一致 */
   border:2px solid var(--surface);
-
+  animation-delay:inherit;
+}
+.time-node{
   transform:scale(.6);
   opacity:0;
   animation:nodePop .4s ease forwards;
-  animation-delay:inherit;
 }
-
 @keyframes timelineFade{ to{ opacity:1; transform:translateY(0) } }
 @keyframes nodePop{ to{ opacity:1; transform:scale(1) } }
 
@@ -466,10 +472,17 @@ html[data-theme="dark"] .day-content .text-primary{ color:var(--text-1) !importa
   cursor:pointer;
   user-select:none;
 }
+
+.time-text,
+.title-text{
+  user-select:text; /* ⭐ 允許編輯 */
+}
 .toggle-icon{
   font-size:.9rem;
   color:var(--text-3);
   transition:transform .3s ease;
+  display:inline-block;
+  transform-origin:center;
 }
 .time-detail{
   max-height:0;
@@ -478,6 +491,7 @@ html[data-theme="dark"] .day-content .text-primary{ color:var(--text-1) !importa
   opacity:0;
   overflow:hidden;
   transition:max-height .35s ease,transform .35s ease,opacity .35s ease;
+white-space: pre-line;
 }
 .time-item.open .time-detail{
   max-height:500px;
@@ -2313,8 +2327,364 @@ html[data-theme="dark"]
 #pack-list-container input[type="checkbox"]:not(#carryModeSwitch):not(.form-check-input)::after{
   filter: drop-shadow(0 0 1px rgba(0,0,0,.55));
 }
+/* 待修色碼 */
+.detail-dot{
+margin-left:auto;
+color:#888;
+cursor:pointer;
+font-size:18px;
+padding-left:10px;
+}
 
+.detail-dot:hover{
+color:#ddd;
+}
+
+.time-header{
+display:flex;
+align-items:center;
+}
+/* edit mode disable timeline animation */
+
+body.edit-mode .time-item{
+  opacity:1;
+  transform:none;
+  animation:none;
+}
+
+body.edit-mode .time-node{
+  opacity:1;
+  transform:none;
+  animation:none;
+}
+/* =========================
+   EDIT MODE UI POLISH
+========================= */
+
+
+/* ---------- Timeline Item ---------- */
+
+.time-item{
+  transition:background .15s ease, box-shadow .15s ease;
+  border-radius:10px;
+}
+
+.time-item:hover{
+  background:var(--pill-bg);
+}
+
+
+/* ---------- Drag Handle ---------- */
+
+.drag-handle{
+  cursor:grab;
+  padding:2px 6px;
+  border-radius:6px;
+  color:var(--text-3);
+  transition:all .15s ease;
+}
+
+.drag-handle:hover{
+  background:var(--pill-bg);
+  color:var(--text-2);
+}
+
+.drag-handle:active{
+  cursor:grabbing;
+}
+
+
+/* ---------- Timeline Detail ---------- */
+
+.time-detail{
+  font-size:.9rem;
+  color:var(--text-2);
+  margin-top:3px;
+}
+
+
+/* ---------- Section Items Container ---------- */
+
+.section-items{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+
+/* ---------- Item Editor ---------- */
+
+.item-editor{
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:8px;
+}
+
+
+/* =========================
+   INPUT SYSTEM
+========================= */
+
+input,
+textarea,
+select{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:4px 8px;
+  color:var(--text-1);
+  transition:border .15s ease, box-shadow .15s ease;
+}
+
+input:hover,
+textarea:hover,
+select:hover{
+  border-color:var(--pill-bd-strong);
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+  outline:none;
+  border-color:var(--brand);
+  box-shadow:0 0 0 2px var(--focus-ring);
+}
+
+
+/* textarea nicer */
+
+textarea{
+  resize:vertical;
+  min-height:60px;
+}
+
+
+/* =========================
+   DETAIL EDITOR
+========================= */
+
+.detail-editor{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+
+/* ---------- Blocks Container ---------- */
+
+#detailBlocks{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+
+/* ---------- Block Card ---------- */
+
+#detailBlocks > div{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px;
+  box-shadow:var(--shadow-1);
+}
+
+
+/* ---------- Block Row ---------- */
+
+#detailBlocks input,
+#detailBlocks textarea{
+  width:100%;
+  margin-top:4px;
+}
+
+
+/* hover highlight */
+
+#detailBlocks > div:hover{
+  border-color:var(--pill-bd-strong);
+}
+
+
+/* =========================
+   ADD BLOCK AREA
+========================= */
+
+#blockType{
+  margin-right:6px;
+}
+
+#addBlockBtn{
+  border:1px solid var(--border);
+  background:var(--surface);
+  border-radius:8px;
+  padding:4px 10px;
+  transition:all .15s ease;
+}
+
+#addBlockBtn:hover{
+  background:var(--pill-bg);
+}
+
+
+/* =========================
+   BUTTON CLEANUP
+========================= */
+
+button{
+  border:1px solid var(--border);
+  background:var(--surface);
+  border-radius:8px;
+  padding:3px 8px;
+  transition:all .15s ease;
+}
+
+button:hover{
+  background:var(--pill-bg);
+}
+
+
+/* =========================
+   EDIT MODE EMPHASIS
+========================= */
+
+input,
+textarea{
+  font-size:.95rem;
+}
+
+h6 input{
+  font-weight:600;
+}
+
+
+/* =========================
+   SMOOTH UI
+========================= */
+
+.time-item,
+.item-editor,
+#detailBlocks > div{
+  transition:all .15s ease;
+}
+.section-title{
+outline:none;
+}
+
+body.edit-mode .section-title{
+border-bottom:1px dashed var(--border);
+}
+
+body:not(.edit-mode) .section-title{
+pointer-events:none;
+}
+.section-header{
+  display:grid;
+  grid-template-columns: 1fr 28px 28px; /* ⭐ 固定 */
+  align-items:center;
+}
+.section-add,
+.section-delete{
+  opacity:0;
+  transform: translateX(8px);
+
+  transition: 
+    opacity .2s ease,
+    transform .2s ease;
+
+background:none;
+border:none;
+
+cursor:pointer;
+  width:28px;
+  height:28px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:0;          /* ⭐ 清掉預設 padding */
+}
+
+body:not(.edit-mode){
+--section-icon:0px;
+}
+
+body.edit-mode{
+--section-icon:28px;
+}
+body.edit-mode .section-add,
+body.edit-mode .section-delete{
+  opacity:1;
+  transform: translateX(0);
+}
+.item-row{
+display:grid;
+grid-template-columns: var(--item-gap) 1fr var(--item-icon) var(--item-icon);
+align-items:center;
+transition: all .25s ease;
+}
+
+.item-handle{
+opacity:0;
+cursor:grab;
+text-align:center;
+transition: opacity .2s ease;
+}
+
+.item-edit,
+.item-delete{
+opacity:0;
+background:none;
+border:none;
+cursor:pointer;
+transition: opacity .2s ease;
+}
+
+body:not(.edit-mode){
+--item-gap:0px;
+--item-icon:0px;
+}
+
+body.edit-mode{
+--item-gap:32px;
+--item-icon:28px;
+}
+
+body.edit-mode .item-handle,
+body.edit-mode .item-edit,
+body.edit-mode .item-delete{
+opacity:1;
+}
+
+.item-content{
+display:flex;
+align-items:center;
+gap:6px;
+}
+.item-edit,
+.item-delete,
+.item-handle{
+transition: opacity .2s ease;
+}
+.time-text{
+  user-select:none;
+  cursor:pointer;
+}
+
+body.edit-mode .time-text{
+  border-bottom:1px dashed var(--border);
+}
+.time-picker{
+  position:absolute;
+  opacity:0;
+  pointer-events:auto;  /* ⭐ 原本是 none → 改這裡 */
+  width:1px;
+  height:1px;
+}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
 <body>
 <div class="sticky-top bg-white border-bottom shadow-sm">
@@ -2362,6 +2732,9 @@ html[data-theme="dark"]
 </div>
 
 <div id="itinerary" class="content-section active">
+<div style="text-align:right;margin-bottom:8px;">
+<button onclick="toggleTimelineEdit()">✏️ Edit</button>
+</div>
     <div class="day-nav-container">
         <div class="day-tab active" onclick="switchDay('all', this)">
             <span class="day-week">ALL</span><span class="day-num">總覽</span>
@@ -2394,253 +2767,65 @@ html[data-theme="dark"]
             <div class="badge bg-dark badge-trip">Total 19 Days</div>
         </div>
     </div>
-
-    <div id="day-910" class="day-content" data-day="910">
-        <div class="card-custom">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold text-primary m-0">啟程飛行</h6>
-            </div>
-            <div class="time-item" data-detail="kaohsiung-airport-departure">
-                <div class="time-node"></div>
-
-                <div class="time-header">
-                    <div class="fw-bold">19:00 高雄小港機場</div>
-                    <span class="toggle-icon">▾</span>
-                </div>
-
-                <div class="time-detail">
-                    <div class="small text-muted">
-                        出境、準備起飛、貴賓室
-                    </div>
-                </div>
-            </div>
-            <div class="time-item">
-                <div class="time-node"></div>
-
-                <div class="time-header">
-                    <div class="fw-bold">23:00 抵達香港機場</div>
-                    <span class="toggle-icon">▾</span>
-                </div>
-
-                <div class="time-detail">
-                    <div class="small text-muted">
-                        等待轉機 (Kiel)
-                    </div>
-                </div>
-            </div>
-        </div> <!-- ⭐ card-custom -->
-    </div>     <!-- ⭐ day-910 -->
-
-    <div id="day-911" class="day-content" data-day="911">
-        <div class="card-custom">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold text-primary m-0">🇩🇪 抵達德國</h6>
-                <div class="d-flex gap-1">
-                    <a href="https://www.google.com/search?q=Kiel+Weather" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
-                        <i class="fas fa-sun"></i>
-                    </a>
-                    <a href="https://maps.app.goo.gl/9ZfWp6G1P8Ue2SjN8" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
-                        <i class="fas fa-map-marked-alt"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="time-item">
-                <div class="time-node"></div>
-
-                <div class="time-header">
-                    <div class="fw-bold">07:15 抵達 FRA T2</div>
-                    <span class="toggle-icon">▾</span>
-                </div>
-
-                <div class="time-detail">
-                    <div class="small text-muted">
-                        抵達後通關、領取行李<br>
-                        123<br>
-                        3221<br>
-                        123547<br>
-                    </div>
-                </div>
-            </div>
-            <div class="time-item">
-                <div class="time-node"></div>
-
-                <div class="time-header">
-                    <div class="fw-bold">09:41 ICE 高鐵</div>
-                    <span class="toggle-icon">▾</span>
-                </div>
-
-                <div class="time-detail">
-                    <div class="small text-muted">
-                        法蘭克福 ➔ 15:21 抵達基爾 (Kiel)
-                    </div>
-                </div>
-            </div>
-        </div> <!-- ⭐ card-custom -->
-    </div>     <!-- ⭐ day-911 -->
-
-    <div id="day-912" class="day-content" data-day="912">
-        <div class="card-custom">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold text-primary m-0">🚢 登船：基爾 Kiel</h6>
-                <div class="d-flex gap-1">
-                    <a href="https://www.yr.no/en" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
-                        <i class="fas fa-sun"></i>
-                    </a>
-                    <a href="https://maps.app.goo.gl/xjPNo9XXZtwXu1qR7" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
-                        <i class="fas fa-map-marked-alt"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="time-item">
-                <div class="time-node"></div>
-
-                <div class="time-header">
-                    <div class="fw-bold">16:00 MSC EURIBIA登船</div>
-                    <span class="toggle-icon">▾</span>
-                </div>
-
-                <div class="time-detail">
-                    <div class="small text-muted">
-                        Terminal MSC Kiel 
-                    </div>
-                </div>
-            </div>
-            <div class="time-item">
-                <div class="time-node"></div>
-
-                <div class="time-header">
-                    <div class="fw-bold">19:00 啟航</div>
-                    <span class="toggle-icon">▾</span>
-                </div>
-
-                <div class="time-detail">
-                    <div class="small text-muted">
-                        房號10103
-                    </div>
-                </div>
-            </div>
-        </div> <!-- ⭐ card-custom -->
-    </div>     <!-- ⭐ day-912 -->
-
-    <div id="day-913" class="day-content" data-day="913"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 哥本哈根</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
-    <div id="day-914" class="day-content" data-day="914"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 海上巡航</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
-    <div id="day-915" class="day-content" data-day="915"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 希雷斯利特</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
-    <div id="day-916" class="day-content" data-day="916"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 奧勒松</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
-    <div id="day-917" class="day-content" data-day="917"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 弗洛姆</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
-    <div id="day-918" class="day-content" data-day="918"><div class="card-custom"><h6 class="fw-bold text-primary mb-3">🚢 海上巡航</h6><div class="time-item"><div class="time-node"></div><div class="fw-bold">郵輪航行中</div></div></div></div>
-
-    <div id="day-919" class="day-content" data-day="919">
-        <div class="card-custom">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold text-primary m-0">🇨🇭 琉森 Luzern</h6>
-                <div class="d-flex gap-1">
-                    <a href="https://www.meteoswiss.admin.ch/local-forecasts/lucerne/6000.html" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
-                        <i class="fas fa-sun"></i>
-                    </a>
-                    <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
-                        <i class="fas fa-map-marked-alt"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="time-item"><div class="time-node"></div><div class="fw-bold">抵達琉森</div><div class="small text-muted">市區觀光、卡貝爾橋</div></div>
-        </div>
-    </div>
-
-    <div id="day-920" class="day-content" data-day="920">
-        <div class="card-custom">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold text-primary m-0">🇨🇭 少女峰區：溫根 Wengen</h6>
-                <div class="d-flex gap-1">
-                    <a href="https://www.meteoswiss.admin.ch/local-forecasts/wengen/3823.html" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
-                        <i class="fas fa-sun"></i>
-                    </a>
-                    <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
-                        <i class="fas fa-map-marked-alt"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="time-item"><div class="time-node"></div><div class="fw-bold">入住 Wengen</div><div class="small text-muted">少女峰、小夏戴克</div></div>
-        </div>
-    </div>
-
-    <div id="day-921" class="day-content" data-day="921">
-        <div class="card-custom">
-            <h6 class="fw-bold text-primary mb-3">🏔️ 健行：Männlichen ➔ 小夏戴克</h6>
-            <div class="time-item"><div class="time-node"></div><div class="fw-bold">全景健行 (2h)</div><div class="small text-muted">格林德瓦 ➔ First 山</div></div>
-        </div>
-    </div>
-
-    <div id="day-922" class="day-content" data-day="922">
-        <div class="card-custom">
-            <h6 class="fw-bold text-primary mb-3">🏔️ 雪朗峰 (Schilthorn)</h6>
-            <div class="time-item"><div class="time-node"></div><div class="fw-bold">景點探索</div><div class="small text-muted">或前往厄西嫩湖 (Oeschinensee)。宿溫根</div></div>
-        </div>
-    </div>
-
-    <div id="day-923" class="day-content" data-day="923">
-        <div class="card-custom">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold text-primary m-0">🇨🇭 策馬特 Zermatt</h6>
-                <div class="d-flex gap-1">
-                    <a href="https://www.meteoswiss.admin.ch/local-forecasts/zermatt/3920.html" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
-                        <i class="fas fa-sun"></i>
-                    </a>
-                    <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
-                        <i class="fas fa-map-marked-alt"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="time-item"><div class="time-node"></div><div class="fw-bold">五湖健行 / 冰川天堂</div></div>
-        </div>
-    </div>
-
-    <div id="day-924" class="day-content" data-day="924">
-        <div class="card-custom">
-            <h6 class="fw-bold text-primary mb-3">🗻 冰川天堂 (Glacier Paradise)</h6>
-            <div class="time-item"><div class="time-node"></div><div class="fw-bold">景點遊覽</div><div class="small text-muted">策馬特周邊景點探索</div></div>
-        </div>
-    </div>
-
-    <div id="day-925" class="day-content" data-day="925">
-        <div class="card-custom">
-            <h6 class="fw-bold text-primary mb-3">🗻 策馬特周邊</h6>
-            <div class="time-item"><div class="time-node"></div><div class="fw-bold">五湖健行</div><div class="small text-muted">Sunnegga 五湖健行或鎮上放鬆</div></div>
-        </div>
-    </div>
-
-    <div id="day-926" class="day-content" data-day="926">
-        <div class="card-custom">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold text-primary m-0">🇮🇹 米蘭 Milan</h6>
-                <div class="d-flex gap-1">
-                    <a href="https://www.google.com/search?q=Milan+Weather" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
-                        <i class="fas fa-sun"></i>
-                    </a>
-                    <a href="(地圖連結)" target="_blank" class="btn btn-sm btn-outline-dark btn-icon-mini">
-                        <i class="fas fa-map-marked-alt"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="time-item"><div class="time-node"></div><div class="fw-bold">米蘭大教堂 / 購物</div></div>
-        </div>
-    </div>
-
-    <div id="day-927" class="day-content" data-day="927">
-        <div class="card-custom">
-            <h6 class="fw-bold text-primary mb-3">✈️ 賦歸 (MXP - HKG)</h6>
-            <div class="time-item"><div class="time-node"></div><div class="fw-bold">12:45 米蘭 (MXP) 起飛</div><div class="small text-muted">前往香港 (11h 40m)</div></div>
-        </div>
-    </div>
-
-    <div id="day-928" class="day-content" data-day="928">
-        <div class="card-custom">
-            <h6 class="fw-bold text-primary mb-3">🏠 抵達高雄</h6>
-            <div class="time-item"><div class="time-node"></div><div class="fw-bold">06:25 抵達香港 (HKG)</div></div>
-            <div class="time-item"><div class="time-node"></div><div class="fw-bold">08:35 香港 ➔ 10:15 高雄</div></div>
-        </div>
-    </div>
+<div id="day-910" class="day-content" data-day="910">
+    <div class="card-custom timeline-container"></div>
 </div>
-
+<div id="day-911" class="day-content" data-day="911">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-912" class="day-content" data-day="912">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-913" class="day-content" data-day="913">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-914" class="day-content" data-day="914">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-915" class="day-content" data-day="915">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-916" class="day-content" data-day="916">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-917" class="day-content" data-day="917">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-918" class="day-content" data-day="918">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-919" class="day-content" data-day="919">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-920" class="day-content" data-day="920">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-921" class="day-content" data-day="921">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-922" class="day-content" data-day="922">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-923" class="day-content" data-day="923">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-924" class="day-content" data-day="924">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-925" class="day-content" data-day="925">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-926" class="day-content" data-day="926">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-927" class="day-content" data-day="927">
+    <div class="card-custom timeline-container"></div>
+</div>
+<div id="day-928" class="day-content" data-day="928">
+    <div class="card-custom timeline-container"></div>
+</div>
+</div>
+</div>
 <div id="budget" class="content-section">
 
   <!-- 新增記帳：輸入卡 -->
@@ -3033,6 +3218,7 @@ html[data-theme="dark"]
 </div>
 
 </div>
+</div>
 </body>
 <script>
 function updateClocks() {
@@ -3094,13 +3280,25 @@ function switchTab(id, el) {
 }
 
 function switchDay(dayId, el) {
+
+    // ⭐ 加這行：啟動 timeline 動畫
+    document.body.classList.add("day-switch");
+
     const container = el.parentElement;
     container.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
+
     document.querySelectorAll('.day-content').forEach(c => c.classList.remove('active'));
+
     const target = document.getElementById('day-' + dayId);
     if (target) target.classList.add('active');
+
     window.scrollTo(0, 0);
+
+    // ⭐ 動畫結束後移除
+    setTimeout(()=>{
+        document.body.classList.remove("day-switch");
+    }, 600); // 要跟你的 timelineFade 時間一致
 }
 // --- 記帳邏輯（新版：每筆鎖匯率 / 今日+分日 / 展開狀態保留） ---
 let expenses = JSON.parse(localStorage.getItem('trip_v2026')) || [];
@@ -3465,8 +3663,8 @@ function render(){
 
   // 日期排序：新到舊
   const dayKeys = Array.from(byDay.keys()).sort((a,b) => (a < b ? 1 : -1));
-
-  // 旅程總覽（沿用你的總覽顯示）
+  
+// 旅程總覽（沿用你的總覽顯示）
   let totalTWD = 0, totalCHF = 0, totalEUR = 0, totalHKD = 0;
   expenses.forEach(e => {
     totalTWD += num(e.twdAtSave);
@@ -3524,6 +3722,7 @@ function render(){
 
   // 匯率提示更新
   updateRateHintUI();
+renderTimeline();
 }
 
 // 單筆卡片 HTML（左：分類+備註+付款方式；右：原幣+TWD）
@@ -5612,47 +5811,6 @@ document.addEventListener('DOMContentLoaded', () => {
         todayBtn.innerText = `9/${now.getDate()}`;
     }
 });
-/* =========================================================
-   ✅【行程詳情資料庫】你以後要新增/刪除/編輯「詳情內容」只改這裡就好
-   - key：你自己取（短一點、好記）
-   - 下面每一筆都是「一個行程項目」的詳情
-   - 沒填的欄位不會顯示（例如沒有票價就不會出現票價區）
-========================================================= */
-const detailData = {
-  // 範例：Toyota 取車（你可以照這個格式改成自己的）
-  "kaohsiung-airport-departure": {
-    tag: "TRANSPORT",
-    time: "11:30",
-    title: "取車 (Toyota Rent a Car)",
-    sub: "熊本｜取車與接駁注意事項",
-    location: {
-      text: "熊本縣菊池郡菊陽町大字辛川403-2",
-      map: "https://maps.google.com/?q=熊本縣菊池郡菊陽町大字辛川403-2"
-    },
-    contact: {
-      phone: "096-232-0100"
-    },
-    hours: "依預約取車時間",
-    price: "", // 沒有就留空字串或刪掉
-    reservation: {
-      provider: "Toyota Rent a Car (熊本)",
-      date: "3/14 取車",
-      confirmNo: "" // 可填訂單代碼
-    },
-    notes: [
-      "領完行李出關後，請往左手邊走，尋找「レンタカー (Rent a Car)」綜合櫃檯。",
-      "告知預約大名後，工作人員會指引到接駁車站牌（通常在 1 號站牌）。",
-      "搭乘 Toyota 專屬接駁車前往營業所。"
-    ],
-    links: [
-      { name: "官網", url: "https://rent.toyota.co.jp/" },
-      { name: "地圖", url: "https://maps.google.com/?q=熊本縣菊池郡菊陽町大字辛川403-2" }
-    ]
-  },
-
-  // 你可以繼續在這裡新增更多筆：
-  // "some-key": { ... }
-};
 
 
 /* =========================================================
@@ -5668,94 +5826,50 @@ function escapeHtml(str){
 }
 
 function buildDetailBody(data){
+// 新 block system
+if(Array.isArray(data.blocks) && data.blocks.length){
+
+return data.blocks.map(block=>{
+
+if(block.type === "list"){
+return `
+<div class="detail-block">
+<h6>${escapeHtml(block.title || "")}</h6>
+<ul>
+${block.items.map(i=>`<li>${escapeHtml(i.text || "")}</li>`).join("")}
+</ul>
+</div>`
+}
+
+if(block.type === "info"){
+return `
+<div class="detail-block">
+<h6>${escapeHtml(block.title || "")}</h6>
+${block.items.map(i=>`
+<div class="detail-row">
+<div class="k">${escapeHtml(i.label || "")}</div>
+<div class="v">${escapeHtml(i.value || "")}</div>
+</div>`).join("")}
+</div>`
+}
+
+if(block.type === "links"){
+return `
+<div class="detail-block">
+<h6>${escapeHtml(block.title || "")}</h6>
+<div class="detail-actions">
+${block.items.map(i=>`
+<a class="detail-pill" href="${escapeHtml(i.value || "#")}" target="_blank">
+${escapeHtml(i.label || "link")}
+</a>`).join("")}
+</div>
+</div>`
+}
+
+}).join("")
+}
   const blocks = [];
 
-  // 位置
-  if (data.location && (data.location.text || data.location.map)) {
-    const locText = data.location.text ? escapeHtml(data.location.text) : "";
-    const locLink = data.location.map
-      ? `<a href="${escapeHtml(data.location.map)}" target="_blank" rel="noopener">開啟地圖</a>`
-      : "";
-    blocks.push(`
-      <div class="detail-block">
-        <h6>LOCATION</h6>
-        <div class="detail-row"><div class="k">地址</div><div class="v">${locText}</div></div>
-        ${locLink ? `<div class="detail-row"><div class="k">導航</div><div class="v">${locLink}</div></div>` : ""}
-      </div>
-    `);
-  }
-
-  // 訂位資訊
-  if (data.reservation && (data.reservation.provider || data.reservation.date || data.reservation.confirmNo)) {
-    const provider = escapeHtml(data.reservation.provider || "");
-    const date = escapeHtml(data.reservation.date || "");
-    const confirmNo = escapeHtml(data.reservation.confirmNo || "");
-    const copyBtn = confirmNo
-      ? `<button class="detail-pill" type="button" onclick="copyText('${confirmNo}')">
-           <i class="fa-regular fa-copy"></i> 複製訂單代碼
-         </button>`
-      : "";
-
-    blocks.push(`
-      <div class="detail-block">
-        <h6>RESERVATION</h6>
-        ${provider ? `<div class="detail-row"><div class="k">預訂</div><div class="v">${provider}</div></div>` : ""}
-        ${date ? `<div class="detail-row"><div class="k">日期</div><div class="v">${date}</div></div>` : ""}
-        ${confirmNo ? `<div class="detail-row"><div class="k">代碼</div><div class="v">${confirmNo}</div></div>` : ""}
-        ${copyBtn ? `<div class="detail-actions">${copyBtn}</div>` : ""}
-      </div>
-    `);
-  }
-
-  // 聯繫方式 / 營業時間 / 票價
-  if ((data.contact && (data.contact.phone || data.contact.email)) || data.hours || data.price) {
-    const rows = [];
-
-    if (data.contact?.phone) {
-      const p = escapeHtml(data.contact.phone);
-      rows.push(`<div class="detail-row"><div class="k">電話</div><div class="v"><a href="tel:${p}">${p}</a></div></div>`);
-    }
-    if (data.contact?.email) {
-      const e = escapeHtml(data.contact.email);
-      rows.push(`<div class="detail-row"><div class="k">Email</div><div class="v"><a href="mailto:${e}">${e}</a></div></div>`);
-    }
-    if (data.hours) rows.push(`<div class="detail-row"><div class="k">營業</div><div class="v">${escapeHtml(data.hours)}</div></div>`);
-    if (data.price) rows.push(`<div class="detail-row"><div class="k">票價</div><div class="v">${escapeHtml(data.price)}</div></div>`);
-
-    blocks.push(`
-      <div class="detail-block">
-        <h6>CONTACT</h6>
-        ${rows.join("")}
-      </div>
-    `);
-  }
-
-  // 注意事項
-  if (Array.isArray(data.notes) && data.notes.length) {
-    const lis = data.notes.map(n => `<li>${escapeHtml(n)}</li>`).join("");
-    blocks.push(`
-      <div class="detail-block">
-        <h6>NOTES</h6>
-        <div class="detail-note"><ul>${lis}</ul></div>
-      </div>
-    `);
-  }
-
-  // 相關連結
-  if (Array.isArray(data.links) && data.links.length) {
-    const pills = data.links
-      .filter(l => l?.url)
-      .map(l => `<a class="detail-pill" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">
-                  <i class="fa-solid fa-up-right-from-square"></i> ${escapeHtml(l.name || "連結")}
-                 </a>`)
-      .join("");
-    blocks.push(`
-      <div class="detail-block">
-        <h6>LINKS</h6>
-        <div class="detail-actions">${pills}</div>
-      </div>
-    `);
-  }
 
   // 沒內容就給個提示（通常不會發生，因為你 2a 沒資料不顯示 icon）
   if (!blocks.length) {
@@ -5764,22 +5878,65 @@ function buildDetailBody(data){
 
   return blocks.join("");
 }
+let currentDetailKey = null
+let detailEditMode = false
 
-function openDetail(key){
-  const data = detailData[key];
-  if (!data) return; // 2a：沒資料不顯示 icon，也避免誤開
+function openDetailCard(key){
+currentDetailKey = key
+detailEditMode = timelineEditMode
+const trip = loadTripData()
 
+const data = trip.details?.[key] || {
+  tag: "INFO",
+  time: "",
+  title: "Detail",
+  sub: "",
+  blocks: []
+};
   const html = document.documentElement;
 
   // 塞 header
   document.getElementById("detailTag").innerText = data.tag || "INFO";
-  document.getElementById("detailTime").innerHTML =
-    `<i class="fa-regular fa-clock"></i> ${escapeHtml(data.time || "--:--")}`;
-  document.getElementById("detailTitle").innerText = data.title || "";
-  document.getElementById("detailSub").innerText = data.sub || "";
+let itemTime = "--:--"
 
+trip.days.forEach(day=>{
+  day.sections.forEach(section=>{
+    section.items.forEach(item=>{
+      if(item.detailKey === key){
+        itemTime = item.time || "--:--"
+      }
+    })
+  })
+})
+
+document.getElementById("detailTime").innerHTML =
+  `<i class="fa-regular fa-clock"></i> ${escapeHtml(itemTime)}`;
+const titleEl = document.getElementById("detailTitle")
+const subEl = document.getElementById("detailSub")
+
+if(detailEditMode){
+
+titleEl.innerHTML = `
+<input
+value="${escapeHtml(data.title || "")}"
+style="width:100%;font-size:20px;font-weight:600;padding:4px 6px;border:1px solid #ddd;border-radius:6px"oninput="updateDetailHeader('title',this.value)">
+`
+
+subEl.innerHTML = `
+<input
+value="${escapeHtml(data.sub || "")}"
+style="width:100%;padding:4px 6px;border:1px solid #ddd;border-radius:6px"oninput="updateDetailHeader('sub',this.value)">
+`
+
+}else{
+
+titleEl.innerText = data.title || ""
+subEl.innerText = data.sub || ""
+
+}
   // 塞 body
   document.getElementById("detailBody").innerHTML = buildDetailBody(data);
+renderDetail()
 
   // 顯示
   const backdrop = document.getElementById("detailBackdrop");
@@ -5800,6 +5957,440 @@ requestAnimationFrame(() => {
 
 // 鎖背景滾動
 document.body.style.overflow = "hidden";
+}
+function renderDetail(){
+
+if(detailEditMode){
+renderDetailEditor()
+}else{
+renderDetailView()
+}
+
+}
+function updateDetailHeader(field,value){
+
+const trip = loadTripData()
+
+if(!trip.details){
+trip.details = {}
+}
+
+if(!trip.details[currentDetailKey]){
+trip.details[currentDetailKey] = {
+title:"",
+sub:"",
+blocks:[]
+}
+}
+
+trip.details[currentDetailKey][field] = value
+
+localStorage.setItem("tripData",JSON.stringify(trip))
+
+}
+function renderDetailView(){
+
+// 目前先什麼都不做
+// 只是保持原本 card 行為
+
+}
+function renderDetailEditor(){
+
+const trip = loadTripData()
+
+const data = trip.details?.[currentDetailKey] || {}
+
+const title = data.title || ""
+const sub = data.sub || ""
+const body = document.getElementById("detailBody")
+
+if(!body) return
+
+body.innerHTML = `
+<div class="detail-editor">
+
+
+<div id="detailBlocks"></div>
+
+<div style="margin-top:8px">
+<select id="blockType">
+<option value="info">Info</option>
+<option value="list">List</option>
+<option value="links">Links</option>
+</select>
+
+<button id="addBlockBtn">+ Add block</button>
+</div>
+
+</div>
+`
+// 綁定 Add Block
+const addBtn = document.getElementById("addBlockBtn")
+
+if(addBtn){
+addBtn.onclick = function(){
+
+const trip = loadTripData()
+
+if(!trip.details[currentDetailKey]){
+trip.details[currentDetailKey] = {
+title:"",
+sub:"",
+blocks:[]
+}
+}
+
+const type = document.getElementById("blockType").value
+
+let title = "SECTION"
+let items = [{text:""}]
+
+if(type === "info"){
+title = "INFO"
+items = [{label:"",value:""}]
+}
+
+if(type === "list"){
+title = "LIST"
+items = [{text:""}]
+}
+
+if(type === "links"){
+title = "LINKS"
+items = [{label:"",value:""}]
+}
+
+trip.details[currentDetailKey].blocks.push({
+type:type,
+title:title,
+items:items
+})
+localStorage.setItem("tripData",JSON.stringify(trip))
+
+renderDetailEditor()
+
+}
+}
+renderEditorBlocks()
+}
+function updateDetailTitle(value){
+
+const trip = loadTripData()
+
+if(!trip.details[currentDetailKey]){
+trip.details[currentDetailKey] = {
+title:"",
+sub:"",
+blocks:[]
+}
+}
+
+trip.details[currentDetailKey].title = value
+
+localStorage.setItem("tripData",JSON.stringify(trip))
+
+}
+
+function updateDetailSub(value){
+
+const trip = loadTripData()
+
+if(!trip.details[currentDetailKey]){
+trip.details[currentDetailKey] = {
+title:"",
+sub:"",
+blocks:[]
+}
+}
+
+trip.details[currentDetailKey].sub = value
+
+localStorage.setItem("tripData",JSON.stringify(trip))
+
+}
+function renderEditorBlocks(){
+
+const trip = loadTripData()
+const blocks = trip.details?.[currentDetailKey]?.blocks || []
+const container = document.getElementById("detailBlocks")
+
+if(!container) return
+
+container.innerHTML = blocks.map((block,i)=>{
+
+if(block.type === "info"){
+
+return `
+
+<div class="detail-block" style="margin-top:10px">
+
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+
+<span class="block-drag" style="cursor:grab">⋮⋮</span>
+<input
+value="${escapeHtml(block.title || "INFO")}"
+style="flex:1"
+onchange="updateBlockTitle(${i},this.value)">
+
+<button onclick="addBlockRow(${i})">＋</button>
+
+<button onclick="deleteBlock(${i})">🗑</button>
+
+</div>
+
+${block.items.map((item,j)=>`
+
+<div class="detail-row-editor" style="display:flex;gap:4px;margin-bottom:4px">
+
+<span class="row-drag" style="cursor:grab">⋮</span>
+<input
+value="${escapeHtml(item.label || "")}"
+placeholder="label"
+style="flex:1"
+onchange="updateBlockLabel(${i},${j},this.value)">
+
+<input
+value="${escapeHtml(item.value || "")}"
+placeholder="value"
+style="flex:2"
+onchange="updateBlockValue(${i},${j},this.value)">
+
+<button onclick="deleteBlockRow(${i},${j})">x</button>
+
+</div>
+
+`).join("")}
+
+</div>
+
+`
+
+}
+if(block.type === "list"){
+
+return `
+
+<div class="detail-block" style="margin-top:10px">
+
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+
+<span class="block-drag" style="cursor:grab">⋮⋮</span>
+<input
+value="${escapeHtml(block.title || "SECTION")}"
+style="flex:1"
+onchange="updateBlockTitle(${i},this.value)">
+
+<button onclick="addBlockRow(${i})">＋</button>
+
+<button onclick="deleteBlock(${i})">🗑</button>
+
+</div>
+
+${block.items.map((item,j)=>`
+
+<div class="detail-row-editor" style="display:flex;gap:4px;margin-bottom:4px">
+
+<span class="row-drag" style="cursor:grab">⋮</span>
+<input
+value="${escapeHtml(item.text || "")}"
+style="flex:1"
+onchange="updateBlockText(${i},${j},this.value)">
+
+<button onclick="deleteBlockRow(${i},${j})">x</button>
+
+</div>
+
+`).join("")}
+
+</div>
+
+`
+
+}
+if(block.type === "links"){
+
+return `
+
+<div class="detail-block" style="margin-top:10px">
+
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+
+<span class="block-drag" style="cursor:grab">⋮⋮</span>
+<input
+value="${escapeHtml(block.title || "LINKS")}"
+style="flex:1"
+onchange="updateBlockTitle(${i},this.value)">
+
+<button onclick="addBlockRow(${i})">＋</button>
+
+<button onclick="deleteBlock(${i})">🗑</button>
+
+</div>
+
+${block.items.map((item,j)=>`
+
+<div class="detail-row-editor" style="display:flex;gap:4px;margin-bottom:4px">
+
+<span class="row-drag" style="cursor:grab">⋮</span>
+<input
+value="${escapeHtml(item.label || "")}"
+placeholder="name"
+style="flex:1"
+onchange="updateBlockLabel(${i},${j},this.value)">
+
+<input
+value="${escapeHtml(item.value || "")}"
+placeholder="url"
+style="flex:2"
+onchange="updateBlockValue(${i},${j},this.value)">
+
+<button onclick="deleteBlockRow(${i},${j})">x</button>
+
+</div>
+
+`).join("")}
+
+</div>
+
+`
+
+}
+return ""
+
+}).join("")
+
+new Sortable(container,{
+animation:150,
+handle:".block-drag",
+onEnd:(evt)=>{
+
+const trip = loadTripData()
+
+const moved =
+trip.details[currentDetailKey].blocks.splice(evt.oldIndex,1)[0]
+
+trip.details[currentDetailKey].blocks.splice(evt.newIndex,0,moved)
+
+localStorage.setItem("tripData",JSON.stringify(trip))
+
+renderEditorBlocks()
+
+}
+
+})
+// ⭐ row drag
+document.querySelectorAll(".detail-block").forEach((blockEl,blockIndex)=>{
+
+const rows = blockEl.querySelectorAll(".detail-row-editor")
+
+if(!rows.length) return
+
+new Sortable(blockEl,{
+animation:150,
+handle:".row-drag",
+onEnd:(evt)=>{
+
+const trip = loadTripData()
+
+const items = trip.details[currentDetailKey].blocks[blockIndex].items
+
+const moved = items.splice(evt.oldIndex,1)[0]
+
+items.splice(evt.newIndex,0,moved)
+
+localStorage.setItem("tripData",JSON.stringify(trip))
+
+}
+
+})
+
+})
+}
+function updateBlockLabel(blockIndex,itemIndex,value){
+
+const trip = loadTripData()
+
+trip.details[currentDetailKey]
+.blocks[blockIndex]
+.items[itemIndex]
+.label = value
+
+localStorage.setItem("tripData",JSON.stringify(trip))
+
+}
+function updateBlockValue(blockIndex,itemIndex,value){
+
+const trip = loadTripData()
+
+trip.details[currentDetailKey]
+.blocks[blockIndex]
+.items[itemIndex]
+.value = value
+
+localStorage.setItem("tripData",JSON.stringify(trip))
+
+}
+function updateBlockTitle(blockIndex,value){
+
+if(!value.trim()) return
+
+const trip = loadTripData()
+if(/[a-zA-Z]/.test(value)){
+value = value.toUpperCase()
+}
+trip.details[currentDetailKey].blocks[blockIndex].title = value
+
+localStorage.setItem("tripData",JSON.stringify(trip))
+
+}
+function addBlockRow(blockIndex){
+
+const trip = loadTripData()
+
+trip.details[currentDetailKey].blocks[blockIndex].items.push({
+text:""
+})
+
+localStorage.setItem("tripData",JSON.stringify(trip))
+
+renderEditorBlocks()
+
+}
+function deleteBlock(blockIndex){
+
+const trip = loadTripData()
+
+trip.details[currentDetailKey].blocks.splice(blockIndex,1)
+
+localStorage.setItem("tripData",JSON.stringify(trip))
+
+renderDetailEditor()
+
+}
+function deleteBlockRow(blockIndex,rowIndex){
+
+const trip = loadTripData()
+
+trip.details[currentDetailKey]
+.blocks[blockIndex]
+.items.splice(rowIndex,1)
+
+localStorage.setItem("tripData",JSON.stringify(trip))
+
+renderEditorBlocks()
+
+}
+function updateBlockText(blockIndex,itemIndex,value){
+
+const trip = loadTripData()
+
+trip.details[currentDetailKey]
+.blocks[blockIndex]
+.items[itemIndex]
+.text = value
+
+localStorage.setItem("tripData",JSON.stringify(trip))
+
 }
 
 function closeDetail(){
@@ -6008,104 +6599,638 @@ function initDetailDragToClose(){
     } else {
       snapBack();
     }
-  }
 
-  // 綁在 document，避免漏接 move/up
-  document.addEventListener("pointerdown", onPointerDown, { passive: true });
-  document.addEventListener("pointermove", onPointerMove, { passive: false });
-  document.addEventListener("pointerup", onPointerUp, { passive: true });
-  document.addEventListener("pointercancel", onPointerUp, { passive: true });
+  }
+  // ✅ 在 function 裡面加 listener
+  const header = getHeader();
+  if(!header) return;
+
+  header.addEventListener("pointerdown", onPointerDown);
+  window.addEventListener("pointermove", onPointerMove);
+  window.addEventListener("pointerup", onPointerUp);
+
 }
-/* =========================================================
-   ✅ C 方案：長按行程 header 開詳情（無提示）
-   - 短按：展開/收合備註（原本行為）
-   - 長按：若有詳情資料 -> openDetail(key)
-   - 沒資料：長按不反應
-========================================================= */
-(function initLongPressDetailOnHeaders(){
-  const LONGPRESS_MS = 450;     // ✅ 長按多久才觸發（想更難誤觸可改 500~600）
-  const MOVE_TOL = 10;          // ✅ 手指移動超過幾 px 就視為「不是長按」
-  
-  let pressTimer = null;
-  let pressStartX = 0;
-  let pressStartY = 0;
-  let longPressed = false;
 
-  function clearPressTimer(){
-    if (pressTimer) {
-      clearTimeout(pressTimer);
-      pressTimer = null;
-    }
+/* =========================================================
+   header click → 展開 / 收合 note
+========================================================= */
+
+document.addEventListener("click", (e) => {
+
+  const header = e.target.closest(".time-header");
+  if (!header) return;
+
+  // 點到 detail dot 不要觸發
+  if (e.target.closest(".detail-dot")) return;
+if (e.target.closest("input, textarea, button, .drag-handle")) return;
+  const item = header.closest(".time-item");
+  if (!item) return;
+
+  item.classList.toggle("open");
+
+});
+
+function loadTripData(){
+
+let data = localStorage.getItem("tripData")
+
+if(!data){
+
+const tripData = {
+meta:{},
+days:[]
+}
+
+for(let i=0;i<19;i++){
+
+tripData.days.push({
+sections:[
+{
+title:"行程",
+items:[]
+}
+]
+})
+
+}
+localStorage.setItem("tripData",JSON.stringify(tripData))
+if(!tripData.details){
+tripData.details = {}
+}
+return tripData
+
+}
+
+const tripData = JSON.parse(data)
+if(!tripData.details){
+tripData.details = {}
+}
+
+// ⭐ 保證一定有19天
+for(let i=tripData.days.length;i<19;i++){
+
+tripData.days.push({
+sections:[
+{
+title:"行程",
+items:[]
+}
+]
+})
+
+}
+return tripData
+
+}
+
+let timelineEditMode = false;
+let draggingItemId = null;
+let editingItemId = null;
+function toggleTimelineEdit(){
+
+    timelineEditMode = !timelineEditMode;
+
+    document.body.classList.toggle("edit-mode",timelineEditMode);
+
+    // ⭐ 確保 edit mode 不會觸發 day-switch 動畫
+    document.body.classList.remove("day-switch");
+
+setTimeout(()=>{
+        renderTimeline();
+    }, 50)
+}
+function renderSection(section,dayIndex,sectionIndex){
+let html = `
+
+<div class="card-custom mb-4">
+
+<div class="section-header">
+
+<h6 class="fw-bold text-primary m-0 section-title"
+contenteditable="${timelineEditMode}"
+data-day="${dayIndex}"
+data-section="${sectionIndex}">
+${section.title}
+</h6>
+
+<button class="section-add"
+onclick="addItem(${dayIndex},${sectionIndex})">
+＋
+</button>
+
+<button class="section-delete"
+onclick="deleteSection(${dayIndex},${sectionIndex})">
+🗑
+</button>
+
+</div>
+<div class="section-items" id="section-${dayIndex}-${sectionIndex}">
+`
+section.items.forEach(item=>{
+html += renderItem(item)
+})
+html += `</div>`
+
+html += `</div>`
+
+return html
+}
+function renderTimeline(){
+
+const tripData = loadTripData()
+
+if(!tripData) return
+
+
+tripData.days.forEach((day,dayIndex)=>{
+
+const dayContainer =
+document.querySelector(`#day-${910+dayIndex} .timeline-container`)
+if(!dayContainer) return
+
+
+dayContainer.innerHTML = ""
+
+dayContainer.innerHTML += `
+<div class="day-sections" id="daysections-${dayIndex}">
+`
+
+day.sections.forEach((section,sectionIndex)=>{
+
+dayContainer.innerHTML += `
+<div class="section-block" data-section="${sectionIndex}">
+${renderSection(section,dayIndex,sectionIndex)}
+</div>
+`
+
+})
+
+dayContainer.innerHTML += `</div>`
+
+if(timelineEditMode){
+
+dayContainer.innerHTML += `
+<div style="margin-top:10px;">
+<button onclick="addSection(${dayIndex})">＋ Add Section</button>
+</div>
+`
+
+}
+
+
+})
+initItemDrag()
+
+}
+document.addEventListener("blur", e => {
+
+  // section title
+  if(e.target.classList.contains("section-title")){
+    const day = e.target.dataset.day
+    const section = e.target.dataset.section
+    const value = e.target.textContent.trim()
+
+    renameSection(day, section, value)
+    return
   }
 
-  // 用「事件委派」：不用每個 header 都綁，且新內容也自動生效
-  document.addEventListener("pointerdown", (e) => {
-    const header = e.target.closest(".time-header");
-    if (!header) return;
+  // ⭐ item title（新增這段）
+  if(e.target.classList.contains("title-text")){
+    const id = e.target.dataset.id
+    const value = e.target.textContent.trim()
 
-    const item = header.closest(".time-item");
-    if (!item) return;
+    updateItemTitle(id, value)
+    return
+  }
 
-    // 只允許「左鍵/手指」觸發
-    if (e.pointerType === "mouse" && e.button !== 0) return;
+}, true)
+function addItem(dayIndex,sectionIndex){
 
-    longPressed = false;
-    pressStartX = e.clientX;
-    pressStartY = e.clientY;
+const data = loadTripData()
 
-    // 如果這個行程有 detail key 且 detailData 有資料 -> 才啟用長按
-    const key = item.getAttribute("data-detail");
-    const canOpenDetail = key && typeof detailData === "object" && detailData[key];
+// ⭐ 如果沒有 section 就建立
+if(!data.days[dayIndex].sections[sectionIndex]){
+data.days[dayIndex].sections.push({
+title:"行程",
+items:[]
+})
+}
 
-    clearPressTimer();
+const section = data.days[dayIndex].sections[sectionIndex]
 
-    if (!canOpenDetail) return; // ✅ 沒資料就不做長按計時（長按也不反應）
+const newItem = {
+id:"item"+Date.now(),
+time:"",
+title:"新行程",
+note:"",
+detailKey:null
+}
 
-    pressTimer = setTimeout(() => {
-      longPressed = true;
+section.items.push(newItem)
 
-      // ✅ 長按成功：開詳情
-      openDetail(key);
+localStorage.setItem("tripData",JSON.stringify(data))
 
-      // ✅ 抑制接下來那一下 click（避免展開/收合被觸發）
-      header.dataset.suppressClick = "1";
-      setTimeout(() => { delete header.dataset.suppressClick; }, 600);
-    }, LONGPRESS_MS);
-  }, { passive: true });
+renderTimeline()
 
-  document.addEventListener("pointermove", (e) => {
-    if (!pressTimer) return;
+}
+function addSection(dayIndex){
 
-    const dx = Math.abs(e.clientX - pressStartX);
-    const dy = Math.abs(e.clientY - pressStartY);
+const data = loadTripData()
 
-    if (dx > MOVE_TOL || dy > MOVE_TOL) {
-      clearPressTimer(); // ✅ 手指滑動了 -> 取消長按
-    }
-  }, { passive: true });
+data.days[dayIndex].sections.push({
+title:"新區段",
+items:[]
+})
 
-  document.addEventListener("pointerup", () => {
-    clearPressTimer();
-  }, { passive: true });
+localStorage.setItem("tripData",JSON.stringify(data))
 
-  document.addEventListener("pointercancel", () => {
-    clearPressTimer();
-  }, { passive: true });
+renderTimeline()
 
-  // ✅ 短按：展開/收合（取代你原本那段 querySelectorAll click）
-  document.addEventListener("click", (e) => {
-    const header = e.target.closest(".time-header");
-    if (!header) return;
+}
+function renameSection(dayIndex,sectionIndex,newTitle){
 
-    // ✅ 如果剛剛是長按打開詳情，這一下 click 要忽略
-    if (header.dataset.suppressClick === "1") return;
+const data = loadTripData()
 
-    const item = header.closest(".time-item");
-    if (!item) return;
+data.days[dayIndex].sections[sectionIndex].title = newTitle
 
-    item.classList.toggle("open");
-  });
-})();
+localStorage.setItem("tripData",JSON.stringify(data))
+
+}
+function deleteSection(dayIndex,sectionIndex){
+
+if(!confirm("刪除這個區段?")) return
+
+const data = loadTripData()
+
+data.days[dayIndex].sections.splice(sectionIndex,1)
+
+localStorage.setItem("tripData",JSON.stringify(data))
+
+renderTimeline()
+
+}
+
+function updateItemOrder(){
+
+const data = loadTripData()
+
+document.querySelectorAll(".section-items").forEach(sectionEl=>{
+
+const ids = [...sectionEl.querySelectorAll(".time-item")]
+.map(el=>el.dataset.id)
+
+const [_,dayIndex,sectionIndex] = sectionEl.id.split("-")
+
+const items = data.days[dayIndex].sections[sectionIndex].items
+
+items.sort((a,b)=>{
+return ids.indexOf(a.id) - ids.indexOf(b.id)
+})
+
+})
+
+localStorage.setItem("tripData",JSON.stringify(data))
+
+}
+function renderItem(item){
+
+headerContent = `
+
+<div class="item-row">
+
+<div class="item-handle">☰</div>
+
+<div class="item-content">
+
+<span class="time-text"
+data-id="${item.id}">
+${item.time || "--:--"}
+</span>
+
+<input type="time"
+class="time-picker"
+data-id="${item.id}"
+value="${item.time || ""}">
+
+<span class="title-text"
+data-id="${item.id}"
+contenteditable="${timelineEditMode}">
+${item.title || ""}
+</span>
+
+${item.note ? `<span class="toggle-icon">▾</span>` : ""}
+
+</div>
+
+<button class="item-edit"
+onclick="toggleItemEditor('${item.id}')">
+✏
+</button>
+
+<button class="item-delete"
+onclick="if(confirm('刪除這個行程?')) deleteItem('${item.id}')">
+🗑
+</button>
+
+</div>
+
+`
+return `
+
+<div class="time-item" data-id="${item.id}" ${item.detailKey ? `data-detail="${item.detailKey}"` : ""}>
+<div class="time-node"></div>
+
+<div class="time-header">
+
+${headerContent}
+
+${item.detailKey ? `
+<span class="detail-dot" data-detail="${item.detailKey}">·</span>
+` : ""}
+
+</div>
+
+${item.note ? `
+<div class="time-detail">${item.note}</div>
+` : ""}
+${timelineEditMode && editingItemId === item.id ? `
+
+<div class="item-editor" style="margin-top:6px;">
+
+<textarea
+style="width:100%;margin-bottom:6px;"
+placeholder="Note..."
+onchange="updateItemNote('${item.id}',this.value)"
+>${item.note || ""}</textarea>
+
+<label style="font-size:13px;">
+<input type="checkbox"
+${item.detailKey ? "checked":""}
+onchange="toggleItemDetail('${item.id}',this.checked)">
+有詳細資訊
+</label>
+
+</div>
+
+` : ""}
+</div>
+
+`
+
+}
+document.addEventListener("click", e => {
+
+  const timeText = e.target.closest(".time-text")
+  if(!timeText) return
+  if(!timelineEditMode) return
+
+  e.stopPropagation() // ⭐ 防止被 header 吃掉
+
+  const id = timeText.dataset.id
+  const picker = document.querySelector(`.time-picker[data-id="${id}"]`)
+  if(!picker) return
+
+  if(picker.showPicker){
+    picker.showPicker()
+  }else{
+    picker.focus()
+    picker.click()
+  }
+
+})
+document.addEventListener("change", e => {
+
+  if(!e.target.classList.contains("time-picker")) return
+
+  const id = e.target.dataset.id
+  const value = e.target.value
+
+  updateItemTime(id, value)
+
+  // ⭐ 更新畫面文字（不用整頁 render）
+  const text = document.querySelector(`.time-text[data-id="${id}"]`)
+  if(text){
+    text.textContent = value || "--:--"
+  }
+
+})
+function updateItemNote(id,value){
+
+const data = loadTripData()
+
+data.days.forEach(day=>{
+day.sections.forEach(section=>{
+section.items.forEach(item=>{
+
+if(item.id === id){
+item.note = value
+}
+
+})
+})
+})
+
+localStorage.setItem("tripData",JSON.stringify(data))
+
+}
+function toggleItemDetail(id,checked){
+
+const data = loadTripData()
+
+data.days.forEach(day=>{
+day.sections.forEach(section=>{
+section.items.forEach(item=>{
+
+if(item.id === id){
+
+if(checked){
+
+if(!item.detailKey){
+item.detailKey = item.id
+
+// ⭐ 第一次建立 detail 時初始化
+if(!data.details){
+data.details = {}
+}
+
+if(!data.details[item.id]){
+
+data.details[item.id] = {
+title: item.title || "",
+blocks:[]
+}
+
+}
+
+}
+
+}else{
+
+item.detailKey = null
+
+}
+}
+
+})
+})
+})
+
+localStorage.setItem("tripData",JSON.stringify(data))
+
+renderTimeline()
+
+}
+function toggleItemEditor(id){
+
+if(editingItemId === id){
+
+editingItemId = null
+
+}else{
+
+editingItemId = id
+
+}
+
+renderTimeline()
+
+}
+function deleteItem(id){
+
+const data = loadTripData()
+
+data.days.forEach(day=>{
+day.sections.forEach(section=>{
+
+section.items =
+section.items.filter(item=> item.id !== id)
+
+})
+})
+
+localStorage.setItem("tripData",JSON.stringify(data))
+
+renderTimeline()
+
+}
+function updateItemTime(id,newTime){
+
+const data = loadTripData()
+
+data.days.forEach(day=>{
+day.sections.forEach(section=>{
+section.items.forEach(item=>{
+
+if(item.id === id){
+item.time = newTime
+}
+
+})
+})
+})
+
+localStorage.setItem("tripData",JSON.stringify(data))
+
+}
+function updateItemTitle(id,newTitle){
+
+const data = loadTripData()
+
+data.days.forEach(day=>{
+day.sections.forEach(section=>{
+section.items.forEach(item=>{
+
+if(item.id === id){
+item.title = newTitle
+}
+
+})
+})
+})
+
+localStorage.setItem("tripData",JSON.stringify(data))
+
+}
+renderTimeline()
+
+function initItemDrag(){
+
+document.querySelectorAll(".section-items").forEach(container=>{
+
+new Sortable(container,{
+
+group:"timeline-items",
+
+handle:".item-handle",
+
+animation:150,
+onStart:function(evt){
+
+draggingItemId = evt.item.dataset.id
+
+},
+onEnd:function(evt){
+
+const fromParts = evt.from.id.split("-")
+const toParts = evt.to.id.split("-")
+
+const fromDay = fromParts[1]
+const fromSection = fromParts[2]
+
+const toDay = toParts[1]
+const toSection = toParts[2]
+
+const data = loadTripData()
+
+const moved =
+data.days[fromDay].sections[fromSection].items.splice(evt.oldIndex,1)[0]
+
+data.days[toDay].sections[toSection].items.splice(evt.newIndex,0,moved)
+
+localStorage.setItem("tripData",JSON.stringify(data))
+}
+
+})
+
+})
+
+}
+document.querySelectorAll(".day-tab").forEach(tab=>{
+
+let hoverTimer = null
+
+tab.addEventListener("dragenter",()=>{
+
+if(!draggingItemId) return
+
+hoverTimer = setTimeout(()=>{
+
+tab.click()
+
+},400)
+
+})
+
+tab.addEventListener("dragleave",()=>{
+
+clearTimeout(hoverTimer)
+
+})
+
+})
+document.addEventListener("click",function(e){
+
+const dot = e.target.closest(".detail-dot")
+if(!dot) return
+
+e.stopPropagation()
+
+const key = dot.dataset.detail
+if(!key) return
+
+openDetailCard(key)
+
+})
 
 </script>
 <div id="hotel-bar" class="accommodation-bar">
