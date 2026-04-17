@@ -370,7 +370,7 @@ body:not(.edit-mode) .time-text{ pointer-events:auto; }
 .exp-left-top{ display:flex; align-items:flex-start; justify-content:flex-start; gap:10px; }
 .exp-left-top .exp-cat{ min-width:0; }
 .more-btn.exp-more-left{ opacity:.55; padding:2px 4px; font-size:1rem; line-height:1; }
-.exp-note{ margin-top:4px; font-size:.85rem; opacity:.8; line-height:1.25; }
+.exp-note{ margin-top:4px; font-size:.85rem; opacity:.8; line-height:1.4; white-space:pre-wrap; word-break:break-word; }
 .day-group{ border:1px solid var(--border); border-radius:14px; overflow:hidden; background:var(--surface); box-shadow:var(--shadow-1); margin-bottom:10px; }
 .day-group-head{ padding:12px 14px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none; }
 .day-group-head:active{ transform:scale(.99); }
@@ -395,6 +395,7 @@ body:not(.edit-mode) .time-text{ pointer-events:auto; }
 .budget-popover .pop-row{ display:flex; gap:8px; align-items:center; }
 .budget-popover input{ width:100%; border-radius:10px; border:1px solid var(--border); padding:6px 10px; font-size:.85rem; outline:none; background:var(--surface); color:var(--text-1); }
 .budget-popover input::placeholder{ color:var(--text-3); }
+.budget-popover textarea::placeholder{ color:var(--text-3); }
 .budget-popover .pop-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:8px; }
 .budget-popover .pop-btn{ border:none; background:transparent; padding:6px 8px; border-radius:10px; font-size:.78rem; font-weight:900; cursor:pointer; color:var(--text-2); }
 .budget-popover .pop-btn.primary{ background:var(--text-1); color:var(--surface); padding:6px 10px; }
@@ -1207,17 +1208,40 @@ function openEditPopover(expId,anchorBtn){
   pop.querySelector('input[data-role="day"]').addEventListener('keydown',function(ev){ if(ev.key==='Enter'){ ev.preventDefault(); saveEditedDay(expId,ev.target.value.trim()); } });
 }
 document.addEventListener('click',function(ev){ if(!activePop||!activePop.el) return; if(!activePop.el.contains(ev.target)&&!ev.target.closest('.more-menu')&&!ev.target.closest('[data-more-btn="1"]')) closeEditPopover(); });
+
+function openEditNotePopover(expId,anchorBtn){
+  closeEditPopover();
+  var e=expenses.find(function(x){ return x.id===expId; }); if(!e) return;
+  var pop=document.createElement('div'); pop.className='budget-popover'; pop.dataset.popover='budget-note';
+  pop.innerHTML='<div class="pop-title">備註</div><div class="pop-row"><textarea data-role="note" rows="3" placeholder="輸入備註（可換行）" style="width:100%;resize:vertical;border-radius:10px;border:1px solid var(--border);padding:6px 10px;font-size:.85rem;background:var(--surface);color:var(--text-1);outline:none;font-family:inherit;line-height:1.45"></textarea></div><div class="pop-actions"><button type="button" class="pop-btn" data-act="cancel">取消</button><button type="button" class="pop-btn primary" data-act="save">保存</button></div>';
+  pop.querySelector('textarea[data-role="note"]').value = e.note||'';
+  var rect=anchorBtn.getBoundingClientRect(),sx=window.scrollX||0,sy=window.scrollY||0;
+  pop.style.left=(sx+rect.left)+'px'; pop.style.top=(sy+rect.bottom+6)+'px';
+  document.body.appendChild(pop); activePop={id:expId,el:pop};
+  setTimeout(function(){ var pr=pop.getBoundingClientRect(); if(pr.left<8) pop.style.left=(sx+8)+'px'; if(pr.right>window.innerWidth-8) pop.style.left=(sx+window.innerWidth-pr.width-8)+'px'; if(pr.bottom>window.innerHeight-8) pop.style.top=(sy+rect.top-pr.height-6)+'px'; },0);
+  var ta=pop.querySelector('textarea[data-role="note"]');
+  ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length);
+  pop.querySelector('[data-act="cancel"]').addEventListener('click',closeEditPopover);
+  pop.querySelector('[data-act="save"]').addEventListener('click',function(){
+    var idx=expenses.findIndex(function(x){ return x.id===expId; }); if(idx<0) return;
+    expenses[idx].note=ta.value;
+    localStorage.setItem('trip_v2026',JSON.stringify(expenses));
+    closeEditPopover(); render();
+  });
+  ta.addEventListener('keydown',function(ev){ if(ev.key==='Enter'&&(ev.ctrlKey||ev.metaKey)){ ev.preventDefault(); pop.querySelector('[data-act="save"]').click(); } });
+}
 var activeMoreMenu=null;
 function closeMoreMenu(){ if(activeMoreMenu) activeMoreMenu.remove(); activeMoreMenu=null; }
 function openMoreMenu(expId,anchorBtn){
   closeMoreMenu(); closeEditPopover();
   var menu=document.createElement('div'); menu.className='more-menu';
-  menu.innerHTML='<div class="menu-item" data-act="edit"><i class="fas fa-pen"></i> 編輯付款日</div><div class="menu-item danger" data-act="delete"><i class="fas fa-trash-alt"></i> 刪除</div>';
+  menu.innerHTML='<div class="menu-item" data-act="edit-note"><i class="fas fa-comment-alt"></i> 編輯備註</div><div class="menu-item" data-act="edit"><i class="fas fa-pen"></i> 編輯付款日</div><div class="menu-item danger" data-act="delete"><i class="fas fa-trash-alt"></i> 刪除</div>';
   var rect=anchorBtn.getBoundingClientRect(),sx=window.scrollX||0,sy=window.scrollY||0;
   menu.style.left=(sx+rect.left)+'px'; menu.style.top=(sy+rect.bottom+6)+'px';
   document.body.appendChild(menu);
   var mr=menu.getBoundingClientRect(); var left=sx+rect.left; left=Math.max(sx+8,Math.min(left,sx+document.documentElement.clientWidth-mr.width-8)); menu.style.left=left+'px';
   activeMoreMenu=menu;
+  menu.querySelector('[data-act="edit-note"]').onclick=function(){ closeMoreMenu(); openEditNotePopover(expId,anchorBtn); };
   menu.querySelector('[data-act="edit"]').onclick=function(){ closeMoreMenu(); openEditPopover(expId,anchorBtn); };
   menu.querySelector('[data-act="delete"]').onclick=function(){ closeMoreMenu(); deleteExp(expId); };
 }
