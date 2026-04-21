@@ -1338,7 +1338,7 @@ function renderPackList(){
       var ii=items.indexOf(item); var cb=(!isTemplate&&item.carry)?'<span class="carry-badge">• 隨身</span>':''; var isCL=eCM&&!isTemplate;
       var ck=carryKey(catObj.category,item.text); var cc=!!carryCheckedMap[ck];
       var chk=isTemplate?'':(isCL?'<input type="checkbox" '+(cc?'checked':'')+' onclick="event.stopPropagation();" onchange="toggleCarryChecked(\''+catObj.category.replace(/'/g,"\\'")+'\',' +'\''+item.text.replace(/'/g,"\\'")+'\')">':'<input type="checkbox" '+(item.checked?'checked':''));
-      if(!isTemplate&&!isCL) chk+='>'; else if(isCL) chk+='>';
+      if(!isTemplate&&!isCL) chk+='>';
       var rowClick=(isTemplate||isCL)?'':'onclick="toggleItem('+ci+','+ii+')"';
       var rbtns=isTemplate?'<button class="btn btn-sm text-muted" onclick="deleteSingleItem('+ci+','+ii+')">\xd7</button>':(isCL?'':'<button class="btn btn-sm text-muted carry-more-btn" onclick="event.stopPropagation();openCarryMenu('+ci+','+ii+',this)">⋯</button><button class="btn btn-sm text-muted" onclick="deleteSingleItem('+ci+','+ii+')">\xd7</button>');
       html+='<div class="pack-item d-flex align-items-center justify-content-between py-1"><div class="d-flex align-items-center flex-grow-1" '+rowClick+'>'+chk+'<span class="pack-text '+((!isTemplate&&!isCL&&item.checked)?'checked':'')+' '+(isTemplate?'':'ms-2')+'">'+item.text+'</span>'+cb+'</div><div class="d-flex align-items-center gap-1">'+rbtns+'</div></div>';
