@@ -236,7 +236,7 @@ body.day-switch .time-item{ opacity:0; transform:translateY(4px); animation:time
 @keyframes nodePop{ to{ opacity:1; transform:scale(1) } }
 body.edit-mode .time-item,.edit-mode .time-node{ opacity:1; transform:none; animation:none; }
 .time-header{ display:flex; align-items:center; cursor:pointer; user-select:none; }
-.time-text,.title-text{ user-select:text; }
+.time-text,.title-text{ user-select:text; white-space:pre-line; }
 .toggle-icon{ font-size:.9rem; color:var(--text-3); transition:transform .3s ease; display:inline-block; transform-origin:center; }
 .time-detail{
   max-height:0; transform:scaleY(0); transform-origin:top; opacity:0; overflow:hidden;
