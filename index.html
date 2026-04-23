@@ -839,6 +839,11 @@ input,textarea{ font-size:.95rem; }
             <i class="fas fa-paste text-primary"></i><span class="paste-check">✓</span>
           </span>
         </div>
+<input type="file" id="sync-file-input" accept=".txt" style="display:none">
+<button class="btn btn-sm btn-secondary-soft w-100 mt-2"
+        onclick="document.getElementById('sync-file-input').click()">
+  <i class="fas fa-file-import"></i> 從 TXT 檔案匯入
+</button>
       </div>
       <button class="btn btn-sm btn-secondary-soft w-100 mb-2" onclick="analyzeSyncContent()"><i class="fas fa-search"></i> 分析同步內容</button>
       <div class="small text-muted mb-2" id="sync-recv-preview">（分析後會顯示將更新內容）</div>
@@ -1481,7 +1486,16 @@ function undoSync(){
   localStorage.removeItem('trip_sync_backup');
 }
 function pasteSyncCode(wEl){ navigator.clipboard.readText().then(function(t){ var inp=document.getElementById('sync-code-input'); if(inp) inp.value=t; wEl.classList.add('is-success'); setTimeout(function(){ wEl.classList.remove('is-success'); },900); }).catch(function(){ alert('無法讀取剪貼簿，請手動貼上'); }); }
-
+document.getElementById('sync-file-input').addEventListener('change', function(e){
+  var file = e.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    document.getElementById('sync-code-input').value = ev.target.result.trim();
+    e.target.value = '';
+  };
+  reader.readAsText(file, 'utf-8');
+});
 // ===== 收藏 =====
 var favorites=JSON.parse(localStorage.getItem('trip_favorites')||'[]');
 function saveFavorites(){ localStorage.setItem('trip_favorites',JSON.stringify(favorites)); }
