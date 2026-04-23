@@ -816,6 +816,14 @@ input,textarea{ font-size:.95rem; }
             <span class="btn-label-default">產生同步碼</span><span class="btn-label-success">✓ 已複製</span>
           </button>
         </div>
+<button type="button"
+        class="btn btn-sm btn-secondary-soft w-100 mt-2"
+        id="btn-download-code"
+        onclick="downloadSyncCode()"
+        style="display:none">
+  <i class="fas fa-file-download"></i> 下載 TXT 檔案
+</button>
+
       </div>
     </div>
     <div id="sync-pane-receive">
@@ -1394,6 +1402,8 @@ function confirmShareGenerate(btn){
     if(useExp) s+='記帳 '+exp.length+'筆 ';
     if(usePack){ s+='行李 '+pc.length+'類 '; }
     if(useFav) s+='收藏 '+fav.length+'項';
+    window._lastSyncCode = code;
+    document.getElementById('btn-download-code').style.display = 'block';    
     saveSyncLog('export','success',s.trim());
     var prev=document.getElementById('sync-share-preview'); if(prev) prev.innerHTML+='<hr class="my-2"><div class="text-success fw-bold">同步碼已產生 ✓</div><div class="small text-muted">產生時間：'+new Date().toLocaleString()+'</div>';
     btn.classList.add('is-success'); btn.disabled=true; setTimeout(function(){ btn.classList.remove('is-success'); btn.disabled=false; },1500);
@@ -1496,6 +1506,25 @@ document.getElementById('sync-file-input').addEventListener('change', function(e
   };
   reader.readAsText(file, 'utf-8');
 });
+function downloadSyncCode(){
+  if(!window._lastSyncCode) return;
+  var file = new File([window._lastSyncCode], 'sync_code.txt', {type:'text/plain'});
+  if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+    navigator.share({
+      title: '行程同步碼',
+      text: '請用旅遊網站的「從TXT檔案匯入」功能匯入',
+      files: [file]
+    }).catch(function(){});
+  } else {
+    // 不支援的話 fallback 到下載
+    var url = URL.createObjectURL(file);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'sync_code.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+}
 // ===== 收藏 =====
 var favorites=JSON.parse(localStorage.getItem('trip_favorites')||'[]');
 function saveFavorites(){ localStorage.setItem('trip_favorites',JSON.stringify(favorites)); }
